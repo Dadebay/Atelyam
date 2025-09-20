@@ -13,6 +13,8 @@ class AuthController extends GetxController {
 
   Future<void> handleAuthAction({required String phoneController, required String usernameController}) async {
     final HomeController homeController = Get.find();
+    print(phoneController);
+    print(usernameController);
     homeController.agreeButton.toggle();
     final signInService = SignInService();
     final phoneNumber = phoneController;

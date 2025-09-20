@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/modules/settings_view/components/settings_button.dart';

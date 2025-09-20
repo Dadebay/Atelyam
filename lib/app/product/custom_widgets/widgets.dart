@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:animate_do/animate_do.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/back_button.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
@@ -144,13 +143,6 @@ class WidgetsMine {
       width: Get.size.width,
       placeholder: (context, url) => EmptyStates().loadingData(),
       errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
-    );
-  }
-
-  Widget buildAnimatedWidget(Widget child, int delay) {
-    return FadeInUp(
-      delay: Duration(milliseconds: delay),
-      child: child,
     );
   }
 

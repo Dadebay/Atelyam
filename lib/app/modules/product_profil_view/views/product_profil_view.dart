@@ -1,20 +1,4 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:atelyam/app/data/models/business_user_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/data/service/business_user_service.dart';
-import 'package:atelyam/app/modules/home_view/components/business_users/business_user_profile_view.dart';
-import 'package:atelyam/app/modules/product_profil_view/controllers/product_profil_controller.dart';
-import 'package:atelyam/app/modules/product_profil_view/views/photo_view_page.dart';
-import 'package:atelyam/app/modules/settings_view/components/fav_button.dart';
-import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 
 class ProductProfilView extends StatefulWidget {
   const ProductProfilView({required this.productModel, super.key, this.businessUserID});

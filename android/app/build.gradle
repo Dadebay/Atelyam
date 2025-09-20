@@ -1,9 +1,8 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id 'com.google.gms.google-services'
-    
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -14,20 +13,19 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-
 android {
     namespace = "com.gurbanov.atelyam"
     compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
+
+
+    defaultConfig {
+        applicationId = "com.gurbanov.atelyam"
+        minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
+        targetSdkVersion localProperties.getProperty('flutter.targetSdkVersion').toInteger()
+        versionCode localProperties.getProperty('flutter.versionCode').toInteger()
+        versionName localProperties.getProperty('flutter.versionName')
+        multiDexEnabled true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -43,16 +41,6 @@ android {
     lintOptions {
         disable 'InvalidPackage'
         checkReleaseBuilds false //<- add this line
-    }
-
-
-    defaultConfig {
-        applicationId = "com.gurbanov.atelyam"
-        minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
-        targetSdkVersion localProperties.getProperty('flutter.targetSdkVersion').toInteger()
-        versionCode localProperties.getProperty('flutter.versionCode').toInteger()
-        versionName localProperties.getProperty('flutter.versionName')
-        multiDexEnabled true
     }
 
     buildTypes {

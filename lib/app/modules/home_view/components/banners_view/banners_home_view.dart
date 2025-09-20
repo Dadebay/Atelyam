@@ -32,7 +32,6 @@ class Banners extends StatelessWidget {
               } else if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
                   return emptyBanner(size);
-                  ;
                 }
                 return _buildCarousel(snapshot.data!, sizeValue);
               } else {

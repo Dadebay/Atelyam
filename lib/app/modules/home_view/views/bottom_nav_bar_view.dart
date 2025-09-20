@@ -23,7 +23,15 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // BottomNavigationBar'ı body'ye genişletiyoruz
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          "Atelyam",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+      ),
       body: Obx(() => pages[homeController.selectedIndex.value]),
       bottomNavigationBar: Obx(() {
         return CustomBottomNavBar(
@@ -63,19 +71,8 @@ class CustomBottomNavBar extends StatelessWidget {
     ];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 25, left: 30, right: 30),
       height: 60,
-      decoration: BoxDecoration(
-        color: ColorConstants.kSecondaryColor,
-        borderRadius: BorderRadii.borderRadius30,
-        boxShadow: [
-          BoxShadow(
-            color: ColorConstants.kThirdColor.withOpacity(0.1),
-            spreadRadius: 5,
-            blurRadius: 10,
-          ),
-        ],
-      ),
+      color: ColorConstants.kSecondaryColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(items.length, (index) {

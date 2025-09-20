@@ -1,18 +1,11 @@
-import 'package:atelyam/app/data/service/notification_service.dart';
 import 'package:atelyam/app/modules/auth_view/views/connection_check_view.dart';
 import 'package:atelyam/app/product/initialize/app_start_init.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:atelyam/app/utils/utils.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:get_storage/get_storage.dart';
-
-Future<void> backgroundNotificationHandler(RemoteMessage message) async {
-  await FCMConfig().sendNotification(body: message.notification!.body!, title: message.notification!.title!);
-  return;
-}
 
 Future<void> main() async {
   await AppStartInit.init();
@@ -29,12 +22,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final GetStorage storage = GetStorage();
 
-  @override
-  void initState() {
-    super.initState();
-    AppStartInit.getNotification();
-  }
-
   Locale getLocale() {
     final String? langCode = storage.read('langCode');
     if (langCode != null) {
@@ -48,12 +35,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(1.0),
-        ),
-        child: child!,
-      ),
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)), child: child!),
       title: Assets.appName,
       theme: AppThemes.lightTheme,
       fallbackLocale: const Locale('tr'),

@@ -84,6 +84,8 @@ class SignInService {
   }
 
   Future<int?> register({required String phoneNumber, required String name}) async {
+    print(phoneNumber);
+    print('REGISTER');
     final result = await _handleApiRequest(
       '/mobile/signup/',
       body: <String, dynamic>{
@@ -93,6 +95,8 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
+        print(responseJson);
+
         return responseJson;
       },
       isForm: true,
@@ -102,6 +106,9 @@ class SignInService {
   }
 
   Future<int?> login({required String phone}) async {
+    print(phone);
+    print('LOGIN-------------------');
+
     return _handleApiRequest(
       '/mobile/login/',
       body: <String, dynamic>{
@@ -110,6 +117,8 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
+        print(responseJson);
+
         return responseJson;
       },
       isForm: true,

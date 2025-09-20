@@ -13,6 +13,7 @@ import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -42,41 +43,88 @@ class ProductController extends GetxController {
     loadHashtags();
   }
 
-  Future<void> pickImage() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 70,
-      maxWidth: 1000,
-      maxHeight: 1000,
+  Future<XFile?> compressImage(File file) async {
+    final int fileSizeInBytes = await file.length();
+    final double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+    final double fileSizeInKB = fileSizeInBytes / 1024;
+
+    int quality = 70;
+
+    if (fileSizeInMB < 5) {
+      quality = 70; // Around 1 MB
+    } else if (fileSizeInMB >= 5 && fileSizeInMB < 10) {
+      quality = 50; // Around 2 MB
+    } else {
+      quality = 30; // Around 3 MB
+    }
+
+    final compressedImage = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      file.absolute.path + '_compressed.jpg',
+      quality: quality,
+      minWidth: 1000,
+      minHeight: 1000,
     );
+
+    final int compressedFileSizeInBytes = await compressedImage!.length();
+    final double compressedFileSizeInKB = compressedFileSizeInBytes / 1024;
+    final double compressedFileSizeInMB = compressedFileSizeInBytes / (1024 * 1024);
+
+    print('Original File Size: ${fileSizeInBytes} B');
+    print('Original File Size: ${fileSizeInKB.toStringAsFixed(2)} KB');
+    print('Original File Size: ${fileSizeInMB.toStringAsFixed(2)} MB');
+    print('Compressed File Size: ${compressedFileSizeInBytes} B');
+    print('Compressed File Size: ${compressedFileSizeInKB.toStringAsFixed(2)} KB');
+    print('Compressed File Size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
+    return compressedImage;
+  }
+
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       final File file = File(image.path);
-      final int fileSizeInBytes = await file.length();
-      final double fileSizeInKB = fileSizeInBytes / 1024;
-      final double fileSizeInMB = fileSizeInKB / 1024;
-
-      print('Dosya Boyutu: ${fileSizeInBytes} B');
-      print('Dosya Boyutu: ${fileSizeInKB.toStringAsFixed(2)} KB');
-      print('Dosya Boyutu: ${fileSizeInMB.toStringAsFixed(2)} MB');
-      selectedImage.value = File(image.path);
+      final compressedImage = await compressImage(file);
+      if (compressedImage != null) {
+        selectedImage.value = File(compressedImage.path);
+      }
     }
   }
 
   Future<void> pickImages({bool isEditProduct = false}) async {
-    final List<XFile> images = await _picker.pickMultiImage(
-      imageQuality: 70,
-      maxWidth: 1000,
-      maxHeight: 1000,
-    );
+    final List<XFile> images = await _picker.pickMultiImage();
     if (images.isNotEmpty) {
       if (selectedImages.length + images.length > maxImageCount) {
         showSnackBar('error', 'max_4_images'.tr, ColorConstants.redColor);
         return;
       }
-      if (isEditProduct) {
-        selectedImagesEditProduct.addAll(images.map((image) => image.path));
-      } else {
-        selectedImages.addAll(images.map((image) => File(image.path)));
+
+      for (var image in images) {
+        final File file = File(image.path);
+
+        // Print the original image size
+        final int originalFileSizeInBytes = await file.length();
+        final double originalFileSizeInKB = originalFileSizeInBytes / 1024;
+        final double originalFileSizeInMB = originalFileSizeInBytes / (1024 * 1024);
+        print('Original Image Size: ${originalFileSizeInBytes} B');
+        print('Original Image Size: ${originalFileSizeInKB.toStringAsFixed(2)} KB');
+        print('Original Image Size: ${originalFileSizeInMB.toStringAsFixed(2)} MB');
+
+        final compressedImage = await compressImage(file);
+        if (compressedImage != null) {
+          // Print the compressed image size
+          final int compressedFileSizeInBytes = await compressedImage.length();
+          final double compressedFileSizeInKB = compressedFileSizeInBytes / 1024;
+          final double compressedFileSizeInMB = compressedFileSizeInBytes / (1024 * 1024);
+          print('Compressed Image Size: ${compressedFileSizeInBytes} B');
+          print('Compressed Image Size: ${compressedFileSizeInKB.toStringAsFixed(2)} KB');
+          print('Compressed Image Size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
+
+          if (isEditProduct) {
+            selectedImagesEditProduct.add(compressedImage.path);
+          } else {
+            selectedImages.add(File(compressedImage.path));
+          }
+        }
       }
     }
   }
