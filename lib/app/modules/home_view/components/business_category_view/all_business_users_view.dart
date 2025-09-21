@@ -41,13 +41,10 @@ class AllBusinessUsersView extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8),
                     itemBuilder: (BuildContext context, index) {
-                      return WidgetsMine().buildAnimatedWidget(
-                        BusinessUsersCardView(
+                      return BusinessUsersCardView(
                           category: categories[index],
                           categoryID: categoryId,
-                        ),
-                        200 * index,
-                      );
+                        );
                     },
                   );
                 }

@@ -40,20 +40,17 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        bottomSheet: WidgetsMine().buildAnimatedWidget(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: AgreeButton(
-              onTap: () {
-                final String phoneNumberText =
-                    _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
+        bottomSheet: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: AgreeButton(
+            onTap: () {
+              final String phoneNumberText =
+                  _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
 
-                _homeController.makePhoneCall(phoneNumberText);
-              },
-              text: 'call'.tr,
-            ),
+              _homeController.makePhoneCall(phoneNumberText);
+            },
+            text: 'call'.tr,
           ),
-          500,
         ),
         backgroundColor: ColorConstants.whiteMainColor,
         body: Obx(
@@ -133,16 +130,13 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
               crossAxisSpacing: 15.0,
               itemBuilder: (BuildContext context, int index) {
                 final product = products[index];
-                return WidgetsMine().buildAnimatedWidget(
-                  SizedBox(
-                    height: index % 2 == 0 ? 250 : 220,
-                    child: DiscoveryCard(
-                      productModel: product,
-                      homePageStyle: false,
-                      businessUserID: widget.businessUserModelFromOutside.userID.toString(),
-                    ),
+                return SizedBox(
+                  height: index % 2 == 0 ? 250 : 220,
+                  child: DiscoveryCard(
+                    productModel: product,
+                    homePageStyle: false,
+                    businessUserID: widget.businessUserModelFromOutside.userID.toString(),
                   ),
-                  100 * index,
                 );
               },
             );
@@ -258,66 +252,57 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             () => Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FadeInDown(
-                  duration: const Duration(milliseconds: 600),
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadii.borderRadius30,
-                      boxShadow: [BoxShadow(color: ColorConstants.kPrimaryColor.withOpacity(.4), spreadRadius: 4, blurRadius: 4)],
-                      border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.4)),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadii.borderRadius30,
-                      child: CachedNetworkImage(
-                        fadeInCurve: Curves.ease,
-                        imageUrl: authController.ipAddress.value + _homeController.businessUser.value!.backPhoto,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadii.borderRadius10,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadii.borderRadius30,
+                    boxShadow: [BoxShadow(color: ColorConstants.kPrimaryColor.withOpacity(.4), spreadRadius: 4, blurRadius: 4)],
+                    border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.4)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadii.borderRadius30,
+                    child: CachedNetworkImage(
+                      fadeInCurve: Curves.ease,
+                      imageUrl: authController.ipAddress.value + _homeController.businessUser.value!.backPhoto,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadii.borderRadius10,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        placeholder: (context, url) => EmptyStates().loadingData(),
-                        errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
                       ),
+                      placeholder: (context, url) => EmptyStates().loadingData(),
+                      errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
                     ),
                   ),
                 ),
-                FadeInDown(
-                  duration: const Duration(milliseconds: 700),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      _homeController.businessUser.value!.businessName.toString(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: ColorConstants.kPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppFontSizes.fontSize20,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    _homeController.businessUser.value!.businessName.toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: ColorConstants.kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.fontSize20,
                     ),
                   ),
                 ),
-                FadeInDown(
-                  duration: const Duration(milliseconds: 800),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
-                    child: Text(
-                      _homeController.businessUser.value!.description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ColorConstants.darkMainColor.withOpacity(.6),
-                        fontSize: AppFontSizes.fontSize14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
+                  child: Text(
+                    _homeController.businessUser.value!.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: ColorConstants.darkMainColor.withOpacity(.6),
+                      fontSize: AppFontSizes.fontSize14,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),

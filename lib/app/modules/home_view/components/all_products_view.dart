@@ -129,16 +129,13 @@ class _AllProductsViewState extends State<AllProductsView> {
                 );
               }
 
-              return WidgetsMine().buildAnimatedWidget(
-                SizedBox(
+              return   SizedBox(
                   height: index % 2 == 0 ? 250 : 220,
                   child: DiscoveryCard(
                     productModel: product,
                     homePageStyle: false,
                   ),
-                ),
-                200 * index,
-              );
+                );
             },
           ),
         ),

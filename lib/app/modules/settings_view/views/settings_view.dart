@@ -36,41 +36,32 @@ class SettingsView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 600),
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 62,
                         child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 62,
-                          child: CircleAvatar(
-                            radius: 60,
-                            child: Image.asset(
-                              settingsController.avatars[settingsController.selectedAvatarIndex.value],
-                              width: 90,
-                              height: 90,
-                            ),
+                          radius: 60,
+                          child: Image.asset(
+                            settingsController.avatars[settingsController.selectedAvatarIndex.value],
+                            width: 90,
+                            height: 90,
                           ),
                         ),
                       ),
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 700),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            settingsController.username.value.isEmpty ? 'Ulanyjy 007 ' : settingsController.username.value,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: ColorConstants.whiteMainColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 + 2),
-                          ),
-                        ),
-                      ),
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 900),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          settingsController.phoneNumber.value.isEmpty ? ' +993-60-00-00-00' : '+993-${formatPhoneNumber(settingsController.phoneNumber.value)}',
+                          settingsController.username.value.isEmpty ? 'Ulanyjy 007 ' : settingsController.username.value,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: ColorConstants.warmWhiteColor, fontSize: AppFontSizes.fontSize16),
+                          style: TextStyle(color: ColorConstants.whiteMainColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 + 2),
                         ),
+                      ),
+                      Text(
+                        settingsController.phoneNumber.value.isEmpty ? ' +993-60-00-00-00' : '+993-${formatPhoneNumber(settingsController.phoneNumber.value)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: ColorConstants.warmWhiteColor, fontSize: AppFontSizes.fontSize16),
                       ),
                       const SizedBox(height: 30),
                     ],
@@ -123,8 +114,7 @@ class SettingsView extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   final item = currentSettingsViews[index];
                   return token != null && token.isNotEmpty && item['name'] == 'login'
-                      ? WidgetsMine().buildAnimatedWidget(
-                          SettingsButton(
+                      ?     SettingsButton(
                             name: 'logout'.tr,
                             lang: false,
                             onTap: () {
@@ -141,23 +131,18 @@ class SettingsView extends StatelessWidget {
                               );
                             },
                             icon: Icon(IconlyLight.logout, color: ColorConstants.kSecondaryColor),
-                          ),
-                          500 * index,
-                        )
-                      : WidgetsMine().buildAnimatedWidget(
-                          SettingsButton(
-                            name: "${item['name']}".tr,
-                            lang: item['name'] == 'lang',
-                            onTap: () {
-                              if (item['name'] == 'lang') {
-                                settingsController.showLanguageDialog(context);
-                              } else {
-                                Get.to(item['page']);
-                              }
-                            },
-                            icon: Icon(item['icon'], color: ColorConstants.kSecondaryColor),
-                          ),
-                          500 * index,
+                          )
+                      : SettingsButton(
+                          name: "${item['name']}".tr,
+                          lang: item['name'] == 'lang',
+                          onTap: () {
+                            if (item['name'] == 'lang') {
+                              settingsController.showLanguageDialog(context);
+                            } else {
+                              Get.to(item['page']);
+                            }
+                          },
+                          icon: Icon(item['icon'], color: ColorConstants.kSecondaryColor),
                         );
                 },
               ),

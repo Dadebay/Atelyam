@@ -77,8 +77,8 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
         isScrollable: false,
         unselectedLabelColor: Colors.grey,
         tabs: [
-          FadeInDown(duration: const Duration(milliseconds: 900), child: Tab(text: 'tab2Settings'.tr)),
-          FadeInDown(duration: const Duration(milliseconds: 900), child: Tab(text: 'business_accounts'.tr)),
+   Tab(text: 'tab2Settings'.tr),
+       Tab(text: 'business_accounts'.tr)
         ],
       ),
     );

@@ -246,15 +246,12 @@ class _CategoryProductViewState extends State<CategoryProductView> {
         ),
       );
     } else {
-      return WidgetsMine().buildAnimatedWidget(
-        SizedBox(
+      return SizedBox(
           height: index % 2 == 0 ? 250 : 200,
           child: DiscoveryCard(
             homePageStyle: false,
             productModel: product,
           ),
-        ),
-        200 * index,
       );
     }
   }

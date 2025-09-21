@@ -5,7 +5,7 @@ import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:dio/dio.dart';
-import 'package:gal/gal.dart';
+// import 'package:gal/gal.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -77,7 +77,7 @@ class ProductProfilController extends GetxController {
         final String fileName = 'Atelyam_${DateTime.now().toString().replaceAll(RegExp(r'[^\w]'), '_')}.webp';
         final String fullPath = '$savePath/$fileName';
         await dio.download(imageURL, fullPath);
-        await Gal.putImage(fullPath);
+        // await Gal.putImage(fullPath);
 
         showSnackBar('success', 'downloaded', ColorConstants.kSecondaryColor);
       } catch (e) {

@@ -1,4 +1,4 @@
-
+import '../../../product/custom_widgets/index.dart';
 
 class ProductProfilView extends StatefulWidget {
   const ProductProfilView({required this.productModel, super.key, this.businessUserID});
@@ -36,9 +36,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,
-      bottomSheet: FadeInUp(
-        duration: const Duration(milliseconds: 500),
-        child: Padding(
+      bottomSheet: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: AgreeButton(
             onTap: () {
@@ -51,7 +49,6 @@ class _ProductProfilViewState extends State<ProductProfilView> {
             text: 'call'.tr,
           ),
         ),
-      ),
       body: CustomScrollView(
         slivers: <Widget>[
           appBar(),
@@ -205,21 +202,18 @@ class _ProductProfilViewState extends State<ProductProfilView> {
       pinned: true,
       scrolledUnderElevation: 0.0,
       backgroundColor: ColorConstants.whiteMainColor,
-      leading: FadeInLeft(
-        duration: const Duration(milliseconds: 500),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 12, bottom: 6, top: 6),
-          child: IconButton(
-            style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius18), backgroundColor: ColorConstants.whiteMainColor),
-            icon: Icon(
-              IconlyLight.arrow_left_circle,
-              color: ColorConstants.darkMainColor,
-              size: AppFontSizes.fontSize24,
-            ),
-            onPressed: () {
-              Get.back();
-            },
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 12, bottom: 6, top: 6),
+        child: IconButton(
+          style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius18), backgroundColor: ColorConstants.whiteMainColor),
+          icon: Icon(
+            IconlyLight.arrow_left_circle,
+            color: ColorConstants.darkMainColor,
+            size: AppFontSizes.fontSize24,
           ),
+          onPressed: () {
+            Get.back();
+          },
         ),
       ),
       actions: [
@@ -243,28 +237,22 @@ class _ProductProfilViewState extends State<ProductProfilView> {
             ],
           ),
         ),
-        FadeInRight(
-          duration: const Duration(milliseconds: 500),
-          child: FavButton(
-            productProfilStyle: true,
-            product: widget.productModel,
-          ),
+        FavButton(
+          productProfilStyle: true,
+          product: widget.productModel,
         ),
-        FadeInRight(
-          duration: const Duration(milliseconds: 600),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius15), backgroundColor: ColorConstants.whiteMainColor),
-              icon: Icon(
-                IconlyLight.download,
-                color: ColorConstants.darkMainColor,
-                size: AppFontSizes.fontSize24,
-              ),
-              onPressed: () {
-                controller.checkPermissionAndDownloadImage(controller.productImages[controller.selectedImageIndex.value]);
-              },
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: IconButton(
+            style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius15), backgroundColor: ColorConstants.whiteMainColor),
+            icon: Icon(
+              IconlyLight.download,
+              color: ColorConstants.darkMainColor,
+              size: AppFontSizes.fontSize24,
             ),
+            onPressed: () {
+              controller.checkPermissionAndDownloadImage(controller.productImages[controller.selectedImageIndex.value]);
+            },
           ),
         ),
       ],
@@ -315,44 +303,41 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                     itemCount: controller.productImages.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return WidgetsMine().buildAnimatedWidget(
-                        GestureDetector(
-                          onTap: () {
-                            controller.updateSelectedImageIndex(index);
-                          },
-                          child: Obx(() {
-                            return Container(
-                              margin: const EdgeInsets.all(8),
-                              width: 70,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadii.borderRadius18,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: index == controller.selectedImageIndex.value ? ColorConstants.whiteMainColor.withOpacity(.6) : Colors.transparent,
-                                    blurRadius: 5,
-                                    spreadRadius: 3,
-                                  ),
-                                ],
-                                border: index == controller.selectedImageIndex.value
-                                    ? Border.all(
-                                        color: ColorConstants.whiteMainColor,
-                                        width: 2.0,
-                                      )
-                                    : null,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadii.borderRadius18,
-                                child: CachedNetworkImage(
-                                  imageUrl: controller.productImages[index],
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => EmptyStates().loadingData(),
-                                  errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                      return GestureDetector(
+                        onTap: () {
+                          controller.updateSelectedImageIndex(index);
+                        },
+                        child: Obx(() {
+                          return Container(
+                            margin: const EdgeInsets.all(8),
+                            width: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadii.borderRadius18,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: index == controller.selectedImageIndex.value ? ColorConstants.whiteMainColor.withOpacity(.6) : Colors.transparent,
+                                  blurRadius: 5,
+                                  spreadRadius: 3,
                                 ),
+                              ],
+                              border: index == controller.selectedImageIndex.value
+                                  ? Border.all(
+                                      color: ColorConstants.whiteMainColor,
+                                      width: 2.0,
+                                    )
+                                  : null,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadii.borderRadius18,
+                              child: CachedNetworkImage(
+                                imageUrl: controller.productImages[index],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => EmptyStates().loadingData(),
+                                errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
                               ),
-                            );
-                          }),
-                        ),
-                        500 * index,
+                            ),
+                          );
+                        }),
                       );
                     },
                   );
