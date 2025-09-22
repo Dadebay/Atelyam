@@ -1,6 +1,3 @@
-import 'package:atelyam/app/data/models/business_user_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/data/service/business_user_service.dart';
 import 'package:atelyam/app/data/service/product_service.dart';
 import 'package:atelyam/app/modules/settings_view/components/business_acc_card.dart';
 import 'package:atelyam/app/modules/settings_view/components/product_card_mine.dart';
@@ -9,18 +6,13 @@ import 'package:atelyam/app/modules/settings_view/views/business_acc_components_
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/edit_product_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 class AllBusinessAccountsView extends StatefulWidget {
   AllBusinessAccountsView({super.key});
 
   @override
-  State<AllBusinessAccountsView> createState() => _AllBusinessAccountsViewState();
+  State<AllBusinessAccountsView> createState() =>
+      _AllBusinessAccountsViewState();
 }
 
 class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
@@ -52,7 +44,8 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
+      systemOverlayStyle:
+          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BackButtonMine(
@@ -76,27 +69,26 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
         dividerColor: Colors.white,
         isScrollable: false,
         unselectedLabelColor: Colors.grey,
-        tabs: [
-   Tab(text: 'tab2Settings'.tr),
-       Tab(text: 'business_accounts'.tr)
-        ],
+        tabs: [Tab(text: 'tab2Settings'.tr), Tab(text: 'business_accounts'.tr)],
       ),
     );
   }
 
   FutureBuilder<List<ProductModel>?> getMyProducts() {
     return FutureBuilder<List<ProductModel>?>(
-      future: ProductService().getMyProducts(), // İşletme hesaplarını getir
+      future: ProductService().getMyProducts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return EmptyStates().loadingData(); // Yükleme animasyonu göster
+          return EmptyStates().loadingData();
         } else if (snapshot.hasError) {
-          return EmptyStates().errorData(snapshot.error.toString()); // Hata mesajı göster
+          return EmptyStates().errorData(snapshot.error.toString());
         } else if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
             return Column(
               children: [
-                Expanded(child: EmptyStates().noDataAvailablePage(textColor: ColorConstants.kPrimaryColor)),
+                Expanded(
+                    child: EmptyStates().noDataAvailablePage(
+                        textColor: ColorConstants.kPrimaryColor)),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AgreeButton(
@@ -106,7 +98,7 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
                         setState(() {});
                       }
                     },
-                    text: 'add_product', // Buton metni
+                    text: 'add_product',
                   ),
                 ),
               ],
@@ -116,17 +108,17 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.data!.length, // İşletme hesabı sayısı
+                  itemCount: snapshot.data!.length,
                   itemExtent: 120,
-// Her bir öğenin yüksekliği
                   shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(), // Kaydırma fizikleri
-                  scrollDirection: Axis.vertical, // Dikey kaydırma
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
                   itemBuilder: (BuildContext context, int index) {
                     return MyProductCard(
                       productModel: snapshot.data![index],
                       onTap: () async {
-                        final result = await Get.to(() => UpdateProductView(product: snapshot.data![index]));
+                        final result = await Get.to(() =>
+                            UpdateProductView(product: snapshot.data![index]));
                         if (result == true) {
                           setState(() {});
                         }
@@ -144,56 +136,63 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
                       setState(() {});
                     }
                   },
-                  text: 'add_product', // Buton metni
+                  text: 'add_product',
                 ),
               ),
             ],
           );
         }
-        return EmptyStates().noDataAvailable(); // Veri yok mesajı göster
+        return EmptyStates().noDataAvailable();
       },
     );
   }
 
   Widget getBusinessAccounts() {
     return FutureBuilder<List<GetMyStatusModel>?>(
-      future: BusinessUserService().getMyStatus(), // İşletme hesaplarını getir
+      future: BusinessUserService().getMyStatus(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return EmptyStates().loadingData(); // Yükleme animasyonu göster
+          return EmptyStates().loadingData();
         } else if (snapshot.hasError) {
-          return EmptyStates().errorData(snapshot.error.toString()); // Hata mesajı göster
+          return EmptyStates().errorData(snapshot.error.toString());
         } else if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
             return Column(
               children: [
-                Expanded(child: EmptyStates().noDataAvailablePage(textColor: ColorConstants.kPrimaryColor)),
+                Expanded(
+                  child: EmptyStates().noDataAvailablePage(
+                    textColor: ColorConstants.kPrimaryColor,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AgreeButton(
                     onTap: () async {
-                      final result = await Get.to(() => CreateBusinessAccountView()); // Örnek olarak CreateBusinessAccountView'a yönlendirir.
+                      final result = await Get.to(
+                        () => CreateBusinessAccountView(),
+                      );
                       if (result == true) {
                         setState(() {});
                       }
                     },
-                    text: 'add_account', // Buton metni
+                    text: 'add_account',
                   ),
                 ),
               ],
             );
           }
           return ListView.builder(
-            itemCount: snapshot.data!.length, // İşletme hesabı sayısı
+            itemCount: snapshot.data!.length,
             itemExtent: 120,
             shrinkWrap: true,
-            physics: const BouncingScrollPhysics(), // Kaydırma fizikleri
-            scrollDirection: Axis.vertical, // Dikey kaydırma
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               return BusinessAccCard(
                 businessUser: snapshot.data![index],
                 onTap: () async {
-                  final result = await Get.to(() => EditBusinessAccountView(businessUser: snapshot.data![index]));
+                  final result = await Get.to(() => EditBusinessAccountView(
+                      businessUser: snapshot.data![index]));
                   if (result == true) {
                     setState(() {});
                   }
@@ -203,7 +202,7 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
             },
           );
         }
-        return EmptyStates().noDataAvailable(); // Veri yok mesajı göster
+        return EmptyStates().noDataAvailable();
       },
     );
   }
