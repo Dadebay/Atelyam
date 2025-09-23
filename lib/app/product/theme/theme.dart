@@ -3,6 +3,7 @@
 import 'package:atelyam/app/modules/auth_view/views/auth_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/about_us_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_business_accounts_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/all_product_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,9 +30,12 @@ class Assets {
   static const String frenchLangIcon = 'assets/image/flags/lang_fr.svg';
   static const String turkLangIcon = 'assets/image/flags/lang_tr.svg';
   static const String turkmenLangIcon = 'assets/image/flags/lang_tm.svg';
-  static const String backgorundPattern1 = 'assets/image/patterns/pattern_1.png';
-  static const String backgorundPattern2 = 'assets/image/patterns/pattern_2.png';
-  static const String backgorundPattern3 = 'assets/image/patterns/pattern_3.png';
+  static const String backgorundPattern1 =
+      'assets/image/patterns/pattern_1.png';
+  static const String backgorundPattern2 =
+      'assets/image/patterns/pattern_2.png';
+  static const String backgorundPattern3 =
+      'assets/image/patterns/pattern_3.png';
 }
 
 final List<Map<String, dynamic>> settingsViews = [
@@ -53,19 +57,24 @@ final List<Map<String, dynamic>> settingsViews = [
   {
     'name': 'login',
     'icon': IconlyLight.login,
-    'page': () => AuthView(), // Giriş sayfası
+    'page': () => AuthView(),
   },
 ];
 final List<Map<String, dynamic>> loggedInSettingsViews = [
   {
     'name': 'business_accounts_profil',
     'icon': IconlyLight.user,
-    'page': () => AllBusinessAccountsView(), // Dil ayarları sayfası
+    'page': () => AllBusinessAccountsView(),
+  },
+  {
+    'name': 'add_product',
+    'icon': IconlyLight.add_user,
+    'page': () => AllProductView(),
   },
   {
     'name': 'lang',
     'icon': IconlyLight.setting,
-    'page': '', // Dil ayarları sayfası
+    'page': '',
   },
   {
     'name': 'favorites',
@@ -89,18 +98,30 @@ class Fonts {
 }
 
 class BorderRadii {
-  static const BorderRadius borderRadius5 = BorderRadius.all(Radius.circular(5));
-  static const BorderRadius borderRadius10 = BorderRadius.all(Radius.circular(10));
-  static const BorderRadius borderRadius15 = BorderRadius.all(Radius.circular(15));
-  static const BorderRadius borderRadius18 = BorderRadius.all(Radius.circular(18));
-  static const BorderRadius borderRadius20 = BorderRadius.all(Radius.circular(20));
-  static const BorderRadius borderRadius25 = BorderRadius.all(Radius.circular(25));
-  static const BorderRadius borderRadius30 = BorderRadius.all(Radius.circular(30));
-  static const BorderRadius borderRadius35 = BorderRadius.all(Radius.circular(35));
-  static const BorderRadius borderRadius40 = BorderRadius.all(Radius.circular(40));
-  static const BorderRadius borderRadius50 = BorderRadius.all(Radius.circular(50));
-  static const BorderRadius borderRadius88 = BorderRadius.all(Radius.circular(88));
-  static const BorderRadius borderRadius99 = BorderRadius.all(Radius.circular(99));
+  static const BorderRadius borderRadius5 =
+      BorderRadius.all(Radius.circular(5));
+  static const BorderRadius borderRadius10 =
+      BorderRadius.all(Radius.circular(10));
+  static const BorderRadius borderRadius15 =
+      BorderRadius.all(Radius.circular(15));
+  static const BorderRadius borderRadius18 =
+      BorderRadius.all(Radius.circular(18));
+  static const BorderRadius borderRadius20 =
+      BorderRadius.all(Radius.circular(20));
+  static const BorderRadius borderRadius25 =
+      BorderRadius.all(Radius.circular(25));
+  static const BorderRadius borderRadius30 =
+      BorderRadius.all(Radius.circular(30));
+  static const BorderRadius borderRadius35 =
+      BorderRadius.all(Radius.circular(35));
+  static const BorderRadius borderRadius40 =
+      BorderRadius.all(Radius.circular(40));
+  static const BorderRadius borderRadius50 =
+      BorderRadius.all(Radius.circular(50));
+  static const BorderRadius borderRadius88 =
+      BorderRadius.all(Radius.circular(88));
+  static const BorderRadius borderRadius99 =
+      BorderRadius.all(Radius.circular(99));
 }
 
 class AppFontSizes {
@@ -132,7 +153,10 @@ class AppThemes {
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         backgroundColor: ColorConstants.darkMainColor,
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarBrightness: Brightness.light, systemNavigationBarColor: ColorConstants.kPrimaryColor),
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: ColorConstants.kPrimaryColor),
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontFamily: Fonts.plusJakartaSans,

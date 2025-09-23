@@ -1,3 +1,4 @@
+import 'package:atelyam/app/modules/settings_view/components/fav_button_product.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 // Make sure this path is correct
@@ -39,6 +40,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   @override
   void dispose() {
     _pageController.dispose();
+
     super.dispose();
   }
 
@@ -312,6 +314,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                               Get.to(
                                 () => PhotoViewPage(
                                   images: controller.productImages,
+                                  initialIndex:
+                                      controller.selectedImageIndex.value,
                                 ),
                               );
                             },
@@ -374,9 +378,9 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                       ),
                                       margin: EdgeInsets.only(right: 10),
                                       decoration: BoxDecoration(
-                                          color: ColorConstants.whiteMainColor,
-                                          borderRadius:
-                                              BorderRadii.borderRadius15),
+                                        color: Colors.grey.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -385,15 +389,15 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                                 const EdgeInsets.only(right: 8),
                                             child: Icon(IconlyLight.show,
                                                 color: ColorConstants
-                                                    .darkMainColor,
-                                                size: AppFontSizes.fontSize16),
+                                                    .whiteMainColor,
+                                                size: AppFontSizes.fontSize24),
                                           ),
                                           Obx(
                                             () => Text(
                                               controller.viewCount.toString(),
                                               style: TextStyle(
                                                 color: ColorConstants
-                                                    .darkMainColor,
+                                                    .whiteMainColor,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize:
                                                     AppFontSizes.fontSize20 - 2,
@@ -405,23 +409,25 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                     ),
                                     const SizedBox(height: 10),
                                     // FavButton
-                                    FavButton(
+                                    FavButtonProduct(
                                       productProfilStyle: true,
                                       product: widget.productModel,
                                     ),
                                     const SizedBox(height: 10),
+
                                     Padding(
                                       padding: const EdgeInsets.only(right: 8),
                                       child: IconButton(
                                         style: IconButton.styleFrom(
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadii.borderRadius15),
-                                            backgroundColor:
-                                                ColorConstants.whiteMainColor),
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadii.borderRadius15),
+                                          backgroundColor:
+                                              Colors.grey.withOpacity(0.7),
+                                        ),
                                         icon: Icon(
                                           IconlyLight.download,
-                                          color: ColorConstants.darkMainColor,
+                                          color: ColorConstants.whiteMainColor,
                                           size: AppFontSizes.fontSize24,
                                         ),
                                         onPressed: () {
@@ -459,7 +465,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
               top: AppBar().preferredSize.height + 20,
               bottom: 20,
               child: SizedBox(
-                width: 55,
+                width: 45,
                 child: Obx(() {
                   final itemsCount = controller.productImages.length + 1;
                   final displayCount = itemsCount > 4 ? 4 : itemsCount;
@@ -469,7 +475,6 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                       itemCount: itemsCount,
                       itemBuilder: (context, index) {
                         if (index == controller.productImages.length) {
-                          // call butonu
                           return GestureDetector(
                             onTap: () {
                               if (outSideBusinessuserModel != null) {
@@ -503,29 +508,31 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                             onTap: () {
                               controller.updateSelectedImageIndex(index);
                             },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              width: 45,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadii.borderRadius15,
-                                border: Border.all(
-                                  color: index ==
-                                          controller.selectedImageIndex.value
-                                      ? Colors.white
-                                      : Colors.grey.withOpacity(0.3),
-                                  width: 1.5,
+                            child: Obx(
+                              () => Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                width: 42,
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadii.borderRadius15,
+                                  border: Border.all(
+                                    color: index ==
+                                            controller.selectedImageIndex.value
+                                        ? Colors.white
+                                        : Colors.grey.withOpacity(0.3),
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadii.borderRadius15,
-                                child: CachedNetworkImage(
-                                  imageUrl: controller.productImages[index],
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      EmptyStates().loadingData(),
-                                  errorWidget: (context, url, error) =>
-                                      EmptyStates().noMiniCategoryImage(),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadii.borderRadius15,
+                                  child: CachedNetworkImage(
+                                    imageUrl: controller.productImages[index],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        EmptyStates().loadingData(),
+                                    errorWidget: (context, url, error) =>
+                                        EmptyStates().noMiniCategoryImage(),
+                                  ),
                                 ),
                               ),
                             ),

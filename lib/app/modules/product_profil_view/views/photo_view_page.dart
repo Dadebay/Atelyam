@@ -9,7 +9,9 @@ import 'package:photo_view/photo_view.dart';
 
 class PhotoViewPage extends StatefulWidget {
   final List images;
-  const PhotoViewPage({required this.images, Key? key}) : super(key: key);
+  final int initialIndex;
+  const PhotoViewPage({required this.images, this.initialIndex = 0, Key? key})
+      : super(key: key);
 
   @override
   State<PhotoViewPage> createState() => _PhotoViewPageState();
@@ -34,11 +36,12 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                   ),
                   tightMode: false,
                   loadingBuilder: (context, url) => EmptyStates().loadingData(),
-                  errorBuilder: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                  errorBuilder: (context, url, error) =>
+                      EmptyStates().noMiniCategoryImage(),
                 );
               },
               options: CarouselOptions(
-                onPageChanged: (index, CarouselPageChangedReason a) {},
+                initialPage: widget.initialIndex,
                 viewportFraction: 1.0,
                 autoPlay: true,
                 height: Get.size.height,
@@ -55,7 +58,8 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: const Icon(CupertinoIcons.xmark_circle, color: Colors.white, size: 40),
+                child: const Icon(CupertinoIcons.xmark_circle,
+                    color: Colors.white, size: 40),
               ),
             ),
           ],

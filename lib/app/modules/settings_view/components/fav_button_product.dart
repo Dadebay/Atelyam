@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 
-class FavButton extends StatefulWidget {
-  const FavButton({
+class FavButtonProduct extends StatefulWidget {
+  const FavButtonProduct({
     required this.productProfilStyle,
     required this.product,
     super.key,
@@ -19,10 +19,10 @@ class FavButton extends StatefulWidget {
   final ProductModel product;
 
   @override
-  State<FavButton> createState() => _FavButtonState();
+  State<FavButtonProduct> createState() => _FavButtonState();
 }
 
-class _FavButtonState extends State<FavButton> {
+class _FavButtonState extends State<FavButtonProduct> {
   final NewSettingsPageController settingsController =
       Get.find<NewSettingsPageController>();
 
@@ -42,12 +42,8 @@ class _FavButtonState extends State<FavButton> {
           padding: const EdgeInsets.all(9),
           margin: EdgeInsets.only(right: widget.productProfilStyle ? 8 : 0),
           decoration: BoxDecoration(
-            color: widget.productProfilStyle
-                ? ColorConstants.whiteMainColor
-                : isFavorited
-                    ? Colors.white
-                    : ColorConstants.kThirdColor.withOpacity(0.6),
-            borderRadius: BorderRadii.borderRadius15,
+            color: Colors.grey.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Icon(
             isFavorited ? IconlyBold.heart : IconlyLight.heart,
@@ -55,7 +51,7 @@ class _FavButtonState extends State<FavButton> {
             color: isFavorited
                 ? Colors.red
                 : widget.productProfilStyle
-                    ? ColorConstants.darkMainColor
+                    ? ColorConstants.whiteMainColor
                     : ColorConstants.whiteMainColor,
           ),
         ),
