@@ -37,7 +37,7 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
     return AppBar(
       backgroundColor: ColorConstants.kSecondaryColor,
       title: Text(
-        'all_business_accounts'.tr, // Başlık metni
+        'all_business_accounts'.tr,
         style: TextStyle(
           color: ColorConstants.whiteMainColor,
           fontSize: AppFontSizes.getFontSize(5),

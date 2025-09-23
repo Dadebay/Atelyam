@@ -25,9 +25,9 @@ class _CategoryViewState extends State<CategoryView> {
             future: _categoriesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return SliverToBoxAdapter(child: EmptyStates().loadingData());
+                return EmptyStates().loadingData();
               } else if (snapshot.hasError) {
-                return SliverToBoxAdapter(child: EmptyStates().errorData(snapshot.hasError.toString()));
+                return EmptyStates().errorData(snapshot.hasError.toString());
               } else if (snapshot.hasData) {
                 final categories = snapshot.data!;
                 final int length = categories.length;
@@ -38,7 +38,9 @@ class _CategoryViewState extends State<CategoryView> {
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.only(bottom: index == length - 1 ? 100 : 1),
+                      padding: EdgeInsets.only(
+                        bottom: index == length - 1 ? 100 : 1,
+                      ),
                       child: CategoryCard(
                         categoryModel: categories[index],
                         onTap: () {
@@ -54,7 +56,7 @@ class _CategoryViewState extends State<CategoryView> {
                   },
                 );
               } else {
-                return SliverToBoxAdapter(child: EmptyStates().noCategoriesAvailable());
+                return EmptyStates().noCategoriesAvailable();
               }
             },
           ),

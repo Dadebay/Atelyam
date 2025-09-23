@@ -1,18 +1,11 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:atelyam/app/data/models/business_category_model.dart';
-import 'package:atelyam/app/data/models/business_user_model.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 class CreateBusinessAccountView extends StatelessWidget {
-  final ProductController controller = Get.put<ProductController>(ProductController());
+  final ProductController controller =
+      Get.put<ProductController>(ProductController());
   AppBar _appBar(BuildContext context) {
     return AppBar(
       backgroundColor: ColorConstants.kSecondaryColor,
@@ -24,7 +17,8 @@ class CreateBusinessAccountView extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
+      systemOverlayStyle:
+          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: BackButtonMine(
         miniButton: true,
       ),
@@ -32,7 +26,8 @@ class CreateBusinessAccountView extends StatelessWidget {
   }
 
   List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
+  List<TextEditingController> textEditingControllers =
+      List.generate(8, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -42,22 +37,28 @@ class CreateBusinessAccountView extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
             child: Obx(
               () => DropdownButtonFormField<BusinessCategoryModel>(
                 decoration: InputDecoration(
                   labelText: 'select_types_of_business'.tr,
-                  labelStyle: TextStyle(fontSize: AppFontSizes.getFontSize(4), fontWeight: FontWeight.w600, color: Colors.grey.shade400),
+                  labelStyle: TextStyle(
+                      fontSize: AppFontSizes.getFontSize(4),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade400),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                    borderSide:
+                        BorderSide(color: Colors.grey.shade400, width: 2),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: ColorConstants.kSecondaryColor, width: 2),
+                    borderSide: BorderSide(
+                        color: ColorConstants.kSecondaryColor, width: 2),
                   ),
                 ),
                 value: controller.selectedCategory.value,
@@ -74,7 +75,8 @@ class CreateBusinessAccountView extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (value) => controller.selectedCategory.value = value,
-                validator: (value) => value == null ? 'fill_all_fields'.tr : null,
+                validator: (value) =>
+                    value == null ? 'fill_all_fields'.tr : null,
               ),
             ),
           ),
@@ -170,13 +172,17 @@ class CreateBusinessAccountView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadii.borderRadius25,
-                  border: Border.all(color: ColorConstants.kSecondaryColor, width: 2),
+                  border: Border.all(
+                      color: ColorConstants.kSecondaryColor, width: 2),
                 ),
                 child: Obx(
                   () => controller.selectedImage.value != null
                       ? ClipRRect(
                           borderRadius: BorderRadii.borderRadius25,
-                          child: Image.file(controller.selectedImage.value!, width: Get.size.width, height: Get.size.height, fit: BoxFit.cover),
+                          child: Image.file(controller.selectedImage.value!,
+                              width: Get.size.width,
+                              height: Get.size.height,
+                              fit: BoxFit.cover),
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -220,7 +226,8 @@ class CreateBusinessAccountView extends StatelessWidget {
                       ),
                     );
                   } else {
-                    showSnackBar('error', 'fill_all_fields', ColorConstants.redColor);
+                    showSnackBar(
+                        'error', 'fill_all_fields', ColorConstants.redColor);
                   }
                 },
                 text: 'add_account'.tr,

@@ -1,7 +1,9 @@
-import '../../../product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/custom_widgets/index.dart';
+// Make sure this path is correct
 
 class ProductProfilView extends StatefulWidget {
-  const ProductProfilView({required this.productModel, super.key, this.businessUserID});
+  const ProductProfilView(
+      {required this.productModel, super.key, this.businessUserID});
   final ProductModel productModel;
   final String? businessUserID;
   @override
@@ -20,14 +22,16 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final String phoneNumberText = phoneNumber.contains('+993') ? phoneNumber : '+993${phoneNumber}';
+    final String phoneNumberText =
+        phoneNumber.contains('+993') ? phoneNumber : '+993${phoneNumber}';
 
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumberText);
 
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
     } else {
-      showSnackBar('error', 'phone_call_error' + launchUri.toString(), ColorConstants.redColor);
+      showSnackBar('error', 'phone_call_error' + launchUri.toString(),
+          ColorConstants.redColor);
       throw 'Could not launch $launchUri';
     }
   }
@@ -36,35 +40,49 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,
-      bottomSheet: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: AgreeButton(
-            onTap: () {
-              if (outSideBusinessuserModel != null) {
-                _makePhoneCall('+${outSideBusinessuserModel!.businessPhone}');
-              } else {
-                showSnackBar('error', 'phone_call_error', ColorConstants.redColor);
-              }
-            },
-            text: 'call'.tr,
-          ),
-        ),
       body: CustomScrollView(
         slivers: <Widget>[
-          appBar(),
+          _buildSliverAppBar(),
           SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: FutureBuilder<BusinessUserModel?>(
-              future: BusinessUserService().fetchBusinessAccountKICI(widget.productModel.user.toInt()),
+              future: BusinessUserService()
+                  .fetchBusinessAccountKICI(widget.productModel.user.toInt()),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(child: EmptyStates().loadingData());
                 } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: EmptyStates().errorData(snapshot.hasError.toString()));
+                  return SliverToBoxAdapter(
+                    child:
+                        EmptyStates().errorData(snapshot.hasError.toString()),
+                  );
                 } else if (snapshot.hasData) {
                   outSideBusinessuserModel = snapshot.data;
                   return SliverList(
                     delegate: SliverChildListDelegate([
+                      brendData(snapshot.data!),
+                      widget.productModel.description.isEmpty
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'info_product'.tr,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: AppFontSizes.fontSize20,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                      Text(
+                        widget.productModel.description,
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: AppFontSizes.fontSize16 - 2,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: const BoxDecoration(
@@ -96,27 +114,11 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                           ),
                         ),
                       ),
-                      brendData(snapshot.data!),
-                      widget.productModel.description.isEmpty
-                          ? SizedBox.shrink()
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: Text(
-                                'info_product'.tr,
-                                style: TextStyle(color: Colors.black, fontSize: AppFontSizes.fontSize20, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                      Text(
-                        widget.productModel.description,
-                        style: TextStyle(color: Colors.grey, fontSize: AppFontSizes.fontSize16 - 2, fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(
-                        height: 200,
-                      ),
                     ]),
                   );
                 }
-                return SliverToBoxAdapter(child: EmptyStates().noDataAvailable());
+                return SliverToBoxAdapter(
+                    child: EmptyStates().noDataAvailable());
               },
             ),
           ),
@@ -128,9 +130,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   Widget brendData(BusinessUserModel businessUserModel) {
     return GestureDetector(
       onTap: () {
-        print(widget.productModel.user);
-        print(widget.businessUserID);
-        if (widget.productModel.user.toString() == widget.businessUserID.toString()) {
+        if (widget.productModel.user.toString() ==
+            widget.businessUserID.toString()) {
           Get.back();
         } else {
           Get.to(
@@ -143,7 +144,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
         }
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20),
+        margin: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
           color: ColorConstants.whiteMainColor,
           borderRadius: BorderRadii.borderRadius25,
@@ -154,9 +155,10 @@ class _ProductProfilViewState extends State<ProductProfilView> {
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2)),
+          border:
+              Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2)),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         child: Row(
           children: [
             Container(
@@ -165,7 +167,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
               margin: const EdgeInsets.only(right: 15),
               child: ClipRRect(
                 borderRadius: BorderRadii.borderRadius99,
-                child: WidgetsMine().customCachedImage(businessUserModel.backPhoto),
+                child: WidgetsMine()
+                    .customCachedImage(businessUserModel.backPhoto),
               ),
             ),
             Expanded(
@@ -176,7 +179,10 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                     businessUserModel.businessName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: ColorConstants.darkMainColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 - 2),
+                    style: TextStyle(
+                        color: ColorConstants.darkMainColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.fontSize20 - 2),
                   ),
                   const SizedBox(
                     height: 6,
@@ -185,7 +191,11 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                     businessUserModel.address.toString(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: ColorConstants.darkMainColor.withOpacity(.6), fontWeight: FontWeight.w600, fontSize: AppFontSizes.fontSize16),
+                    style: TextStyle(
+                      color: ColorConstants.darkMainColor.withOpacity(.6),
+                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.fontSize16,
+                    ),
                   ),
                 ],
               ),
@@ -196,74 +206,33 @@ class _ProductProfilViewState extends State<ProductProfilView> {
     );
   }
 
-  SliverAppBar appBar() {
+  SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
-      expandedHeight: 500.0,
+      expandedHeight: Get.size.height * 0.78,
       pinned: true,
       scrolledUnderElevation: 0.0,
-      backgroundColor: ColorConstants.whiteMainColor,
+      backgroundColor: Colors.transparent,
       leading: Padding(
         padding: const EdgeInsets.only(left: 12, bottom: 6, top: 6),
-        child: IconButton(
-          style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius18), backgroundColor: ColorConstants.whiteMainColor),
-          icon: Icon(
-            IconlyLight.arrow_left_circle,
-            color: ColorConstants.darkMainColor,
-            size: AppFontSizes.fontSize24,
-          ),
-          onPressed: () {
+        child: GestureDetector(
+          onTap: () {
             Get.back();
           },
+          child: Icon(
+            IconlyLight.arrow_left_circle,
+            color: Colors.white,
+            size: AppFontSizes.fontSize30,
+          ),
         ),
       ),
-      actions: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          margin: EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(color: ColorConstants.whiteMainColor, borderRadius: BorderRadii.borderRadius15),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Icon(IconlyLight.show, color: ColorConstants.darkMainColor, size: AppFontSizes.fontSize20 - 2),
-              ),
-              Obx(
-                () => Text(
-                  controller.viewCount.toString(),
-                  style: TextStyle(color: ColorConstants.darkMainColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 - 2),
-                ),
-              ),
-            ],
-          ),
-        ),
-        FavButton(
-          productProfilStyle: true,
-          product: widget.productModel,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: IconButton(
-            style: IconButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius15), backgroundColor: ColorConstants.whiteMainColor),
-            icon: Icon(
-              IconlyLight.download,
-              color: ColorConstants.darkMainColor,
-              size: AppFontSizes.fontSize24,
-            ),
-            onPressed: () {
-              controller.checkPermissionAndDownloadImage(controller.productImages[controller.selectedImageIndex.value]);
-            },
-          ),
-        ),
-      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           children: [
             Positioned.fill(
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
                 child: Obx(
                   () => AnimatedSwitcher(
@@ -272,77 +241,245 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                         ? EmptyStates().loadingData()
                         : GestureDetector(
                             onTap: () {
-                              Get.to(() => PhotoViewPage(images: controller.productImages));
+                              Get.to(
+                                () => PhotoViewPage(
+                                    images: controller.productImages),
+                              );
                             },
                             child: CachedNetworkImage(
-                              imageUrl: controller.productImages.isNotEmpty ? controller.productImages[controller.selectedImageIndex.value] : '',
-                              key: ValueKey<int>(controller.selectedImageIndex.value),
+                              imageUrl: controller.productImages.isNotEmpty
+                                  ? controller.productImages[
+                                      controller.selectedImageIndex.value]
+                                  : '',
+                              key: ValueKey<int>(
+                                  controller.selectedImageIndex.value),
                               fit: BoxFit.cover,
                               height: Get.size.height,
                               width: Get.size.width,
-                              placeholder: (context, url) => EmptyStates().loadingData(),
-                              errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                              placeholder: (context, url) =>
+                                  EmptyStates().loadingData(),
+                              errorWidget: (context, url, error) =>
+                                  EmptyStates().noMiniCategoryImage(),
                             ),
                           ),
                   ),
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 100,
-                width: Get.size.width,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
-                decoration: BoxDecoration(color: ColorConstants.whiteMainColor.withOpacity(0), borderRadius: BorderRadii.borderRadius20),
-                child: Obx(() {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.productImages.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          controller.updateSelectedImageIndex(index);
-                        },
-                        child: Obx(() {
-                          return Container(
-                            margin: const EdgeInsets.all(8),
-                            width: 70,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadii.borderRadius18,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: index == controller.selectedImageIndex.value ? ColorConstants.whiteMainColor.withOpacity(.6) : Colors.transparent,
-                                  blurRadius: 5,
-                                  spreadRadius: 3,
+            Positioned(
+              right: 10,
+              top: AppBar().preferredSize.height + 20,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Obx(() => AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: controller.showMoreOptions.value
+                            ? Container(
+                                key: const ValueKey('rightPanel'),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadii.borderRadius15,
                                 ),
-                              ],
-                              border: index == controller.selectedImageIndex.value
-                                  ? Border.all(
-                                      color: ColorConstants.whiteMainColor,
-                                      width: 2.0,
-                                    )
-                                  : null,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadii.borderRadius18,
-                              child: CachedNetworkImage(
-                                imageUrl: controller.productImages[index],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => EmptyStates().loadingData(),
-                                errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 6,
+                                      ),
+                                      margin: EdgeInsets.only(right: 10),
+                                      decoration: BoxDecoration(
+                                          color: ColorConstants.whiteMainColor,
+                                          borderRadius:
+                                              BorderRadii.borderRadius15),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 8),
+                                            child: Icon(IconlyLight.show,
+                                                color: ColorConstants
+                                                    .darkMainColor,
+                                                size: AppFontSizes.fontSize16),
+                                          ),
+                                          Obx(
+                                            () => Text(
+                                              controller.viewCount.toString(),
+                                              style: TextStyle(
+                                                color: ColorConstants
+                                                    .darkMainColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize:
+                                                    AppFontSizes.fontSize20 - 2,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    // FavButton
+                                    FavButton(
+                                      productProfilStyle: true,
+                                      product: widget.productModel,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: IconButton(
+                                        style: IconButton.styleFrom(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadii.borderRadius15),
+                                            backgroundColor:
+                                                ColorConstants.whiteMainColor),
+                                        icon: Icon(
+                                          IconlyLight.download,
+                                          color: ColorConstants.darkMainColor,
+                                          size: AppFontSizes.fontSize24,
+                                        ),
+                                        onPressed: () {
+                                          controller
+                                              .checkPermissionAndDownloadImage(
+                                                  controller.productImages[
+                                                      controller
+                                                          .selectedImageIndex
+                                                          .value]);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      )),
+                  GestureDetector(
+                    onTap: () {
+                      controller.showMoreOptions.toggle();
+                    },
+                    child: Container(
+                      child: Icon(
+                        Icons.more_vert,
+                        color: ColorConstants.whiteMainColor,
+                        size: AppFontSizes.fontSize30,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 10,
+              top: AppBar().preferredSize.height + 20,
+              bottom: 20,
+              child: Obx(() {
+                final int maxItems = controller.productImages.length > 4
+                    ? 4
+                    : controller.productImages.length;
+
+                return Column(
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      height: Get.size.height * 0.55,
+                      child: ListView.builder(
+                        itemCount: maxItems,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              controller.updateSelectedImageIndex(index);
+                            },
+                            child: Obx(
+                              () => Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                width: 40,
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadii.borderRadius15,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: index ==
+                                              controller
+                                                  .selectedImageIndex.value
+                                          ? Colors.white.withOpacity(0.7)
+                                          : Colors.grey.withOpacity(0.3),
+                                      blurRadius: index ==
+                                              controller
+                                                  .selectedImageIndex.value
+                                          ? 3
+                                          : 1,
+                                      spreadRadius: index ==
+                                              controller
+                                                  .selectedImageIndex.value
+                                          ? 2
+                                          : 1,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: index ==
+                                            controller.selectedImageIndex.value
+                                        ? Colors.white
+                                        : Colors.grey.withOpacity(0.3),
+                                    width: index ==
+                                            controller.selectedImageIndex.value
+                                        ? 1.5
+                                        : 1,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadii.borderRadius15,
+                                  child: CachedNetworkImage(
+                                    imageUrl: controller.productImages[index],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        EmptyStates().loadingData(),
+                                    errorWidget: (context, url, error) =>
+                                        EmptyStates().noMiniCategoryImage(),
+                                  ),
+                                ),
                               ),
                             ),
                           );
-                        }),
-                      );
-                    },
-                  );
-                }),
-              ),
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    GestureDetector(
+                      onTap: () {
+                        if (outSideBusinessuserModel != null) {
+                          _makePhoneCall(
+                              '+${outSideBusinessuserModel!.businessPhone}');
+                        } else {
+                          showSnackBar(
+                            'error',
+                            'phone_call_error',
+                            ColorConstants.redColor,
+                          );
+                        }
+                      },
+                      child: Container(
+                        width: 55,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Icon(
+                          IconlyLight.call,
+                          color: ColorConstants.whiteMainColor,
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ],
         ),

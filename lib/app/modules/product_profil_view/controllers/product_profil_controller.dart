@@ -17,6 +17,7 @@ class ProductProfilController extends GetxController {
   RxList<String> productImages = <String>[].obs;
   RxBool isLoading = true.obs;
   RxInt viewCount = 0.obs;
+  RxBool showMoreOptions = false.obs; // New observable for dropdown visibility
 
   Future<void> fetchImages(final int id, final String mainImage) async {
     isLoading.value = true;

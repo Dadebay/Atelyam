@@ -61,7 +61,8 @@ class Banners extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadii.borderRadius30,
-        child: Image.asset(Assets.backgorundPattern2, height: size.width >= 800 ? 400 : 220, fit: BoxFit.cover),
+        child: Image.asset(Assets.backgorundPattern2,
+            height: size.width >= 800 ? 400 : 220, fit: BoxFit.cover),
       ),
     );
   }
@@ -119,16 +120,22 @@ class Banners extends StatelessWidget {
 
   Widget _buildDot(int index, bool sizeValue, HomeController controller) {
     return Obx(
-      () => AnimatedContainer(
+      () => Container(
         margin: EdgeInsets.symmetric(horizontal: sizeValue ? 8 : 4),
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.decelerate,
-        height: controller.carouselSelectedIndex.value == index ? (sizeValue ? 22 : 16) : (sizeValue ? 16 : 10),
-        width: controller.carouselSelectedIndex.value == index ? (sizeValue ? 21 : 15) : (sizeValue ? 16 : 10),
+        height: controller.carouselSelectedIndex.value == index
+            ? (sizeValue ? 22 : 16)
+            : (sizeValue ? 16 : 10),
+        width: controller.carouselSelectedIndex.value == index
+            ? (sizeValue ? 21 : 15)
+            : (sizeValue ? 16 : 10),
         decoration: BoxDecoration(
-          color: controller.carouselSelectedIndex.value == index ? Colors.transparent : ColorConstants.kSecondaryColor,
+          color: controller.carouselSelectedIndex.value == index
+              ? Colors.transparent
+              : ColorConstants.kSecondaryColor,
           shape: BoxShape.circle,
-          border: controller.carouselSelectedIndex.value == index ? Border.all(color: ColorConstants.kPrimaryColor, width: 3) : Border.all(color: Colors.white),
+          border: controller.carouselSelectedIndex.value == index
+              ? Border.all(color: ColorConstants.kPrimaryColor, width: 3)
+              : Border.all(color: Colors.white),
         ),
       ),
     );

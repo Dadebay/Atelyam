@@ -1,19 +1,12 @@
-// lib/app/modules/home_view/components/categories_mini.dart
-// ignore_for_file: deprecated_member_use
-
 import 'package:atelyam/app/data/models/business_category_model.dart';
 import 'package:atelyam/app/modules/home_view/components/business_category_view/all_business_users_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class BusinessCategoryView extends StatelessWidget {
   final double screenWidth;
   final Future<List<BusinessCategoryModel>?> categoriesFuture;
-  BusinessCategoryView({required this.screenWidth, required this.categoriesFuture, super.key});
+  BusinessCategoryView(
+      {required this.screenWidth, required this.categoriesFuture, super.key});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -65,8 +58,12 @@ class BusinessCategoryView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: screenWidth >= 800 ? screenWidth * 0.15 : screenWidth * 0.24,
-                height: screenWidth >= 800 ? screenWidth * 0.15 : screenWidth * 0.24,
+                width: screenWidth >= 800
+                    ? screenWidth * 0.15
+                    : screenWidth * 0.24,
+                height: screenWidth >= 800
+                    ? screenWidth * 0.15
+                    : screenWidth * 0.24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [

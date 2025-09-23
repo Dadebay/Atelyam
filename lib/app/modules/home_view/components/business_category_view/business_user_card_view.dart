@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BusinessUsersCardView extends StatelessWidget {
-  BusinessUsersCardView({required this.category, required this.categoryID, super.key});
+  BusinessUsersCardView(
+      {required this.category, required this.categoryID, super.key});
   final BusinessUserModel category;
   final int categoryID;
   @override
@@ -30,8 +31,11 @@ class BusinessUsersCardView extends StatelessWidget {
         height: 300,
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(6),
-        decoration:
-            BoxDecoration(borderRadius: BorderRadii.borderRadius30, color: ColorConstants.whiteMainColor.withOpacity(.8), border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2))),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadii.borderRadius30,
+            color: ColorConstants.whiteMainColor.withOpacity(.8),
+            border: Border.all(
+                color: ColorConstants.kPrimaryColor.withOpacity(.2))),
         child: topPart(),
       ),
     );
@@ -50,7 +54,7 @@ class BusinessUsersCardView extends StatelessWidget {
             height: 90,
             margin: const EdgeInsets.only(top: 10),
             child: ClipRRect(
-              borderRadius: BorderRadii.borderRadius99,
+              borderRadius: BorderRadii.borderRadius5,
               child: CachedNetworkImage(
                 fadeInCurve: Curves.ease,
                 imageUrl: authController.ipAddress.value + category.backPhoto,
@@ -64,7 +68,8 @@ class BusinessUsersCardView extends StatelessWidget {
                   ),
                 ),
                 placeholder: (context, url) => EmptyStates().loadingData(),
-                errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                errorWidget: (context, url, error) =>
+                    EmptyStates().noMiniCategoryImage(),
               ),
             ),
           ),
@@ -78,7 +83,9 @@ class BusinessUsersCardView extends StatelessWidget {
                 category.businessName.toString(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppFontSizes.fontSize20),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),
@@ -87,7 +94,10 @@ class BusinessUsersCardView extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w400, color: ColorConstants.darkMainColor.withOpacity(.8), fontSize: AppFontSizes.fontSize14),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      color: ColorConstants.darkMainColor.withOpacity(.8),
+                      fontSize: AppFontSizes.fontSize14),
                 ),
               ),
             ],

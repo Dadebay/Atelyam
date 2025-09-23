@@ -12,7 +12,8 @@ import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 
 class BottomNavBar extends StatelessWidget {
-  final HomeController homeController = Get.put<HomeController>(HomeController());
+  final HomeController homeController =
+      Get.put<HomeController>(HomeController());
   BottomNavBar({super.key});
   final List<Widget> pages = [
     HomeView(),
@@ -77,38 +78,29 @@ class CustomBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(items.length, (index) {
           final isSelected = index == currentIndex;
-          return TweenAnimationBuilder<double>(
-            tween: Tween(begin: isSelected ? 0.0 : 1.0, end: isSelected ? 1.0 : 0.0),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            builder: (context, value, child) {
-              const selectedColor = ColorConstants.kThirdColor;
-              const unselectedColor = ColorConstants.whiteMainColor;
-              return GestureDetector(
-                onTap: () => onTap(index),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isSelected ? selectedItem[index] : items[index],
-                      size: 28,
-                      color: Color.lerp(unselectedColor, selectedColor, value),
-                    ),
-                    const SizedBox(height: 5),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      height: isSelected ? 4 : 0,
-                      width: 16,
-                      decoration: const BoxDecoration(
-                        color: selectedColor,
-                        borderRadius: BorderRadii.borderRadius10,
-                      ),
-                    ),
-                  ],
+          return GestureDetector(
+            onTap: () => onTap(index),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isSelected ? selectedItem[index] : items[index],
+                  size: 28,
+                  color: isSelected
+                      ? ColorConstants.kThirdColor
+                      : ColorConstants.whiteMainColor,
                 ),
-              );
-            },
+                const SizedBox(height: 5),
+                Container(
+                  height: isSelected ? 4 : 0,
+                  width: 16,
+                  decoration: const BoxDecoration(
+                    color: ColorConstants.kThirdColor,
+                    borderRadius: BorderRadii.borderRadius10,
+                  ),
+                ),
+              ],
+            ),
           );
         }),
       ),

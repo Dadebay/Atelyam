@@ -56,11 +56,14 @@ class CategoryCard extends StatelessWidget {
                             ),
                             children: [
                               CachedNetworkImage(
-                                imageUrl: '${authController.ipAddress.value}${categoryModel.logo!}',
+                                imageUrl:
+                                    '${authController.ipAddress.value}${categoryModel.logo!}',
                                 fit: BoxFit.cover,
                                 key: keyImage,
-                                placeholder: (context, url) => EmptyStates().loadingData(),
-                                errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                                placeholder: (context, url) =>
+                                    EmptyStates().loadingData(),
+                                errorWidget: (context, url, error) =>
+                                    EmptyStates().noMiniCategoryImage(),
                               ),
                             ],
                           ),
@@ -121,18 +124,22 @@ class ParallaxFlowDelegate extends FlowDelegate {
     required this.keyImage,
   }) : super(repaint: scrollable.position);
   @override
-  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) => BoxConstraints.tightFor(width: constraints.maxWidth);
+  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) =>
+      BoxConstraints.tightFor(width: constraints.maxWidth);
 
   @override
   void paintChildren(FlowPaintingContext context) {
     final scrollableBox = scrollable.context.findRenderObject() as RenderBox;
     final itemBox = itemContext.findRenderObject() as RenderBox;
-    final itemOffset = itemBox.localToGlobal(itemBox.size.centerLeft(Offset.zero), ancestor: scrollableBox);
+    final itemOffset = itemBox.localToGlobal(
+        itemBox.size.centerLeft(Offset.zero),
+        ancestor: scrollableBox);
     final viewportDimension = scrollable.position.viewportDimension;
     final scrollFraction = (itemOffset.dy / viewportDimension).clamp(0, 1);
     final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);
     final imageBox = keyImage.currentContext!.findRenderObject() as RenderBox;
-    final childRect = verticalAlignment.inscribe(imageBox.size, Offset.zero & context.size);
+    final childRect =
+        verticalAlignment.inscribe(imageBox.size, Offset.zero & context.size);
     context.paintChild(
       0,
       transform: Transform.translate(
@@ -142,5 +149,8 @@ class ParallaxFlowDelegate extends FlowDelegate {
   }
 
   @override
-  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) => scrollable != oldDelegate.scrollable || itemContext != oldDelegate.itemContext || keyImage != oldDelegate.keyImage;
+  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) =>
+      scrollable != oldDelegate.scrollable ||
+      itemContext != oldDelegate.itemContext ||
+      keyImage != oldDelegate.keyImage;
 }

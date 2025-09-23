@@ -36,9 +36,10 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(1.0)),
-          child: child!),
+        data:
+            MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
+        child: child!,
+      ),
       title: Assets.appName,
       theme: AppThemes.lightTheme,
       fallbackLocale: const Locale('tr'),
