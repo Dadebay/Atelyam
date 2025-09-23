@@ -376,21 +376,47 @@ class _ProductProfilViewState extends State<ProductProfilView> {
             Positioned(
               left: 10,
               top: AppBar().preferredSize.height + 20,
-              bottom: 20,
-              child: Obx(() {
-                final int maxItems = controller.productImages.length > 4
-                    ? 4
-                    : controller.productImages.length;
+              bottom: 0,
+              child: Center(
+                child: SizedBox(
+                  child: Obx(() {
+                    final int maxItems = controller.productImages.length > 4
+                        ? 4
+                        : controller.productImages.length;
 
-                return Column(
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      height: Get.size.height * 0.55,
-                      child: ListView.builder(
-                        itemCount: maxItems,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(maxItems + 1, (index) {
+                        if (index == maxItems) {
+                          return GestureDetector(
+                            onTap: () {
+                              if (outSideBusinessuserModel != null) {
+                                _makePhoneCall(
+                                    '+${outSideBusinessuserModel!.businessPhone}');
+                              } else {
+                                showSnackBar(
+                                  'error',
+                                  'phone_call_error',
+                                  ColorConstants.redColor,
+                                );
+                              }
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              width: 45,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Icon(
+                                IconlyLight.call,
+                                color: ColorConstants.whiteMainColor,
+                                size: 28,
+                              ),
+                            ),
+                          );
+                        } else {
                           return GestureDetector(
                             onTap: () {
                               controller.updateSelectedImageIndex(index);
@@ -398,7 +424,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                             child: Obx(
                               () => Container(
                                 margin: const EdgeInsets.symmetric(vertical: 8),
-                                width: 40,
+                                width: 45,
                                 height: 75,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadii.borderRadius15,
@@ -446,40 +472,12 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                               ),
                             ),
                           );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    GestureDetector(
-                      onTap: () {
-                        if (outSideBusinessuserModel != null) {
-                          _makePhoneCall(
-                              '+${outSideBusinessuserModel!.businessPhone}');
-                        } else {
-                          showSnackBar(
-                            'error',
-                            'phone_call_error',
-                            ColorConstants.redColor,
-                          );
                         }
-                      },
-                      child: Container(
-                        width: 55,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          IconlyLight.call,
-                          color: ColorConstants.whiteMainColor,
-                          size: 28,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }),
+                      }),
+                    );
+                  }),
+                ),
+              ),
             ),
           ],
         ),
