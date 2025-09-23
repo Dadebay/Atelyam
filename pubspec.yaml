@@ -31,6 +31,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   photo_view: ^0.15.0
   flutter_widget_from_html: ^0.15.3
+  sliver_tools: ^0.2.0
 
   # ⚙️ UTILS
   flutter_image_compress: ^2.4.0

@@ -1,4 +1,5 @@
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 // Make sure this path is correct
 
 class ProductProfilView extends StatefulWidget {
@@ -13,12 +14,32 @@ class ProductProfilView extends StatefulWidget {
 class _ProductProfilViewState extends State<ProductProfilView> {
   final ProductProfilController controller = Get.put(ProductProfilController());
   BusinessUserModel? outSideBusinessuserModel;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     controller.fetchImages(widget.productModel.id, widget.productModel.img);
     controller.fetchViewCount(widget.productModel.id);
+    _pageController =
+        PageController(initialPage: controller.selectedImageIndex.value);
+
+    ever(controller.selectedImageIndex, (int index) {
+      if (_pageController.hasClients &&
+          _pageController.page?.round() != index) {
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
@@ -38,14 +59,38 @@ class _ProductProfilViewState extends State<ProductProfilView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          _buildSliverAppBar(),
-          SliverPadding(
-            padding: const EdgeInsets.all(12),
-            sliver: FutureBuilder<BusinessUserModel?>(
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification notification) {
+        if (notification is ScrollEndNotification) {
+          final bool isLastImage = controller.productImages.isNotEmpty &&
+              controller.selectedImageIndex.value ==
+                  controller.productImages.length - 1;
+
+          if (isLastImage) {
+            // Check if over-scrolled at the top
+            if (notification.metrics.pixels <
+                notification.metrics.minScrollExtent) {
+              Get.back();
+              return true; // Notification handled
+            }
+            // Check if over-scrolled at the bottom
+            if (notification.metrics.extentAfter == 0 &&
+                notification.metrics.pixels >
+                    notification.metrics.maxScrollExtent) {
+              Get.back();
+              return true; // Notification handled
+            }
+          }
+        }
+        return false; // Notification not handled
+      },
+      child: Scaffold(
+        backgroundColor: ColorConstants.whiteMainColor,
+        body: CustomScrollView(
+          physics: BouncingScrollPhysics(),
+          slivers: <Widget>[
+            _buildSliverAppBar(),
+            FutureBuilder<BusinessUserModel?>(
               future: BusinessUserService()
                   .fetchBusinessAccountKICI(widget.productModel.user.toInt()),
               builder: (context, snapshot) {
@@ -58,71 +103,94 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                   );
                 } else if (snapshot.hasData) {
                   outSideBusinessuserModel = snapshot.data;
-                  return SliverList(
-                    delegate: SliverChildListDelegate([
-                      brendData(snapshot.data!),
-                      widget.productModel.description.isEmpty
-                          ? const SizedBox.shrink()
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: Text(
-                                'info_product'.tr,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: AppFontSizes.fontSize20,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                      Text(
-                        widget.productModel.description,
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: AppFontSizes.fontSize16 - 2,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: ColorConstants.kSecondaryColor,
-                          borderRadius: BorderRadii.borderRadius15,
-                        ),
-                        child: Text(
-                          '${'sold'.tr} - ${widget.productModel.price.substring(0, widget.productModel.price.length - 3)} TMT',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: ColorConstants.whiteMainColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: AppFontSizes.fontSize20,
-                          ),
+                  return MultiSliver(
+                    children: [
+                      SliverPadding(
+                        padding: const EdgeInsets.all(12),
+                        sliver: SliverToBoxAdapter(
+                          child: brendData(snapshot.data!),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12, top: 15),
-                        child: Text(
-                          widget.productModel.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: ColorConstants.darkMainColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: AppFontSizes.fontSize20,
-                          ),
-                        ),
+                      Obx(
+                        () => controller.productImages.isNotEmpty &&
+                                controller.selectedImageIndex.value ==
+                                    controller.productImages.length - 1
+                            ? SliverPadding(
+                                padding: const EdgeInsets.all(12),
+                                sliver: SliverList(
+                                  delegate: SliverChildListDelegate([
+                                    widget.productModel.description.isEmpty
+                                        ? const SizedBox.shrink()
+                                        : Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            child: Text(
+                                              'info_product'.tr,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                      AppFontSizes.fontSize20,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                    Text(
+                                      widget.productModel.description,
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: AppFontSizes.fontSize16 - 2,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: const BoxDecoration(
+                                        color: ColorConstants.kSecondaryColor,
+                                        borderRadius:
+                                            BorderRadii.borderRadius15,
+                                      ),
+                                      child: Text(
+                                        '${'sold'.tr} - ${widget.productModel.price.substring(0, widget.productModel.price.length - 3)} TMT',
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: ColorConstants.whiteMainColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: AppFontSizes.fontSize20,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 12, top: 15),
+                                      child: Text(
+                                        widget.productModel.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: ColorConstants.darkMainColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: AppFontSizes.fontSize20,
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                                ),
+                              )
+                            : const SliverToBoxAdapter(
+                                child: SizedBox.shrink()),
                       ),
-                    ]),
+                    ],
                   );
                 }
                 return SliverToBoxAdapter(
                     child: EmptyStates().noDataAvailable());
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -209,7 +277,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
       expandedHeight: Get.size.height * 0.78,
-      pinned: true,
+      pinned: false,
       scrolledUnderElevation: 0.0,
       backgroundColor: Colors.transparent,
       leading: Padding(
@@ -243,23 +311,36 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                             onTap: () {
                               Get.to(
                                 () => PhotoViewPage(
-                                    images: controller.productImages),
+                                  images: controller.productImages,
+                                ),
                               );
                             },
-                            child: CachedNetworkImage(
-                              imageUrl: controller.productImages.isNotEmpty
-                                  ? controller.productImages[
-                                      controller.selectedImageIndex.value]
-                                  : '',
-                              key: ValueKey<int>(
-                                  controller.selectedImageIndex.value),
-                              fit: BoxFit.cover,
-                              height: Get.size.height,
-                              width: Get.size.width,
-                              placeholder: (context, url) =>
-                                  EmptyStates().loadingData(),
-                              errorWidget: (context, url, error) =>
-                                  EmptyStates().noMiniCategoryImage(),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: PageView.builder(
+                                scrollDirection: Axis.vertical,
+                                controller: _pageController,
+                                itemCount: controller.productImages.length,
+                                onPageChanged: (index) {
+                                  controller.updateSelectedImageIndex(index);
+                                },
+                                itemBuilder: (context, index) {
+                                  return CachedNetworkImage(
+                                    imageUrl:
+                                        controller.productImages.isNotEmpty
+                                            ? controller.productImages[index]
+                                            : '',
+                                    key: ValueKey<int>(index),
+                                    fit: BoxFit.cover,
+                                    height: Get.size.height,
+                                    width: Get.size.width,
+                                    placeholder: (context, url) =>
+                                        EmptyStates().loadingData(),
+                                    errorWidget: (context, url, error) =>
+                                        EmptyStates().noMiniCategoryImage(),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                   ),
@@ -376,18 +457,19 @@ class _ProductProfilViewState extends State<ProductProfilView> {
             Positioned(
               left: 10,
               top: AppBar().preferredSize.height + 20,
-              bottom: 0,
-              child: Center(
-                child: SizedBox(
-                  child: Obx(() {
-                    final int maxItems = controller.productImages.length > 4
-                        ? 4
-                        : controller.productImages.length;
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(maxItems + 1, (index) {
-                        if (index == maxItems) {
+              bottom: 20,
+              child: SizedBox(
+                width: 55,
+                child: Obx(() {
+                  final itemsCount = controller.productImages.length + 1;
+                  final displayCount = itemsCount > 4 ? 4 : itemsCount;
+                  return Container(
+                    height: displayCount * 85.0,
+                    child: ListView.builder(
+                      itemCount: itemsCount,
+                      itemBuilder: (context, index) {
+                        if (index == controller.productImages.length) {
+                          // call butonu
                           return GestureDetector(
                             onTap: () {
                               if (outSideBusinessuserModel != null) {
@@ -402,7 +484,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                               }
                             },
                             child: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              margin: const EdgeInsets.symmetric(vertical: 5),
                               width: 45,
                               height: 75,
                               decoration: BoxDecoration(
@@ -421,62 +503,38 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                             onTap: () {
                               controller.updateSelectedImageIndex(index);
                             },
-                            child: Obx(
-                              () => Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                width: 45,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadii.borderRadius15,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: index ==
-                                              controller
-                                                  .selectedImageIndex.value
-                                          ? Colors.white.withOpacity(0.7)
-                                          : Colors.grey.withOpacity(0.3),
-                                      blurRadius: index ==
-                                              controller
-                                                  .selectedImageIndex.value
-                                          ? 3
-                                          : 1,
-                                      spreadRadius: index ==
-                                              controller
-                                                  .selectedImageIndex.value
-                                          ? 2
-                                          : 1,
-                                    ),
-                                  ],
-                                  border: Border.all(
-                                    color: index ==
-                                            controller.selectedImageIndex.value
-                                        ? Colors.white
-                                        : Colors.grey.withOpacity(0.3),
-                                    width: index ==
-                                            controller.selectedImageIndex.value
-                                        ? 1.5
-                                        : 1,
-                                  ),
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              width: 45,
+                              height: 75,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadii.borderRadius15,
+                                border: Border.all(
+                                  color: index ==
+                                          controller.selectedImageIndex.value
+                                      ? Colors.white
+                                      : Colors.grey.withOpacity(0.3),
+                                  width: 1.5,
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadii.borderRadius15,
-                                  child: CachedNetworkImage(
-                                    imageUrl: controller.productImages[index],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        EmptyStates().loadingData(),
-                                    errorWidget: (context, url, error) =>
-                                        EmptyStates().noMiniCategoryImage(),
-                                  ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadii.borderRadius15,
+                                child: CachedNetworkImage(
+                                  imageUrl: controller.productImages[index],
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      EmptyStates().loadingData(),
+                                  errorWidget: (context, url, error) =>
+                                      EmptyStates().noMiniCategoryImage(),
                                 ),
                               ),
                             ),
                           );
                         }
-                      }),
-                    );
-                  }),
-                ),
+                      },
+                    ),
+                  );
+                }),
               ),
             ),
           ],
