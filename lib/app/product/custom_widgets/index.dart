@@ -1,3 +1,5 @@
+// ignore_for_file: duplicate_export
+
 export 'agree_button.dart';
 export 'back_button.dart';
 export 'background_pattern.dart';

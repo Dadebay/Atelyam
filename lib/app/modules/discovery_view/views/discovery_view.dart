@@ -1,12 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DiscoveryView extends StatelessWidget {
@@ -18,7 +14,11 @@ class DiscoveryView extends StatelessWidget {
       body: Stack(
         children: [
           BackgroundPattern(),
-          TransparentAppBar(title: 'mostViewedFasons', removeLeading: true, color: Colors.white),
+          TransparentAppBar(
+            title: 'mostViewedFasons',
+            removeLeading: true,
+            color: Colors.white,
+          ),
           buildGridView(),
         ],
       ),

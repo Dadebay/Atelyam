@@ -72,37 +72,46 @@ class CustomBottomNavBar extends StatelessWidget {
     ];
 
     return Container(
-      height: 60,
-      color: ColorConstants.kSecondaryColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(items.length, (index) {
-          final isSelected = index == currentIndex;
-          return GestureDetector(
-            onTap: () => onTap(index),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isSelected ? selectedItem[index] : items[index],
-                  size: 28,
-                  color: isSelected
-                      ? ColorConstants.kThirdColor
-                      : ColorConstants.whiteMainColor,
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  height: isSelected ? 4 : 0,
-                  width: 16,
-                  decoration: const BoxDecoration(
-                    color: ColorConstants.kThirdColor,
-                    borderRadius: BorderRadii.borderRadius10,
+      color: ColorConstants.whiteMainColor,
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorConstants.whiteMainColor,
+          border: Border.all(
+            color: ColorConstants.kSecondaryColor,
+            width: 0.5,
+          ),
+        ),
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(items.length, (index) {
+            final isSelected = index == currentIndex;
+            return GestureDetector(
+              onTap: () => onTap(index),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isSelected ? selectedItem[index] : items[index],
+                    size: 28,
+                    color: isSelected
+                        ? ColorConstants.kSecondaryColor
+                        : Colors.grey,
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: isSelected ? 4 : 0,
+                    width: 16,
+                    decoration: const BoxDecoration(
+                      color: ColorConstants.kSecondaryColor,
+                      borderRadius: BorderRadii.borderRadius10,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

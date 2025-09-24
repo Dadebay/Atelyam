@@ -27,7 +27,7 @@ class BusinessUsersHomeView extends StatelessWidget {
                 onTap: () {},
               ),
               Container(
-                height: screenHeight * 0.40, // Dinamik yükseklik
+                height: screenHeight * 0.40,
                 child: ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemExtent: screenWidth * 0.80,

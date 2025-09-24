@@ -29,18 +29,37 @@ class DiscoveryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => ProductProfilView(productModel: productModel, businessUserID: businessUserID));
-      },
+        Get.to(
+          () => ProductProfilView(
+            productModel: productModel,
+            businessUserID: businessUserID,
+          ),
+        );
+      },  
       child: Container(
-        margin: homePageStyle == true ? const EdgeInsets.only(left: 20, top: 10, bottom: 10) : EdgeInsets.zero,
+        margin: homePageStyle == true
+            ? const EdgeInsets.only(left: 20, top: 10, bottom: 10)
+            : EdgeInsets.zero,
         decoration: BoxDecoration(
           boxShadow: homePageStyle == true
-              ? [BoxShadow(color: ColorConstants.darkMainColor.withOpacity(0.1), spreadRadius: 5, blurRadius: 5)]
-              : [BoxShadow(color: ColorConstants.kThirdColor.withOpacity(0.8), spreadRadius: 3, blurRadius: 3)],
-          borderRadius: BorderRadii.borderRadius30,
+              ? [
+                  BoxShadow(
+                    color: ColorConstants.darkMainColor.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 5,
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: ColorConstants.kThirdColor.withOpacity(0.8),
+                    spreadRadius: 3,
+                    blurRadius: 3,
+                  ),
+                ],
+          borderRadius: BorderRadii.borderRadius10,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadii.borderRadius30,
+          borderRadius: BorderRadii.borderRadius10,
           child: Stack(
             children: [
               Positioned.fill(
@@ -48,7 +67,8 @@ class DiscoveryCard extends StatelessWidget {
                   imageUrl: authController.ipAddress.value + productModel.img,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => EmptyStates().loadingData(),
-                  errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+                  errorWidget: (context, url, error) =>
+                      EmptyStates().noMiniCategoryImage(),
                 ),
               ),
               Positioned(
@@ -65,11 +85,15 @@ class DiscoveryCard extends StatelessWidget {
                       top: 10,
                       left: 10,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         margin: EdgeInsets.only(right: 10),
                         decoration: BoxDecoration(
                           color: ColorConstants.whiteMainColor.withOpacity(.8),
-                          border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.6), width: 1),
+                          border: Border.all(
+                            color: ColorConstants.kPrimaryColor.withOpacity(.6),
+                            width: 0.5,
+                          ),
                           borderRadius: BorderRadii.borderRadius15,
                         ),
                         child: Row(
@@ -77,11 +101,19 @@ class DiscoveryCard extends StatelessWidget {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: Icon(IconlyLight.show, color: ColorConstants.kPrimaryColor, size: AppFontSizes.fontSize16),
+                              child: Icon(
+                                IconlyLight.show,
+                                color: ColorConstants.kPrimaryColor,
+                                size: AppFontSizes.fontSize14,
+                              ),
                             ),
                             Text(
                               productModel.viewCount.toString(),
-                              style: TextStyle(color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize16),
+                              style: TextStyle(
+                                color: ColorConstants.kPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppFontSizes.fontSize12,
+                              ),
                             ),
                           ],
                         ),
@@ -93,8 +125,15 @@ class DiscoveryCard extends StatelessWidget {
                       right: 0,
                       left: 0,
                       child: Container(
-                        padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8, top: 8),
-                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.9), borderRadius: BorderRadii.borderRadius20),
+                        padding: const EdgeInsets.only(
+                          bottom: 12,
+                          left: 8,
+                          right: 8,
+                          top: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.65),
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,13 +143,21 @@ class DiscoveryCard extends StatelessWidget {
                               productModel.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize16),
+                              style: TextStyle(
+                                color: ColorConstants.kPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppFontSizes.fontSize16,
+                              ),
                             ),
                             Text(
                               productModel.description,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.w400, fontSize: AppFontSizes.fontSize14),
+                              style: TextStyle(
+                                color: ColorConstants.kPrimaryColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: AppFontSizes.fontSize14,
+                              ),
                             ),
                           ],
                         ),

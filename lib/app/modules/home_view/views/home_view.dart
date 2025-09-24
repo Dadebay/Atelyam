@@ -31,7 +31,8 @@ class _HomeViewState extends State<HomeView> {
           child: Container(
             color: Colors.white,
             child: ListView(
-              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               padding: EdgeInsets.zero,
               children: [
                 Banners(),
@@ -69,7 +70,9 @@ class _HomeViewState extends State<HomeView> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final hashtag = snapshot.data![index];
-                return hashtag.count > 0 ? _buildProductList(size, hashtag) : const SizedBox.shrink();
+                return hashtag.count > 0
+                    ? _buildProductList(size, hashtag)
+                    : const SizedBox.shrink();
               },
             );
           } else {
@@ -86,10 +89,11 @@ class _HomeViewState extends State<HomeView> {
         ListviewTopNameAndIcon(
           text: hashtagModel.name,
           icon: true,
-          onTap: () => Get.to(() => AllProductsView(title: hashtagModel.name, id: hashtagModel.id)),
+          onTap: () => Get.to(() =>
+              AllProductsView(title: hashtagModel.name, id: hashtagModel.id)),
         ),
         SizedBox(
-          height: size.height * 0.35,
+          height: size.height * 0.45,
           child: FutureBuilder<List<ProductModel>>(
             future: homeController.fetchProductsByHashtagId(hashtagModel.id),
             builder: (context, snapshot) {

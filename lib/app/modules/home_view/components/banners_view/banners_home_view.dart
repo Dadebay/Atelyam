@@ -61,8 +61,11 @@ class Banners extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadii.borderRadius30,
-        child: Image.asset(Assets.backgorundPattern2,
-            height: size.width >= 800 ? 400 : 220, fit: BoxFit.cover),
+        child: Image.asset(
+          Assets.backgorundPattern2,
+          height: size.width >= 800 ? 400 : 220,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

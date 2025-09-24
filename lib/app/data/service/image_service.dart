@@ -3,13 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:atelyam/app/data/models/images_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class ImageService {
