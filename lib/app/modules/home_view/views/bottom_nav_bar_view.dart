@@ -35,15 +35,7 @@ class BottomNavBar extends StatelessWidget {
           ? UpgradeDialogStyle.material
           : UpgradeDialogStyle.cupertino,
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(
-            'Atelyam',
-            style: TextStyle(color: Colors.black),
-          ),
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-        ),
+        
         body: Obx(() => pages[homeController.selectedIndex.value]),
         bottomNavigationBar: Obx(() {
           return CustomBottomNavBar(

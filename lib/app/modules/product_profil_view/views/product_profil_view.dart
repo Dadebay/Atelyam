@@ -4,8 +4,11 @@ import 'package:sliver_tools/sliver_tools.dart';
 // Make sure this path is correct
 
 class ProductProfilView extends StatefulWidget {
-  const ProductProfilView(
-      {required this.productModel, super.key, this.businessUserID,});
+  const ProductProfilView({
+    required this.productModel,
+    super.key,
+    this.businessUserID,
+  });
   final ProductModel productModel;
   final String? businessUserID;
   @override

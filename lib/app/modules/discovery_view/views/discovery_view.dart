@@ -1,33 +1,49 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
-import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
+import 'package:atelyam/app/product/custom_widgets/index.dart';
 
 class DiscoveryView extends StatelessWidget {
   DiscoveryView({super.key});
 
+  final DiscoveryController controller = Get.put(DiscoveryController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          BackgroundPattern(),
-          TransparentAppBar(
-            title: 'mostViewedFasons',
-            removeLeading: true,
-            color: Colors.white,
-          ),
-          buildGridView(),
-        ],
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: _buildSearchBar(),
+      ),
+      body: _buildGridView(),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadii.borderRadius10,
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        ),
+        onChanged: (value) {},
       ),
     );
   }
 
-  final DiscoveryController controller = Get.put(DiscoveryController());
-
-  Widget buildGridView() {
+  Widget _buildGridView() {
     return Obx(() {
       if (controller.products.isEmpty && controller.hasMore) {
         return EmptyStates().loadingData();
@@ -35,38 +51,39 @@ class DiscoveryView extends StatelessWidget {
         return EmptyStates().noDataAvailable();
       }
 
+      final List<Map<String, int>> tileSizes = [
+        {'cross': 2, 'main': 2},
+        {'cross': 1, 'main': 1},
+        {'cross': 1, 'main': 1},
+        {'cross': 2, 'main': 1},
+        {'cross': 1, 'main': 1},
+        {'cross': 1, 'main': 2},
+      ];
+
       return SmartRefresher(
         controller: controller.refreshController,
         enablePullUp: true,
         onRefresh: controller.onRefresh,
         onLoading: controller.onLoading,
         child: Padding(
-          padding: const EdgeInsets.only(top: kToolbarHeight + 40),
-          child: MasonryGridView.builder(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: Get.size.width >= 800 ? 3 : 2,
-            ),
-            itemCount: controller.products.length,
-            mainAxisSpacing: 15.0,
-            crossAxisSpacing: 15.0,
-            itemBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                height: index % 2 == 0
-                    ? Get.size.width >= 800
-                        ? 350
-                        : 230
-                    : Get.size.width >= 800
-                        ? 380
-                        : 250,
+          padding: const EdgeInsets.all(8.0),
+          child: StaggeredGrid.count(
+            crossAxisCount: 4,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            children: List.generate(controller.products.length, (index) {
+              final tile = tileSizes[index % tileSizes.length];
+              return StaggeredGridTile.count(
+                crossAxisCellCount: tile['cross']!,
+                mainAxisCellCount: tile['main']!,
                 child: DiscoveryCard(
-                  homePageStyle: false,
                   productModel: controller.products[index],
+                  homePageStyle: false,
+                  showFavButton: false,
+                  showViewCount: true,
                 ),
               );
-            },
+            }),
           ),
         ),
       );

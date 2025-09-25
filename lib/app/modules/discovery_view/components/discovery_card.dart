@@ -14,6 +14,7 @@ class DiscoveryCard extends StatelessWidget {
   final ProductModel productModel;
   final bool homePageStyle;
   final bool? showViewCount;
+  final bool showFavButton;
   final String? businessUserID;
 
   DiscoveryCard({
@@ -21,6 +22,7 @@ class DiscoveryCard extends StatelessWidget {
     required this.homePageStyle,
     this.showViewCount,
     this.businessUserID,
+    this.showFavButton = true,
     super.key,
   });
   final AuthController authController = Get.find();
@@ -35,7 +37,7 @@ class DiscoveryCard extends StatelessWidget {
             businessUserID: businessUserID,
           ),
         );
-      },  
+      },
       child: Container(
         margin: homePageStyle == true
             ? const EdgeInsets.only(left: 20, top: 10, bottom: 10)
@@ -51,15 +53,13 @@ class DiscoveryCard extends StatelessWidget {
                 ]
               : [
                   BoxShadow(
-                    color: ColorConstants.kThirdColor.withOpacity(0.8),
-                    spreadRadius: 3,
-                    blurRadius: 3,
+                    color: Colors.transparent,
                   ),
                 ],
-          borderRadius: BorderRadii.borderRadius10,
+          borderRadius: BorderRadii.borderRadius5,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadii.borderRadius10,
+          borderRadius: BorderRadii.borderRadius5,
           child: Stack(
             children: [
               Positioned.fill(
@@ -74,13 +74,44 @@ class DiscoveryCard extends StatelessWidget {
               Positioned(
                 top: 10,
                 right: 10,
-                child: FavButton(
-                  productProfilStyle: false,
-                  product: productModel,
-                ),
+                child: showFavButton
+                    ? FavButton(
+                        productProfilStyle: false,
+                        product: productModel,
+                      )
+                    : const SizedBox.shrink(),
               ),
-              showViewCount == false
-                  ? SizedBox.shrink()
+              showFavButton == false
+                  ? Positioned(
+                      top: 5,
+                      left: 5,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        margin: EdgeInsets.only(right: 10),
+                        decoration: BoxDecoration(
+                          color: ColorConstants.whiteMainColor.withOpacity(.8),
+                          border: Border.all(
+                            color: ColorConstants.kPrimaryColor.withOpacity(.6),
+                            width: 0.1,
+                          ),
+                          borderRadius: BorderRadii.borderRadius5,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              productModel.viewCount.toString(),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: AppFontSizes.fontSize10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   : Positioned(
                       top: 10,
                       left: 10,

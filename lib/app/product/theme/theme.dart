@@ -131,6 +131,7 @@ class AppFontSizes {
 
   static double get screenWidth => Get.width;
   static double get screenHeight => Get.height;
+  static double get fontSize10 => screenWidth * 0.020;
   static double get fontSize12 => screenWidth * 0.031;
   static double get fontSize14 => screenWidth * 0.036;
   static double get fontSize16 => screenWidth * 0.041;
@@ -155,8 +156,10 @@ class AppThemes {
         backgroundColor: ColorConstants.darkMainColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
-          systemNavigationBarColor: ColorConstants.kPrimaryColor,
+          systemNavigationBarColor: ColorConstants.whiteMainColor,
+          systemNavigationBarIconBrightness: Brightness.dark,
         ),
         titleTextStyle: TextStyle(
           color: Colors.white,
