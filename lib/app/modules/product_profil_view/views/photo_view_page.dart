@@ -58,8 +58,11 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: const Icon(CupertinoIcons.xmark_circle,
-                    color: Colors.white, size: 40,),
+                child: const Icon(
+                  CupertinoIcons.xmark_circle,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
           ],
