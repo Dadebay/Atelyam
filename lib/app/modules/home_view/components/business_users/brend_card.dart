@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:atelyam/app/data/models/business_user_model.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/home_view/components/business_users/business_user_profile_view.dart';
@@ -16,7 +14,7 @@ class BrendCard extends StatelessWidget {
   BrendCard(
       {required this.showAllBrends,
       required this.businessUserModel,
-      super.key});
+      super.key,});
   final bool showAllBrends;
   final BusinessUserModel businessUserModel;
   final AuthController authController = Get.find();
@@ -90,7 +88,7 @@ class BrendCard extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadii.borderRadius10,
                     border: Border.all(
-                        color: ColorConstants.whiteMainColor.withOpacity(.1))),
+                        color: ColorConstants.whiteMainColor.withOpacity(.1),),),
                 height: Get.size.height,
                 width: Get.size.width,
                 child: businessUserModel.images!.isEmpty
@@ -132,7 +130,7 @@ class BrendCard extends StatelessWidget {
                                       .withOpacity(.6),
                                 )
                               : WidgetsMine().customCachedImage(
-                                  businessUserModel.images![1]),
+                                  businessUserModel.images![1],),
                         ),
                       ),
                     ),
@@ -148,7 +146,7 @@ class BrendCard extends StatelessWidget {
                             border: Border.all(
                               color:
                                   ColorConstants.whiteMainColor.withOpacity(.1),
-                            )),
+                            ),),
                         child: ClipRRect(
                           borderRadius: BorderRadii.borderRadius5,
                           child: businessUserModel.images!.length < 3
@@ -182,13 +180,13 @@ class BrendCard extends StatelessWidget {
             flex: 3,
             child: Container(
               margin: const EdgeInsets.only(
-                  left: 15, right: 10, top: 15, bottom: 15),
+                  left: 15, right: 10, top: 15, bottom: 15,),
               height: Get.size.height,
               width: Get.size.width,
               decoration: BoxDecoration(
                   borderRadius: BorderRadii.borderRadius10,
                   border: Border.all(
-                      color: ColorConstants.whiteMainColor.withOpacity(.1))),
+                      color: ColorConstants.whiteMainColor.withOpacity(.1),),),
               child: ClipRRect(
                 borderRadius: BorderRadii.borderRadius10,
                 child: CachedNetworkImage(
@@ -216,7 +214,7 @@ class BrendCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.only(
                   top: showAllBrends ? 20 : 25,
-                  bottom: showAllBrends ? 10 : 20),
+                  bottom: showAllBrends ? 10 : 20,),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

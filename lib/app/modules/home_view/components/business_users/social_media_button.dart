@@ -86,12 +86,12 @@ class SocialMediaIcon extends StatelessWidget {
                           ? 10
                           : icon == Assets.address
                               ? 10
-                              : 7),
+                              : 7,),
                       height: AppFontSizes.getFontSize(icon == Assets.tiktok
                           ? 10
                           : icon == Assets.address
                               ? 10
-                              : 7),
+                              : 7,),
                     ),
                   ),
                 ),

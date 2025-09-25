@@ -46,7 +46,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                   labelStyle: TextStyle(
                       fontSize: AppFontSizes.getFontSize(4),
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade400),
+                      color: Colors.grey.shade400,),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
                   ),
@@ -58,7 +58,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
                     borderSide: BorderSide(
-                        color: ColorConstants.kSecondaryColor, width: 2),
+                        color: ColorConstants.kSecondaryColor, width: 2,),
                   ),
                 ),
                 value: controller.selectedCategory.value,
@@ -173,7 +173,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadii.borderRadius25,
                   border: Border.all(
-                      color: ColorConstants.kSecondaryColor, width: 2),
+                      color: ColorConstants.kSecondaryColor, width: 2,),
                 ),
                 child: Obx(
                   () => controller.selectedImage.value != null
@@ -182,7 +182,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                           child: Image.file(controller.selectedImage.value!,
                               width: Get.size.width,
                               height: Get.size.height,
-                              fit: BoxFit.cover),
+                              fit: BoxFit.cover,),
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +227,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                     );
                   } else {
                     showSnackBar(
-                        'error', 'fill_all_fields', ColorConstants.redColor);
+                        'error', 'fill_all_fields', ColorConstants.redColor,);
                   }
                 },
                 text: 'add_account'.tr,

@@ -1,17 +1,7 @@
-import 'package:atelyam/app/data/models/business_user_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
-import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/modules/home_view/components/business_users/social_media_button.dart';
 import 'package:atelyam/app/modules/home_view/controllers/brands_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 
 class BusinessUserProfileView extends StatefulWidget {
   final BusinessUserModel businessUserModelFromOutside;

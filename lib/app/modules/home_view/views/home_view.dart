@@ -32,7 +32,7 @@ class _HomeViewState extends State<HomeView> {
             color: Colors.white,
             child: ListView(
               physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
+                  parent: AlwaysScrollableScrollPhysics(),),
               padding: EdgeInsets.zero,
               children: [
                 Banners(),
@@ -90,7 +90,7 @@ class _HomeViewState extends State<HomeView> {
           text: hashtagModel.name,
           icon: true,
           onTap: () => Get.to(() =>
-              AllProductsView(title: hashtagModel.name, id: hashtagModel.id)),
+              AllProductsView(title: hashtagModel.name, id: hashtagModel.id),),
         ),
         SizedBox(
           height: size.height * 0.45,

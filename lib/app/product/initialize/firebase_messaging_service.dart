@@ -9,8 +9,8 @@ class FirebaseMessagingService {
 
   Future<void> init({required LocalNotificationsService localNotificationsService}) async {
     _localNotificationsService = localNotificationsService;
-    _handlePushNotificationsToken();
-    _requestPermission();
+    await _handlePushNotificationsToken();
+    await _requestPermission();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);

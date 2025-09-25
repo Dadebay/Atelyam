@@ -24,14 +24,14 @@ class ConnectionCheckImageCard extends StatelessWidget {
           image: AssetImage(image),
           fit: BoxFit.cover,
           frameBuilder: (BuildContext context, Widget child, int? frame,
-              bool wasSynchronouslyLoaded) {
+              bool wasSynchronouslyLoaded,) {
             if (wasSynchronouslyLoaded) {
               return child;
             }
             return child;
           },
           loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent? loadingProgress) {
+              ImageChunkEvent? loadingProgress,) {
             if (loadingProgress == null) {
               return child;
             }

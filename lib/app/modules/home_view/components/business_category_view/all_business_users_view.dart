@@ -18,7 +18,7 @@ class AllBusinessUsersView extends StatelessWidget {
               title: 'commecial_users'.tr,
               actions: [],
               removeLeading: false,
-              color: ColorConstants.whiteMainColor),
+              color: ColorConstants.whiteMainColor,),
           Padding(
             padding: const EdgeInsets.only(top: kToolbarHeight + 40),
             child: FutureBuilder<List<BusinessUserModel>?>(
@@ -31,7 +31,7 @@ class AllBusinessUsersView extends StatelessWidget {
                   return EmptyStates().errorData(snapshot.hasError.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return EmptyStates().noDataAvailablePage(
-                      textColor: ColorConstants.whiteMainColor);
+                      textColor: ColorConstants.whiteMainColor,);
                 } else {
                   final List<BusinessUserModel> categories = snapshot.data!;
                   return GridView.builder(

@@ -1,18 +1,9 @@
 import 'dart:io';
 
 import 'package:atelyam/app/data/models/business_category_model.dart';
-import 'package:atelyam/app/data/models/hashtag_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
 import 'package:atelyam/app/data/service/image_service.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 class UpdateProductView extends StatefulWidget {
   final ProductModel product;

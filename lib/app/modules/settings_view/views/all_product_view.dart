@@ -58,7 +58,7 @@ class _AllProductViewState extends State<AllProductView> {
               children: [
                 Expanded(
                     child: EmptyStates().noDataAvailablePage(
-                        textColor: ColorConstants.kPrimaryColor)),
+                        textColor: ColorConstants.kPrimaryColor,),),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AgreeButton(
@@ -88,7 +88,7 @@ class _AllProductViewState extends State<AllProductView> {
                       productModel: snapshot.data![index],
                       onTap: () async {
                         final result = await Get.to(() =>
-                            UpdateProductView(product: snapshot.data![index]));
+                            UpdateProductView(product: snapshot.data![index]),);
                         if (result == true) {
                           setState(() {});
                         }

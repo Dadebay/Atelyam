@@ -133,7 +133,7 @@ class ParallaxFlowDelegate extends FlowDelegate {
     final itemBox = itemContext.findRenderObject() as RenderBox;
     final itemOffset = itemBox.localToGlobal(
         itemBox.size.centerLeft(Offset.zero),
-        ancestor: scrollableBox);
+        ancestor: scrollableBox,);
     final viewportDimension = scrollable.position.viewportDimension;
     final scrollFraction = (itemOffset.dy / viewportDimension).clamp(0, 1);
     final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);

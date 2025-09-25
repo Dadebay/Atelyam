@@ -31,7 +31,7 @@ class LocalNotificationsService {
     );
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings, onDidReceiveNotificationResponse: (NotificationResponse response) {
       print('Foreground notification has been tapped: ${response.payload}');
-    });
+    },);
     await _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_androidChannel);
     _isFlutterLocalNotificationInitialized = true;
   }
@@ -41,7 +41,7 @@ class LocalNotificationsService {
     String? body,
     String? payload,
   ) async {
-    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       _androidChannel.id,
       _androidChannel.name,
       channelDescription: _androidChannel.description,

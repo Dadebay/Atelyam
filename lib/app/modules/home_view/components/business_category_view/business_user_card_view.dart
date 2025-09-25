@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 
 class BusinessUsersCardView extends StatelessWidget {
   BusinessUsersCardView(
-      {required this.category, required this.categoryID, super.key});
+      {required this.category, required this.categoryID, super.key,});
   final BusinessUserModel category;
   final int categoryID;
   @override
@@ -35,7 +35,7 @@ class BusinessUsersCardView extends StatelessWidget {
             borderRadius: BorderRadii.borderRadius30,
             color: ColorConstants.whiteMainColor.withOpacity(.8),
             border: Border.all(
-                color: ColorConstants.kPrimaryColor.withOpacity(.2))),
+                color: ColorConstants.kPrimaryColor.withOpacity(.2),),),
         child: topPart(),
       ),
     );
@@ -85,7 +85,7 @@ class BusinessUsersCardView extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: AppFontSizes.fontSize20),
+                    fontSize: AppFontSizes.fontSize20,),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),
@@ -97,7 +97,7 @@ class BusinessUsersCardView extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.w400,
                       color: ColorConstants.darkMainColor.withOpacity(.8),
-                      fontSize: AppFontSizes.fontSize14),
+                      fontSize: AppFontSizes.fontSize14,),
                 ),
               ),
             ],

@@ -1,16 +1,6 @@
-import 'package:atelyam/app/data/models/category_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/category_view/controllers/category_controller.dart';
-import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoryProductView extends StatefulWidget {

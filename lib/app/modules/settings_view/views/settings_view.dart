@@ -26,7 +26,7 @@ class SettingsView extends StatelessWidget {
               color: ColorConstants.whiteMainColor,
               fontFamily: Fonts.plusJakartaSans,
               fontSize: AppFontSizes.fontSize24,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600,),
           flexibleSpace: FlexibleSpaceBar(
             background: GestureDetector(
               onTap: () => Dialogs().showAvatarDialog(),
@@ -60,7 +60,7 @@ class SettingsView extends StatelessWidget {
                           style: TextStyle(
                               color: ColorConstants.whiteMainColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: AppFontSizes.fontSize20 + 2),
+                              fontSize: AppFontSizes.fontSize20 + 2,),
                         ),
                       ),
                       Text(
@@ -71,7 +71,7 @@ class SettingsView extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: ColorConstants.warmWhiteColor,
-                            fontSize: AppFontSizes.fontSize16),
+                            fontSize: AppFontSizes.fontSize16,),
                       ),
                       const SizedBox(height: 30),
                     ],
@@ -106,7 +106,7 @@ class SettingsView extends StatelessWidget {
           return SliverToBoxAdapter(child: EmptyStates().loadingData());
         } else if (snapshot.hasError) {
           return SliverToBoxAdapter(
-              child: EmptyStates().errorData(snapshot.error.toString()));
+              child: EmptyStates().errorData(snapshot.error.toString()),);
         } else {
           final String? token = snapshot.data;
           final List<Map<String, dynamic>> currentSettingsViews =
@@ -145,13 +145,13 @@ class SettingsView extends StatelessWidget {
                                   Get.back();
                                   await Get.offAll(() => BottomNavBar());
                                   showSnackBar(
-                                      'logout', 'logOutUser', Colors.red);
+                                      'logout', 'logOutUser', Colors.red,);
                                 },
                               ),
                             );
                           },
                           icon: Icon(IconlyLight.logout,
-                              color: ColorConstants.kSecondaryColor),
+                              color: ColorConstants.kSecondaryColor,),
                         )
                       : SettingsButton(
                           name: "${item['name']}".tr,
@@ -164,7 +164,7 @@ class SettingsView extends StatelessWidget {
                             }
                           },
                           icon: Icon(item['icon'],
-                              color: ColorConstants.kSecondaryColor),
+                              color: ColorConstants.kSecondaryColor,),
                         );
                 },
               ),

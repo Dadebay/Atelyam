@@ -6,7 +6,7 @@ class BusinessCategoryView extends StatelessWidget {
   final double screenWidth;
   final Future<List<BusinessCategoryModel>?> categoriesFuture;
   BusinessCategoryView(
-      {required this.screenWidth, required this.categoriesFuture, super.key});
+      {required this.screenWidth, required this.categoriesFuture, super.key,});
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
@@ -10,38 +11,49 @@ import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:upgrader/upgrader.dart'; // 🔥 upgrader importu
 
 class BottomNavBar extends StatelessWidget {
   final HomeController homeController =
       Get.put<HomeController>(HomeController());
+
   BottomNavBar({super.key});
+
   final List<Widget> pages = [
     HomeView(),
     CategoryView(),
     DiscoveryView(),
     SettingsView(),
   ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "Atelyam",
-          style: TextStyle(color: Colors.black),
+    // 🔥 UpgradeAlert ile Scaffold’u sarmalıyoruz
+    return UpgradeAlert(
+      upgrader: Upgrader(languageCode: 'tr'), // dil ayarı
+      dialogStyle: Platform.isAndroid
+          ? UpgradeDialogStyle.material
+          : UpgradeDialogStyle.cupertino,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'Atelyam',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
         ),
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
+        body: Obx(() => pages[homeController.selectedIndex.value]),
+        bottomNavigationBar: Obx(() {
+          return CustomBottomNavBar(
+            currentIndex: homeController.selectedIndex.value,
+            onTap: (index) {
+              homeController.selectedIndex.value = index;
+            },
+          );
+        }),
       ),
-      body: Obx(() => pages[homeController.selectedIndex.value]),
-      bottomNavigationBar: Obx(() {
-        return CustomBottomNavBar(
-          currentIndex: homeController.selectedIndex.value,
-          onTap: (index) {
-            homeController.selectedIndex.value = index;
-          },
-        );
-      }),
     );
   }
 }

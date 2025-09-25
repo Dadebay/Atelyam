@@ -89,7 +89,7 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
                 businessUser: snapshot.data![index],
                 onTap: () async {
                   final result = await Get.to(() => EditBusinessAccountView(
-                      businessUser: snapshot.data![index]));
+                      businessUser: snapshot.data![index],),);
                   if (result == true) {
                     setState(() {});
                   }

@@ -5,7 +5,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 class ProductProfilView extends StatefulWidget {
   const ProductProfilView(
-      {required this.productModel, super.key, this.businessUserID});
+      {required this.productModel, super.key, this.businessUserID,});
   final ProductModel productModel;
   final String? businessUserID;
   @override
@@ -53,8 +53,11 @@ class _ProductProfilViewState extends State<ProductProfilView> {
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
     } else {
-      showSnackBar('error', 'phone_call_error' + launchUri.toString(),
-          ColorConstants.redColor);
+      showSnackBar(
+        'error',
+        'phone_call_error' + launchUri.toString(),
+        ColorConstants.redColor,
+      );
       throw 'Could not launch $launchUri';
     }
   }
@@ -123,22 +126,25 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                         ? const SizedBox.shrink()
                                         : Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                vertical: 12),
+                                              vertical: 12,
+                                            ),
                                             child: Text(
                                               'info_product'.tr,
                                               style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                      AppFontSizes.fontSize20,
-                                                  fontWeight: FontWeight.w600),
+                                                color: Colors.black,
+                                                fontSize:
+                                                    AppFontSizes.fontSize20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                     Text(
                                       widget.productModel.description,
                                       style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: AppFontSizes.fontSize16 - 2,
-                                          fontWeight: FontWeight.w400),
+                                        color: Colors.grey,
+                                        fontSize: AppFontSizes.fontSize16 - 2,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -164,7 +170,9 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          bottom: 12, top: 15),
+                                        bottom: 12,
+                                        top: 15,
+                                      ),
                                       child: Text(
                                         widget.productModel.name,
                                         maxLines: 2,
@@ -180,13 +188,15 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                 ),
                               )
                             : const SliverToBoxAdapter(
-                                child: SizedBox.shrink()),
+                                child: SizedBox.shrink(),
+                              ),
                       ),
                     ],
                   );
                 }
                 return SliverToBoxAdapter(
-                    child: EmptyStates().noDataAvailable());
+                  child: EmptyStates().noDataAvailable(),
+                );
               },
             ),
           ],
@@ -248,9 +258,10 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: ColorConstants.darkMainColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppFontSizes.fontSize20 - 2),
+                      color: ColorConstants.darkMainColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.fontSize20 - 2,
+                    ),
                   ),
                   const SizedBox(
                     height: 6,
@@ -325,9 +336,11 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8),
-                                    child: Icon(IconlyLight.show,
-                                        color: ColorConstants.whiteMainColor,
-                                        size: AppFontSizes.fontSize24),
+                                    child: Icon(
+                                      IconlyLight.show,
+                                      color: ColorConstants.whiteMainColor,
+                                      size: AppFontSizes.fontSize24,
+                                    ),
                                   ),
                                   Obx(
                                     () => Text(
@@ -355,7 +368,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                               child: IconButton(
                                 style: IconButton.styleFrom(
                                   shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadii.borderRadius15),
+                                    borderRadius: BorderRadii.borderRadius15,
+                                  ),
                                   backgroundColor: Colors.grey.withOpacity(0.7),
                                 ),
                                 icon: Icon(
@@ -365,8 +379,9 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                 ),
                                 onPressed: () {
                                   controller.checkPermissionAndDownloadImage(
-                                      controller.productImages[
-                                          controller.selectedImageIndex.value]);
+                                    controller.productImages[
+                                        controller.selectedImageIndex.value],
+                                  );
                                 },
                               ),
                             ),
@@ -466,7 +481,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                             onTap: () {
                               if (outSideBusinessuserModel != null) {
                                 _makePhoneCall(
-                                    '+${outSideBusinessuserModel!.businessPhone}');
+                                  '+${outSideBusinessuserModel!.businessPhone}',
+                                );
                               } else {
                                 showSnackBar(
                                   'error',

@@ -59,7 +59,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                   Navigator.of(context).pop();
                 },
                 child: const Icon(CupertinoIcons.xmark_circle,
-                    color: Colors.white, size: 40),
+                    color: Colors.white, size: 40,),
               ),
             ),
           ],

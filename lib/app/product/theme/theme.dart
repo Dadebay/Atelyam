@@ -154,9 +154,10 @@ class AppThemes {
         centerTitle: true,
         backgroundColor: ColorConstants.darkMainColor,
         systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: ColorConstants.kPrimaryColor),
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+          systemNavigationBarColor: ColorConstants.kPrimaryColor,
+        ),
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontFamily: Fonts.plusJakartaSans,

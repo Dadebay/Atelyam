@@ -1,12 +1,6 @@
 import 'package:atelyam/app/data/models/business_category_model.dart';
-import 'package:atelyam/app/data/models/hashtag_model.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 class CreateProductView extends StatelessWidget {
   CreateProductView({super.key});
