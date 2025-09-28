@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:atelyam/app/data/models/business_user_model.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/home_view/components/business_users/business_user_profile_view.dart';
@@ -11,10 +13,11 @@ import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 
 class BrendCard extends StatelessWidget {
-  BrendCard(
-      {required this.showAllBrends,
-      required this.businessUserModel,
-      super.key,});
+  BrendCard({
+    required this.showAllBrends,
+    required this.businessUserModel,
+    super.key,
+  });
   final bool showAllBrends;
   final BusinessUserModel businessUserModel;
   final AuthController authController = Get.find();
@@ -34,6 +37,7 @@ class BrendCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(top: 10, bottom: 10),
         decoration: BoxDecoration(
+          color: ColorConstants.kSecondaryColor,
           borderRadius: BorderRadii.borderRadius10,
           border: Border.all(color: Colors.grey.shade200),
         ),
@@ -47,20 +51,17 @@ class BrendCard extends StatelessWidget {
               //       businessUserModel.backPhoto,
               //   fit: BoxFit.cover,
               // ),
-              // Positioned.fill(
-              //   child: ClipRRect(
-              //     borderRadius: BorderRadius.circular(15),
-              //     child: Stack(
-              //       fit: StackFit.expand,
-              //       children: [
-              //         BackdropFilter(
-              //           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              //           child: Container(color: Colors.transparent),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadii.borderRadius15,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      color: ColorConstants.kSecondaryColor.withOpacity(0.2),
+                    ),
+                  ),
+                ),
+              ),
               Column(
                 children: [
                   topPart(),
@@ -86,9 +87,11 @@ class BrendCard extends StatelessWidget {
               flex: 3,
               child: Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius10,
-                    border: Border.all(
-                        color: ColorConstants.whiteMainColor.withOpacity(.1),),),
+                  borderRadius: BorderRadii.borderRadius10,
+                  border: Border.all(
+                    color: ColorConstants.whiteMainColor.withOpacity(.1),
+                  ),
+                ),
                 height: Get.size.height,
                 width: Get.size.width,
                 child: businessUserModel.images!.isEmpty
@@ -130,7 +133,8 @@ class BrendCard extends StatelessWidget {
                                       .withOpacity(.6),
                                 )
                               : WidgetsMine().customCachedImage(
-                                  businessUserModel.images![1],),
+                                  businessUserModel.images![1],
+                                ),
                         ),
                       ),
                     ),
@@ -142,11 +146,12 @@ class BrendCard extends StatelessWidget {
                         height: Get.size.height,
                         width: Get.size.width,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadii.borderRadius5,
-                            border: Border.all(
-                              color:
-                                  ColorConstants.whiteMainColor.withOpacity(.1),
-                            ),),
+                          borderRadius: BorderRadii.borderRadius5,
+                          border: Border.all(
+                            color:
+                                ColorConstants.whiteMainColor.withOpacity(.1),
+                          ),
+                        ),
                         child: ClipRRect(
                           borderRadius: BorderRadii.borderRadius5,
                           child: businessUserModel.images!.length < 3
@@ -180,13 +185,19 @@ class BrendCard extends StatelessWidget {
             flex: 3,
             child: Container(
               margin: const EdgeInsets.only(
-                  left: 15, right: 10, top: 15, bottom: 15,),
+                left: 15,
+                right: 10,
+                top: 15,
+                bottom: 15,
+              ),
               height: Get.size.height,
               width: Get.size.width,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadii.borderRadius10,
-                  border: Border.all(
-                      color: ColorConstants.whiteMainColor.withOpacity(.1),),),
+                borderRadius: BorderRadii.borderRadius10,
+                border: Border.all(
+                  color: ColorConstants.whiteMainColor.withOpacity(.1),
+                ),
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadii.borderRadius10,
                 child: CachedNetworkImage(
@@ -213,8 +224,9 @@ class BrendCard extends StatelessWidget {
             flex: showAllBrends ? 5 : 4,
             child: Container(
               padding: EdgeInsets.only(
-                  top: showAllBrends ? 20 : 25,
-                  bottom: showAllBrends ? 10 : 20,),
+                top: showAllBrends ? 20 : 25,
+                bottom: showAllBrends ? 10 : 20,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -36,7 +36,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           TransparentAppBar(
             title: widget.categoryModel.name,
             removeLeading: false,
-            color: Colors.white,
+            color: ColorConstants.whiteMainColor,
           ),
           Positioned(
             top: Get.size.height * 0.15,
@@ -45,16 +45,16 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             right: 0,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(40),
-                topRight: Radius.circular(40),
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
               ),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.9),
+                  color: ColorConstants.whiteMainColor,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
                 ),
                 child: Obx(
@@ -62,7 +62,9 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                     if (_categoryController.isLoadingProducts.value) {
                       return EmptyStates().loadingData();
                     } else if (_categoryController.allProducts.isEmpty) {
-                      return EmptyStates().noDataAvailablePage(textColor: ColorConstants.darkMainColor);
+                      return EmptyStates().noDataAvailablePage(
+                        textColor: ColorConstants.darkMainColor,
+                      );
                     } else {
                       return _buildProductGrid();
                     }
@@ -71,7 +73,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
               ),
             ),
           ),
-          _buildFilterContainer(context),
+          // _buildFilterContainer(context),
         ],
       ),
     );
@@ -85,10 +87,12 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       child: SizedBox(
         height: Get.size.height * 0.80,
         child: CachedNetworkImage(
-          imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo}',
+          imageUrl:
+              '${authController.ipAddress.value}${widget.categoryModel.logo}',
           fit: BoxFit.cover,
           placeholder: (context, url) => EmptyStates().loadingData(),
-          errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+          errorWidget: (context, url, error) =>
+              EmptyStates().noMiniCategoryImage(),
         ),
       ),
     );
@@ -96,16 +100,18 @@ class _CategoryProductViewState extends State<CategoryProductView> {
 
   SizedBox _imagePart() {
     return SizedBox(
-      height: Get.size.height * 0.60, // Reduced height for better layout
+      height: Get.size.height * 0.60,
       child: Hero(
         tag: widget.categoryModel.name,
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius30,
           child: CachedNetworkImage(
-            imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo}',
+            imageUrl:
+                '${authController.ipAddress.value}${widget.categoryModel.logo}',
             fit: BoxFit.cover,
             placeholder: (context, url) => EmptyStates().loadingData(),
-            errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+            errorWidget: (context, url, error) =>
+                EmptyStates().noMiniCategoryImage(),
           ),
         ),
       ),
@@ -117,8 +123,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       controller: _categoryController.refreshController,
       enablePullUp: true,
       scrollDirection: Axis.vertical,
-      onRefresh: () => _categoryController.refreshProducts(widget.categoryModel.id),
-      onLoading: () => _categoryController.loadMoreProducts(widget.categoryModel.id),
+      onRefresh: () =>
+          _categoryController.refreshProducts(widget.categoryModel.id),
+      onLoading: () =>
+          _categoryController.loadMoreProducts(widget.categoryModel.id),
       child: Container(
         margin: const EdgeInsets.only(top: 10),
         child: MasonryGridView.builder(
@@ -151,16 +159,19 @@ class _CategoryProductViewState extends State<CategoryProductView> {
         alignment: Alignment.bottomCenter,
         child: GestureDetector(
           onTap: () {
-            _categoryController.toggleFilterExpanded(); // Filtre durumunu değiştir
+            _categoryController.toggleFilterExpanded();
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            height: _categoryController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.4 : 60,
+            height: _categoryController.isFilterExpanded.value
+                ? MediaQuery.of(context).size.height * 0.4
+                : 60,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
               color: ColorConstants.whiteMainColor,
-              border: Border.all(color: ColorConstants.kSecondaryColor, width: 2),
+              border:
+                  Border.all(color: ColorConstants.kSecondaryColor, width: 2),
               borderRadius: BorderRadii.borderRadius20,
             ),
             child: _categoryController.isFilterExpanded.value
@@ -168,18 +179,27 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                     physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.only(top: 10),
                     children: [
-                      radioListTileButton(text: 'last', value: FilterOption.last),
-                      radioListTileButton(text: 'first', value: FilterOption.first),
-                      radioListTileButton(text: 'viewcount', value: FilterOption.viewCount),
-                      radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
-                      radioListTileButton(text: 'HighPrice', value: FilterOption.highPrice),
+                      radioListTileButton(
+                          text: 'last', value: FilterOption.last),
+                      radioListTileButton(
+                          text: 'first', value: FilterOption.first),
+                      radioListTileButton(
+                          text: 'viewcount', value: FilterOption.viewCount),
+                      radioListTileButton(
+                          text: 'LowPrice', value: FilterOption.lowPrice),
+                      radioListTileButton(
+                          text: 'HighPrice', value: FilterOption.highPrice),
                       TextButton(
                         onPressed: () {
-                          _categoryController.toggleFilterExpanded(); // Filtre durumunu değiştir
+                          _categoryController.toggleFilterExpanded();
                         },
                         child: Text(
                           'cancel'.tr,
-                          style: TextStyle(color: Colors.black, fontSize: AppFontSizes.fontSize20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: AppFontSizes.fontSize20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -200,7 +220,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     });
   }
 
-  Widget radioListTileButton({required String text, required FilterOption value}) {
+  Widget radioListTileButton({
+    required String text,
+    required FilterOption value,
+  }) {
     return Obx(
       () => RadioListTile(
         title: Text(
@@ -209,7 +232,9 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           style: TextStyle(
             color: ColorConstants.darkMainColor,
             fontSize: AppFontSizes.fontSize16,
-            fontWeight: _categoryController.selectedFilter.value == value ? FontWeight.bold : FontWeight.w300,
+            fontWeight: _categoryController.selectedFilter.value == value
+                ? FontWeight.bold
+                : FontWeight.w300,
           ),
         ),
         value: value,
@@ -226,7 +251,11 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     );
   }
 
-  Widget _buildCard({required int index, required ProductModel product, required bool isAnimated}) {
+  Widget _buildCard({
+    required int index,
+    required ProductModel product,
+    required bool isAnimated,
+  }) {
     if (isAnimated) {
       return SizedBox(
         height: index % 2 == 0 ? 250 : 200,
@@ -237,11 +266,11 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       );
     } else {
       return SizedBox(
-          height: index % 2 == 0 ? 250 : 200,
-          child: DiscoveryCard(
-            homePageStyle: false,
-            productModel: product,
-          ),
+        height: index % 2 == 0 ? 250 : 200,
+        child: DiscoveryCard(
+          homePageStyle: false,
+          productModel: product,
+        ),
       );
     }
   }

@@ -7,8 +7,8 @@ class ColorConstants {
   static const Color kSecondaryColor = Color(0xff234d1e);
   static const Color kThirdColor = Color(0xffb6f1a7);
   static const Color darkMainColor = Color(0xFF111218);
-  static const Color whiteMainColor = Color(0xFFFDFEFF);
-  static const Color warmWhiteColor = Color(0xFFFFEEDA);
+  static const Color whiteMainColor = Color(0xFFF5F5F0);
+  static const Color warmWhiteColor = Color(0xFFF5F5F0);
   static const Color greenColor = Color(0xFF05B124);
   static const Color redColor = Color(0xFFE95861);
 }
