@@ -46,11 +46,6 @@ class BrendCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // CachedNetworkImage(
-              //   imageUrl: authController.ipAddress.value +
-              //       businessUserModel.backPhoto,
-              //   fit: BoxFit.cover,
-              // ),
               Positioned.fill(
                 child: ClipRRect(
                   borderRadius: BorderRadii.borderRadius15,
