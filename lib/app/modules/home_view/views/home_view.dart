@@ -15,7 +15,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConstants.whiteMainColor,
-        toolbarHeight: 10,
+        toolbarHeight: 0,
         elevation: 0,
         shape: const Border(
           bottom: BorderSide(

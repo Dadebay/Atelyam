@@ -63,15 +63,20 @@ flutter:
     - assets/image/patterns/
 
   fonts:
-    - family: PlusJakartaSans
-      fonts:
-        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/PlusJakartaSans-Light.ttf
-          weight: 300
-        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
-          weight: 600
+  - family: PlusJakartaSans
+    fonts:
+      - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+        weight: 700
+      - asset: assets/fonts/PlusJakartaSans-Light.ttf
+        weight: 300
+      - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+        weight: 500
+      - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+        weight: 600
+
+  - family: Bell
+    fonts:
+      - asset: assets/fonts/BellRegular.otf
+        weight: 400    

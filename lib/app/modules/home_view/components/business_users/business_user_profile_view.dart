@@ -294,8 +294,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  Colors.white,
-                  Colors.white.withOpacity(.5),
+                  ColorConstants.whiteMainColor,
+                  ColorConstants.whiteMainColor.withOpacity(.5),
                   Colors.transparent,
                 ],
               ),

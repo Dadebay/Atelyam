@@ -135,6 +135,7 @@ class AppFontSizes {
   static double get fontSize12 => screenWidth * 0.031;
   static double get fontSize14 => screenWidth * 0.036;
   static double get fontSize16 => screenWidth * 0.041;
+  static double get fontSize18 => screenWidth * 0.046;
   static double get fontSize20 => screenWidth * 0.052; // Yeni: Font Size 20
   static double get fontSize24 => screenWidth * 0.0625;
   static double get fontSize30 => screenWidth * 0.078; // Yeni: Font Size 30
