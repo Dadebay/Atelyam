@@ -47,7 +47,7 @@ class CategoryCard extends StatelessWidget {
                               keyImage: keyImage,
                             ),
                             children: [
-                              categoryModel.logo != null && categoryModel.logo!.isNotEmpty && categoryModel.logo! != "null"
+                              categoryModel.logo != null && categoryModel.logo!.isNotEmpty && categoryModel.logo! != 'null'
                                   ? CachedNetworkImage(
                                       imageUrl:
                                           '${authController.ipAddress.value}${categoryModel.logo}',

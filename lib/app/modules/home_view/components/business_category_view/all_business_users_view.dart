@@ -11,49 +11,56 @@ class AllBusinessUsersView extends StatelessWidget {
     print(categoryId);
 
     return Scaffold(
-      body: Stack(
-        children: [
-          BackgroundPattern(),
-          TransparentAppBar(
-              title: 'commecial_users'.tr,
-              actions: [],
-              removeLeading: false,
-              color: ColorConstants.whiteMainColor,),
-          Padding(
-            padding: const EdgeInsets.only(top: kToolbarHeight + 40),
-            child: FutureBuilder<List<BusinessUserModel>?>(
-              future: BusinessUserService()
-                  .getBusinessAccountsByCategory(categoryID: categoryId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return EmptyStates().loadingData();
-                } else if (snapshot.hasError) {
-                  return EmptyStates().errorData(snapshot.hasError.toString());
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return EmptyStates().noDataAvailablePage(
-                      textColor: ColorConstants.whiteMainColor,);
-                } else {
-                  final List<BusinessUserModel> categories = snapshot.data!;
-                  return GridView.builder(
-                    itemCount: categories.length,
-                    padding: EdgeInsets.zero,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.8,
-                    ),
-                    itemBuilder: (BuildContext context, index) {
-                      return BusinessUsersCardView(
-                        category: categories[index],
-                        categoryID: categoryId,
-                      );
-                    },
-                  );
-                }
-              },
+      backgroundColor: ColorConstants.whiteMainColor,
+      appBar: AppBar(
+          title: Text(
+            'commecial_users'.tr,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: AppFontSizes.fontSize20,
+              fontWeight: FontWeight.w500,
             ),
           ),
-        ],
+          leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(IconlyLight.arrow_left_circle),
+          ),
+          backgroundColor: ColorConstants.whiteMainColor,),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 2),
+        child: FutureBuilder<List<BusinessUserModel>?>(
+          future: BusinessUserService()
+              .getBusinessAccountsByCategory(categoryID: categoryId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return EmptyStates().loadingData();
+            } else if (snapshot.hasError) {
+              return EmptyStates().errorData(snapshot.hasError.toString());
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return EmptyStates().noDataAvailablePage(
+                textColor: ColorConstants.whiteMainColor,
+              );
+            } else {
+              final List<BusinessUserModel> categories = snapshot.data!;
+              return GridView.builder(
+                itemCount: categories.length,
+                padding: EdgeInsets.zero,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.8,
+                ),
+                itemBuilder: (BuildContext context, index) {
+                  return BusinessUsersCardView(
+                    category: categories[index],
+                    categoryID: categoryId,
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }

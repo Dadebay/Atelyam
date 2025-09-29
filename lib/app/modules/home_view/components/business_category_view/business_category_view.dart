@@ -5,8 +5,11 @@ import 'package:atelyam/app/product/custom_widgets/index.dart';
 class BusinessCategoryView extends StatelessWidget {
   final double screenWidth;
   final Future<List<BusinessCategoryModel>?> categoriesFuture;
-  BusinessCategoryView(
-      {required this.screenWidth, required this.categoriesFuture, super.key,});
+  BusinessCategoryView({
+    required this.screenWidth,
+    required this.categoriesFuture,
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return Column(

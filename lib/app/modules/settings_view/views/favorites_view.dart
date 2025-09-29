@@ -2,6 +2,7 @@ import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dar
 import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
+import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -11,12 +12,13 @@ import '../../../product/custom_widgets/dialogs.dart';
 
 class FavoritesView extends StatelessWidget {
   FavoritesView({super.key});
-  final NewSettingsPageController settingsController = Get.find<NewSettingsPageController>();
+  final NewSettingsPageController settingsController =
+      Get.find<NewSettingsPageController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorConstants.whiteMainColor,
       appBar: WidgetsMine().appBar(
         appBarName: 'favorites',
         actions: [

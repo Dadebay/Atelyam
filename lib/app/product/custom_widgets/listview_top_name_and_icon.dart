@@ -1,3 +1,4 @@
+import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,8 +21,9 @@ class ListviewTopNameAndIcon extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 35, bottom: 10),
+        color: ColorConstants.whiteMainColor,
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 35, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -38,7 +40,11 @@ class ListviewTopNameAndIcon extends StatelessWidget {
     return Text(
       text.tr,
       maxLines: 1,
-      style: TextStyle(color: Colors.black, fontSize: AppFontSizes.fontSize20, fontWeight: FontWeight.w600),
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: AppFontSizes.fontSize20,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 

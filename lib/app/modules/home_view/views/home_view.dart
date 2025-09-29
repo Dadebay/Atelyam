@@ -12,11 +12,19 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BackgroundPattern(),
-        _buildContent(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ColorConstants.whiteMainColor,
+        toolbarHeight: 10,
+        elevation: 0,
+        shape: const Border(
+          bottom: BorderSide(
+            color: ColorConstants.whiteMainColor,
+            width: 0,
+          ),
+        ),
+      ),
+      body: _buildContent(),
     );
   }
 
@@ -29,7 +37,7 @@ class _HomeViewState extends State<HomeView> {
         return RefreshIndicator(
           onRefresh: homeController.refreshBanners,
           child: Container(
-            color: Colors.white,
+            color: ColorConstants.whiteMainColor,
             child: ListView(
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
@@ -45,7 +53,10 @@ class _HomeViewState extends State<HomeView> {
                 _buildProducts(
                   Size(screenWidth, screenHeight),
                 ),
-                Container(height: screenHeight * 0.20, color: Colors.white),
+                Container(
+                  height: screenHeight * 0.20,
+                  color: ColorConstants.whiteMainColor,
+                ),
               ],
             ),
           ),

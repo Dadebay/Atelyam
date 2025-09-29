@@ -1,7 +1,6 @@
 import 'package:atelyam/app/modules/category_view/controllers/category_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoryProductView extends StatefulWidget {
@@ -42,20 +41,19 @@ class _CategoryProductViewState extends State<CategoryProductView> {
               Obx(
                 () => Container(
                   margin: EdgeInsets.only(right: 16),
-                  width: 40, 
+                  width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.black.withOpacity(0.2),
                     border: Border.all(
-                      color: ColorConstants
-                          .whiteMainColor, // Using darkMainColor for consistency with filter icon
+                      color: ColorConstants.whiteMainColor,
                       width: 1,
                     ),
                   ),
                   child: IconButton(
-                    padding: EdgeInsets.zero, // Remove default padding
-                    iconSize: 26, // Match the back button's icon size
+                    padding: EdgeInsets.zero,
+                    iconSize: 26,
                     icon: Icon(
                       _categoryController.isFilterExpanded.value
                           ? Icons.close
@@ -234,10 +232,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             radioListTileButton(text: 'last', value: FilterOption.last),
             radioListTileButton(text: 'first', value: FilterOption.first),
             radioListTileButton(
-                text: 'viewcount', value: FilterOption.viewCount),
+                text: 'viewcount', value: FilterOption.viewCount,),
             radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
             radioListTileButton(
-                text: 'HighPrice', value: FilterOption.highPrice),
+                text: 'HighPrice', value: FilterOption.highPrice,),
             TextButton(
               onPressed: () {
                 Get.back();

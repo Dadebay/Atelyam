@@ -162,7 +162,7 @@ class AppThemes {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: ColorConstants.whiteMainColor,
           fontFamily: Fonts.plusJakartaSans,
           fontSize: 20,
         ),

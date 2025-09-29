@@ -24,7 +24,7 @@ class _AllProductsViewState extends State<AllProductsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorConstants.whiteMainColor,
       body: Obx(() {
         return Stack(
           children: [
@@ -33,7 +33,8 @@ class _AllProductsViewState extends State<AllProductsView> {
               EmptyStates().loadingData()
             else if (_homeController.allProducts.isEmpty)
               Positioned.fill(
-                child: EmptyStates().noDataAvailablePage(textColor: ColorConstants.whiteMainColor),
+                child: EmptyStates().noDataAvailablePage(
+                    textColor: ColorConstants.whiteMainColor,),
               )
             else
               _buildProductGrid(),
@@ -78,7 +79,10 @@ class _AllProductsViewState extends State<AllProductsView> {
             child: Text(
               widget.title.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(color: ColorConstants.whiteMainColor, fontSize: AppFontSizes.fontSize20 + 2, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: ColorConstants.whiteMainColor,
+                  fontSize: AppFontSizes.fontSize20 + 2,
+                  fontWeight: FontWeight.bold,),
             ),
           ),
           SizedBox(
@@ -121,13 +125,13 @@ class _AllProductsViewState extends State<AllProductsView> {
                 );
               }
 
-              return   SizedBox(
-                  height: index % 2 == 0 ? 250 : 220,
-                  child: DiscoveryCard(
-                    productModel: product,
-                    homePageStyle: false,
-                  ),
-                );
+              return SizedBox(
+                height: index % 2 == 0 ? 250 : 220,
+                child: DiscoveryCard(
+                  productModel: product,
+                  homePageStyle: false,
+                ),
+              );
             },
           ),
         ),
@@ -144,7 +148,9 @@ class _AllProductsViewState extends State<AllProductsView> {
             _homeController.isFilterExpanded.toggle();
           },
           child: Container(
-            height: _homeController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.4 : 60,
+            height: _homeController.isFilterExpanded.value
+                ? MediaQuery.of(context).size.height * 0.4
+                : 60,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
@@ -156,18 +162,26 @@ class _AllProductsViewState extends State<AllProductsView> {
                     physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.only(top: 10),
                     children: [
-                      radioListTileButton(text: 'last', value: FilterOption.last),
-                      radioListTileButton(text: 'first', value: FilterOption.first),
-                      radioListTileButton(text: 'viewcount', value: FilterOption.viewCount),
-                      radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
-                      radioListTileButton(text: 'HighPrice', value: FilterOption.highPrice),
+                      radioListTileButton(
+                          text: 'last', value: FilterOption.last,),
+                      radioListTileButton(
+                          text: 'first', value: FilterOption.first,),
+                      radioListTileButton(
+                          text: 'viewcount', value: FilterOption.viewCount,),
+                      radioListTileButton(
+                          text: 'LowPrice', value: FilterOption.lowPrice,),
+                      radioListTileButton(
+                          text: 'HighPrice', value: FilterOption.highPrice,),
                       TextButton(
                         onPressed: () {
                           _homeController.isFilterExpanded.toggle();
                         },
                         child: Text(
                           'cancel'.tr,
-                          style: TextStyle(color: Colors.black, fontSize: AppFontSizes.fontSize20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: AppFontSizes.fontSize20,
+                              fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ],
@@ -188,7 +202,8 @@ class _AllProductsViewState extends State<AllProductsView> {
     });
   }
 
-  Widget radioListTileButton({required String text, required FilterOption value}) {
+  Widget radioListTileButton(
+      {required String text, required FilterOption value,}) {
     return Obx(
       () => RadioListTile(
         title: Text(
@@ -197,7 +212,9 @@ class _AllProductsViewState extends State<AllProductsView> {
           style: TextStyle(
             color: ColorConstants.darkMainColor,
             fontSize: AppFontSizes.fontSize16,
-            fontWeight: _homeController.selectedFilter.value == value ? FontWeight.bold : FontWeight.w300,
+            fontWeight: _homeController.selectedFilter.value == value
+                ? FontWeight.bold
+                : FontWeight.w300,
           ),
         ),
         value: value,

@@ -142,10 +142,10 @@ class _CategoryViewState extends State<CategoryView> {
                                   height: height,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(
-                                      color: Colors.grey.withOpacity(0.1)),
+                                      color: Colors.grey.withOpacity(0.1),),
                                   errorWidget: (context, url, error) =>
                                       Container(
-                                          color: Colors.grey.withOpacity(0.2)),
+                                          color: Colors.grey.withOpacity(0.2),),
                                 ),
                               ),
                               Positioned(

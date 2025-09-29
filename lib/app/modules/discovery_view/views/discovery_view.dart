@@ -13,9 +13,9 @@ class DiscoveryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorConstants.whiteMainColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorConstants.whiteMainColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: _buildSearchBar(),

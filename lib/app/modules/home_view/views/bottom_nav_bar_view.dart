@@ -11,7 +11,7 @@ import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
-import 'package:upgrader/upgrader.dart'; // 🔥 upgrader importu
+import 'package:upgrader/upgrader.dart';
 
 class BottomNavBar extends StatelessWidget {
   final HomeController homeController =
@@ -21,16 +21,15 @@ class BottomNavBar extends StatelessWidget {
 
   final List<Widget> pages = [
     HomeView(),
-    CategoryView(),
     DiscoveryView(),
+    CategoryView(),
     SettingsView(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 UpgradeAlert ile Scaffold’u sarmalıyoruz
     return UpgradeAlert(
-      upgrader: Upgrader(languageCode: 'tr'), // dil ayarı
+      upgrader: Upgrader(languageCode: 'tr'),
       dialogStyle: Platform.isAndroid
           ? UpgradeDialogStyle.material
           : UpgradeDialogStyle.cupertino,
@@ -63,14 +62,14 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       IconlyLight.home,
-      IconlyLight.category,
       IconlyLight.discovery,
+      IconlyLight.category,
       IconlyLight.profile,
     ];
     final selectedItem = [
       IconlyBold.home,
-      IconlyBold.category,
       IconlyBold.discovery,
+      IconlyBold.category,
       IconlyBold.profile,
     ];
 

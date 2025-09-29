@@ -11,8 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BusinessUsersCardView extends StatelessWidget {
-  BusinessUsersCardView(
-      {required this.category, required this.categoryID, super.key,});
+  BusinessUsersCardView({
+    required this.category,
+    required this.categoryID,
+    super.key,
+  });
   final BusinessUserModel category;
   final int categoryID;
   @override
@@ -32,10 +35,12 @@ class BusinessUsersCardView extends StatelessWidget {
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-            borderRadius: BorderRadii.borderRadius30,
-            color: ColorConstants.whiteMainColor.withOpacity(.8),
-            border: Border.all(
-                color: ColorConstants.kPrimaryColor.withOpacity(.2),),),
+          borderRadius: BorderRadii.borderRadius15,
+          color: ColorConstants.whiteMainColor.withOpacity(.8),
+          border: Border.all(
+            color: ColorConstants.kPrimaryColor.withOpacity(.2),
+          ),
+        ),
         child: topPart(),
       ),
     );
@@ -60,7 +65,7 @@ class BusinessUsersCardView extends StatelessWidget {
                 imageUrl: authController.ipAddress.value + category.backPhoto,
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius10,
+                    borderRadius: BorderRadii.borderRadius50,
                     image: DecorationImage(
                       image: imageProvider,
                       fit: BoxFit.cover,
@@ -84,20 +89,22 @@ class BusinessUsersCardView extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: AppFontSizes.fontSize20,),
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppFontSizes.fontSize20,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Text(
-                  category.description, // Using description from model
+                  category.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      color: ColorConstants.darkMainColor.withOpacity(.8),
-                      fontSize: AppFontSizes.fontSize14,),
+                    fontWeight: FontWeight.w400,
+                    color: ColorConstants.darkMainColor.withOpacity(.8),
+                    fontSize: AppFontSizes.fontSize14,
+                  ),
                 ),
               ),
             ],

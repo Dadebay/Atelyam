@@ -23,10 +23,11 @@ class SettingsView extends StatelessWidget {
             'profil'.tr,
           ),
           titleTextStyle: TextStyle(
-              color: ColorConstants.whiteMainColor,
-              fontFamily: Fonts.plusJakartaSans,
-              fontSize: AppFontSizes.fontSize24,
-              fontWeight: FontWeight.w600,),
+            color: Colors.black,
+            fontFamily: Fonts.plusJakartaSans,
+            fontSize: AppFontSizes.fontSize24,
+            fontWeight: FontWeight.w600,
+          ),
           flexibleSpace: FlexibleSpaceBar(
             background: GestureDetector(
               onTap: () => Dialogs().showAvatarDialog(),
@@ -37,7 +38,7 @@ class SettingsView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       CircleAvatar(
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.grey.shade200,
                         radius: 62,
                         child: CircleAvatar(
                           radius: 60,
@@ -58,9 +59,10 @@ class SettingsView extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: ColorConstants.whiteMainColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: AppFontSizes.fontSize20 + 2,),
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.fontSize20 + 2,
+                          ),
                         ),
                       ),
                       Text(
@@ -70,8 +72,9 @@ class SettingsView extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            color: ColorConstants.warmWhiteColor,
-                            fontSize: AppFontSizes.fontSize16,),
+                          color: Colors.black,
+                          fontSize: AppFontSizes.fontSize16,
+                        ),
                       ),
                       const SizedBox(height: 30),
                     ],
@@ -106,7 +109,8 @@ class SettingsView extends StatelessWidget {
           return SliverToBoxAdapter(child: EmptyStates().loadingData());
         } else if (snapshot.hasError) {
           return SliverToBoxAdapter(
-              child: EmptyStates().errorData(snapshot.error.toString()),);
+            child: EmptyStates().errorData(snapshot.error.toString()),
+          );
         } else {
           final String? token = snapshot.data;
           final List<Map<String, dynamic>> currentSettingsViews =
@@ -116,11 +120,20 @@ class SettingsView extends StatelessWidget {
 
           return SliverToBoxAdapter(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+              decoration: BoxDecoration(
+                color: ColorConstants.whiteMainColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                border: Border(
+                  top: BorderSide(
+                    color: ColorConstants.kSecondaryColor.withOpacity(0.2),
+                    width: 2,
+                  ),
+                  left: BorderSide.none,
+                  right: BorderSide.none,
+                  bottom: BorderSide.none,
                 ),
               ),
               child: ListView.builder(
@@ -145,13 +158,18 @@ class SettingsView extends StatelessWidget {
                                   Get.back();
                                   await Get.offAll(() => BottomNavBar());
                                   showSnackBar(
-                                      'logout', 'logOutUser', Colors.red,);
+                                    'logout',
+                                    'logOutUser',
+                                    Colors.red,
+                                  );
                                 },
                               ),
                             );
                           },
-                          icon: Icon(IconlyLight.logout,
-                              color: ColorConstants.kSecondaryColor,),
+                          icon: Icon(
+                            IconlyLight.logout,
+                            color: ColorConstants.kSecondaryColor,
+                          ),
                         )
                       : SettingsButton(
                           name: "${item['name']}".tr,
@@ -163,8 +181,10 @@ class SettingsView extends StatelessWidget {
                               Get.to(item['page']);
                             }
                           },
-                          icon: Icon(item['icon'],
-                              color: ColorConstants.kSecondaryColor,),
+                          icon: Icon(
+                            item['icon'],
+                            color: ColorConstants.kSecondaryColor,
+                          ),
                         );
                 },
               ),
@@ -178,7 +198,7 @@ class SettingsView extends StatelessWidget {
   SliverToBoxAdapter _buildSpacer() {
     return SliverToBoxAdapter(
       child: Container(
-        color: Colors.white,
+        color: ColorConstants.whiteMainColor,
         height:
             Get.size.width >= 800 ? Get.size.height / 2 : Get.size.height / 4,
       ),
@@ -187,17 +207,15 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(top: 0, left: 0, right: 0, child: BackgroundPattern()),
-        CustomScrollView(
-          slivers: [
-            _buildSliverAppBar(context),
-            _buildSettingsList(),
-            _buildSpacer(),
-          ],
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: ColorConstants.whiteMainColor,
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          _buildSettingsList(),
+          _buildSpacer(),
+        ],
+      ),
     );
   }
 }

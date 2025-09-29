@@ -37,9 +37,9 @@ class BrendCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(top: 10, bottom: 10),
         decoration: BoxDecoration(
-          color: ColorConstants.kSecondaryColor,
+          color: ColorConstants.whiteMainColor,
           borderRadius: BorderRadii.borderRadius10,
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: Colors.white),
         ),
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius15,
@@ -52,7 +52,7 @@ class BrendCard extends StatelessWidget {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                     child: Container(
-                      color: ColorConstants.kSecondaryColor.withOpacity(0.2),
+                      color: ColorConstants.whiteMainColor,
                     ),
                   ),
                 ),
