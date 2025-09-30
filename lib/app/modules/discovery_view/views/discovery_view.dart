@@ -53,10 +53,10 @@ class DiscoveryView extends StatelessWidget {
 
       final List<Map<String, int>> tileSizes = [
         {'cross': 2, 'main': 2},
-        {'cross': 1, 'main': 1},
-        {'cross': 1, 'main': 1},
         {'cross': 2, 'main': 1},
-        {'cross': 1, 'main': 1},
+        {'cross': 1, 'main': 2},
+        {'cross': 2, 'main': 1},
+        {'cross': 1, 'main': 2},
         {'cross': 1, 'main': 2},
       ];
 
@@ -69,8 +69,8 @@ class DiscoveryView extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: StaggeredGrid.count(
             crossAxisCount: 4,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
+            mainAxisSpacing: 3,
+            crossAxisSpacing: 3,
             children: List.generate(controller.products.length, (index) {
               final tile = tileSizes[index % tileSizes.length];
               return StaggeredGridTile.count(

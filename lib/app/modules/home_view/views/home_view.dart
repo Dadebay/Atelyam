@@ -54,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
                   Size(screenWidth, screenHeight),
                 ),
                 Container(
-                  height: screenHeight * 0.20,
+                  height: screenHeight * 0.10,
                   color: ColorConstants.whiteMainColor,
                 ),
               ],

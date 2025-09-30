@@ -52,7 +52,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             text: 'call'.tr,
           ),
         ),
-        backgroundColor: ColorConstants.whiteMainColor,
+        backgroundColor: Colors.white,
         body: Obx(
           () => _homeController.isLoadingBrandsProfile.value
               ? EmptyStates().loadingData()
@@ -189,7 +189,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
 
   Widget _buildVideosTab() {
     return Container(
-      color: ColorConstants.whiteMainColor,
+      color: Colors.white,
       padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -235,7 +235,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
       foregroundColor: ColorConstants.kSecondaryColor,
       actionsIconTheme:
           const IconThemeData(color: ColorConstants.kSecondaryColor),
-      backgroundColor: ColorConstants.whiteMainColor,
+      backgroundColor: Colors.white,
       automaticallyImplyLeading: true,
       bottom: TabBar(
         labelColor: ColorConstants.kSecondaryColor,
@@ -294,8 +294,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  ColorConstants.whiteMainColor,
-                  ColorConstants.whiteMainColor.withOpacity(.5),
+                  Colors.white,
+                  Colors.white.withOpacity(.4),
                   Colors.transparent,
                 ],
               ),
@@ -313,7 +313,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadii.borderRadius99,
                     border: Border.all(
-                      color: ColorConstants.whiteMainColor.withOpacity(.4),
+                      color: Colors.white.withOpacity(.4),
                     ),
                   ),
                   child: ClipRRect(

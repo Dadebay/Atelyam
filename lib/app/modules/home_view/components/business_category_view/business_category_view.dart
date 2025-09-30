@@ -58,10 +58,10 @@ class BusinessCategoryView extends GetView<BusinessCategoryController> {
                           controller.selectedIndex.value == index;
                       return GestureDetector(
                         onTap: () {
-                          controller.setSelectedIndex(index);
                           Get.to(
                             () => AllBusinessUsersView(categoryId: category.id),
                           );
+                          controller.setSelectedIndex(index);
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(
