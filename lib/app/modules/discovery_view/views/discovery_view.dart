@@ -38,7 +38,9 @@ class DiscoveryView extends StatelessWidget {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
         ),
-        onChanged: (value) {},
+        onSubmitted: (value) {
+          controller.searchProducts(value);
+        },
       ),
     );
   }

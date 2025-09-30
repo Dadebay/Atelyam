@@ -43,6 +43,7 @@ class DiscoveryController extends GetxController {
         refreshController.loadNoData();
       }
     } catch (e) {
+      print(e);
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
     } finally {
       if (isRefresh) {
@@ -50,6 +51,26 @@ class DiscoveryController extends GetxController {
       } else {
         refreshController.loadComplete();
       }
+    }
+  }
+
+  Future<void> searchProducts(String name) async {
+    if (name.isEmpty) {
+      await fetchProducts(isRefresh: true);
+      return;
+    }
+    try {
+      final newProducts = await ProductService().searchProducts(name: name);
+      if (newProducts != null && newProducts.isNotEmpty) {
+        products.assignAll(newProducts);
+        hasMore = true;
+      } else {
+        products.clear();
+        hasMore = false;
+      }
+    } catch (e) {
+      print(e);
+      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
     }
   }
 
