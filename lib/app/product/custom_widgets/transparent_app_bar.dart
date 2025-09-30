@@ -11,7 +11,7 @@ class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
       Key? key,
       this.actions,
       this.miniBackButton,
-      this.removeLeading})
+      this.removeLeading,})
       : super(key: key);
   final String title;
   final Color color;

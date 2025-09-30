@@ -8,10 +8,10 @@ class CategoryController extends GetxController {
   RxBool value = false.obs;
   RxList<ProductModel> allProducts = <ProductModel>[].obs;
   RxBool isLoadingProducts = false.obs;
-  RxString activeFilter = 'last'.obs; // Varsayılan filtre
+  RxString activeFilter = 'last'.obs;
   RxInt currentPage = 1.obs;
   final RefreshController refreshController = RefreshController();
-  RxBool isFilterExpanded = false.obs; // Yeni değişken
+  RxBool isFilterExpanded = false.obs;
   Rx<FilterOption?> selectedFilter = Rx<FilterOption?>(FilterOption.last);
 
   @override
@@ -23,14 +23,13 @@ class CategoryController extends GetxController {
   }
 
   void toggleFilterExpanded() {
-    isFilterExpanded.toggle(); // Filtre durumunu tersine çevir
+    isFilterExpanded.toggle();
   }
 
   void setSelectedFilter(FilterOption? value) {
-    selectedFilter.value = value; // Seçilen filtreyi güncelle
+    selectedFilter.value = value;
   }
 
-  // Ürünleri başlat
   void initializeProducts(int hashtagId) {
     isLoadingProducts.value = true;
     allProducts.clear();
@@ -38,13 +37,12 @@ class CategoryController extends GetxController {
     loadProducts(hashtagId);
   }
 
-  // Ürünleri yükle
   Future<void> loadProducts(int hashtagId) async {
     try {
       final products = await HashtagService().fetchProductsByHashtagId(
         hashtagId: hashtagId,
         page: currentPage.value,
-        size: 10, // Sabit sayfa boyutu
+        size: 10,
         filter: activeFilter.value,
       );
       if (products.isNotEmpty) {
@@ -57,7 +55,6 @@ class CategoryController extends GetxController {
     }
   }
 
-  // Yenileme işlemi
   Future<void> refreshProducts(
     int hashtagId,
   ) async {
@@ -68,7 +65,6 @@ class CategoryController extends GetxController {
     refreshController.refreshCompleted();
   }
 
-  // Daha fazla ürün yükleme işlemi
   Future<void> loadMoreProducts(int hashtagId) async {
     currentPage.value++;
     await loadProducts(hashtagId);

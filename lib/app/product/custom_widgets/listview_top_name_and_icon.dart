@@ -23,7 +23,7 @@ class ListviewTopNameAndIcon extends StatelessWidget {
       child: Container(
         color: ColorConstants.whiteMainColor,
         padding:
-            const EdgeInsets.only(left: 15, right: 15, top: 35, bottom: 10),
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

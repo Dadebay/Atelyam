@@ -29,17 +29,17 @@ class BrendCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        width: MediaQuery.of(context).size.width * 0.81,
+        margin: const EdgeInsets.symmetric(horizontal: 7, vertical: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: ColorConstants.kSecondaryColor.withOpacity(0.4),
             width: 2,
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(15),
           child: Stack(
             children: [
               Positioned.fill(
@@ -67,15 +67,15 @@ class BrendCard extends StatelessWidget {
                         color: Colors.black.withOpacity(0.5),
                         offset: const Offset(1, 1),
                         blurRadius: 3,
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
               Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
+                bottom: 10,
+                left: 10,
+                right: 10,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white.withOpacity(0.4),
@@ -83,7 +83,7 @@ class BrendCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
                   ),
                   onPressed: () {
                     Get.to(
@@ -97,6 +97,7 @@ class BrendCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Spacer(),
                       Text(
                         'BIZNESE GIR',
                         style: TextStyle(
@@ -105,20 +106,21 @@ class BrendCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
-                        width: 15,
-                      ),
+                      Spacer(),
                       Container(
                         child: CircleAvatar(
-                          radius: 14,
+                          radius: 18,
                           backgroundColor: ColorConstants.kPrimaryColor,
                           child: const Icon(
                             Icons.arrow_forward_ios,
-                            size: 14,
+                            size: 20,
                             color: Colors.white,
                           ),
                         ),
-                      )
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                     ],
                   ),
                 ),

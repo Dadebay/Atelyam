@@ -5,6 +5,7 @@ import 'package:atelyam/app/modules/category_view/views/category_view.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
@@ -23,6 +24,7 @@ class BottomNavBar extends StatelessWidget {
     HomeView(),
     DiscoveryView(),
     CategoryView(),
+    FavoritesView(),
     SettingsView(),
   ];
 
@@ -64,12 +66,14 @@ class CustomBottomNavBar extends StatelessWidget {
       IconlyLight.home,
       IconlyLight.discovery,
       IconlyLight.category,
+      IconlyLight.heart,
       IconlyLight.profile,
     ];
     final selectedItem = [
       IconlyBold.home,
       IconlyBold.discovery,
       IconlyBold.category,
+      IconlyBold.heart,
       IconlyBold.profile,
     ];
 

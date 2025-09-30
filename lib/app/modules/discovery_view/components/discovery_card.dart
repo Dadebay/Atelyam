@@ -56,10 +56,10 @@ class DiscoveryCard extends StatelessWidget {
                     color: Colors.transparent,
                   ),
                 ],
-          borderRadius: BorderRadii.borderRadius5,
+          borderRadius: BorderRadii.borderRadius10,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadii.borderRadius5,
+          borderRadius: BorderRadii.borderRadius10,
           child: Stack(
             children: [
               Positioned.fill(
@@ -95,7 +95,7 @@ class DiscoveryCard extends StatelessWidget {
                             color: ColorConstants.kPrimaryColor.withOpacity(.6),
                             width: 0.1,
                           ),
-                          borderRadius: BorderRadii.borderRadius5,
+                          borderRadius: BorderRadii.borderRadius10,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
