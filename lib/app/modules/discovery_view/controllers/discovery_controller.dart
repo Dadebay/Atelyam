@@ -8,6 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class DiscoveryController extends GetxController {
   final RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  final TextEditingController textEditingController = TextEditingController();
   final List<ProductModel> products = <ProductModel>[].obs;
   int page = 1;
   final int size = 15;
@@ -17,6 +18,12 @@ class DiscoveryController extends GetxController {
   void onInit() {
     super.onInit();
     fetchProducts();
+  }
+
+  @override
+  void onClose() {
+    textEditingController.dispose();
+    super.onClose();
   }
 
   Future<void> fetchProducts({bool isRefresh = false}) async {
@@ -72,6 +79,11 @@ class DiscoveryController extends GetxController {
       print(e);
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
     }
+  }
+
+  void clearSearch() {
+    textEditingController.clear();
+    fetchProducts(isRefresh: true);
   }
 
   void onRefresh() => fetchProducts(isRefresh: true);

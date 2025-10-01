@@ -1,14 +1,26 @@
-// ignore_for_file: deprecated_member_use
-
+import 'package:lottie/lottie.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 
-class DiscoveryView extends StatelessWidget {
+class DiscoveryView extends StatefulWidget {
   DiscoveryView({super.key});
 
+  @override
+  State<DiscoveryView> createState() => _DiscoveryViewState();
+}
+
+class _DiscoveryViewState extends State<DiscoveryView> {
   final DiscoveryController controller = Get.put(DiscoveryController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.textEditingController.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +44,18 @@ class DiscoveryView extends StatelessWidget {
         borderRadius: BorderRadii.borderRadius10,
       ),
       child: TextField(
+        controller: controller.textEditingController,
         decoration: InputDecoration(
           hintText: 'Search',
           prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
+          suffixIcon: controller.textEditingController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    controller.clearSearch();
+                  },
+                )
+              : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
         ),
@@ -45,12 +66,32 @@ class DiscoveryView extends StatelessWidget {
     );
   }
 
+  Widget _buildNoDataFound() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/lottie/nodata.json'),
+          const SizedBox(height: 10),
+          Text(
+            'Maglumat tapylmady',
+            style: TextStyle(
+              color: ColorConstants.kPrimaryColor,
+              fontSize: AppFontSizes.fontSize20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildGridView() {
     return Obx(() {
       if (controller.products.isEmpty && controller.hasMore) {
         return EmptyStates().loadingData();
       } else if (controller.products.isEmpty && !controller.hasMore) {
-        return EmptyStates().noDataAvailable();
+        return _buildNoDataFound();
       }
 
       final List<Map<String, int>> tileSizes = [

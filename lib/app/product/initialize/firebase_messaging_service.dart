@@ -1,3 +1,4 @@
+import 'package:atelyam/app/data/service/notification_service.dart';
 import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -21,9 +22,9 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
-    final token = await FirebaseMessaging.instance.getToken();
-    print('Push notifications token: $token');
+    await NotificationService().sendDeviceToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      NotificationService().sendDeviceToken();
       print('FCM token refreshed: $fcmToken');
     }).onError((error) {
       print('Error refreshing FCM token: $error');

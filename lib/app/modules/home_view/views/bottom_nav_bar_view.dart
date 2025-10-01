@@ -31,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
-      upgrader: Upgrader(languageCode: 'tr'),
+      upgrader: Upgrader(languageCode: 'tm'),
       dialogStyle: Platform.isAndroid
           ? UpgradeDialogStyle.material
           : UpgradeDialogStyle.cupertino,

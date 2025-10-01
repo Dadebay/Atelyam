@@ -15,7 +15,7 @@ class ConnectionCheckView extends StatefulWidget {
 }
 
 class _ConnectionCheckViewState extends State<ConnectionCheckView> {
-  final AuthController authController = Get.put(AuthController());
+  final AuthController authController = Get.find<AuthController>();
   late List<int> extendedItemList;
   final int itemCount = 29;
   List<String> loadingMessages = ['brandingTitle1', 'brandingTitle2', 'brandingTitle3', 'brandingTitle4', 'brandingTitle5', 'brandingTitle6', 'brandingTitle7', 'brandingTitle8'];

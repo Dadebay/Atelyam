@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
+
 import '../custom_widgets/index.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -15,6 +17,7 @@ class AppStartInit {
     WidgetsFlutterBinding.ensureInitialized();
     HttpOverrides.global = MyHttpOverrides();
     await GetStorage.init();
+    Get.put(AuthController());
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
