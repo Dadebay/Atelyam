@@ -129,7 +129,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                                 controller.selectedImageIndex.value ==
                                     controller.productImages.length - 1
                             ? ProductDescriptionSection(
-                                productModel: widget.productModel)
+                                productModel: widget.productModel,
+                              )
                             : const SliverToBoxAdapter(
                                 child: SizedBox.shrink(),
                               ),

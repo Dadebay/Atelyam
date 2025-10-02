@@ -2,10 +2,7 @@ import 'package:atelyam/app/product/custom_widgets/index.dart';
 
 class BusinessUserCard extends StatelessWidget {
   const BusinessUserCard({
-    Key? key,
-    required this.businessUserModel,
-    required this.productModel,
-    required this.businessUserID,
+    required this.businessUserModel, required this.productModel, required this.businessUserID, Key? key,
   }) : super(key: key);
 
   final BusinessUserModel businessUserModel;

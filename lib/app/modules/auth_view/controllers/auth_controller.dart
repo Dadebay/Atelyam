@@ -13,7 +13,7 @@ class AuthController extends GetxController {
 
   Future<void> handleAuthAction(
       {required String phoneController,
-      required String usernameController}) async {
+      required String usernameController,}) async {
     final HomeController homeController = Get.find();
     print(phoneController);
     print(usernameController);
@@ -23,18 +23,18 @@ class AuthController extends GetxController {
     final userName = usernameController;
     try {
       final registerResponse = await signInService.register(
-          phoneNumber: phoneNumber, name: userName);
+          phoneNumber: phoneNumber, name: userName,);
       if (registerResponse == 200) {
         homeController.agreeButton.toggle();
         await Get.to(
-            () => OTPView(phoneNumber: phoneNumber, userName: userName));
+            () => OTPView(phoneNumber: phoneNumber, userName: userName),);
       } else {
         final loginResponse = await signInService.login(phone: phoneNumber);
 
         if (loginResponse == 200) {
           homeController.agreeButton.toggle();
           await Get.to(
-              () => OTPView(phoneNumber: phoneNumber, userName: userName));
+              () => OTPView(phoneNumber: phoneNumber, userName: userName,),);
         } else {
           homeController.agreeButton.toggle();
           showSnackBar('error', 'errorLogin', ColorConstants.redColor);
@@ -49,7 +49,7 @@ class AuthController extends GetxController {
   Future<void> verifyOTP(
       {required String phoneNumber,
       required List<TextEditingController> otpControllers,
-      required String username}) async {
+      required String username,}) async {
     final String otp =
         otpControllers.map((controller) => controller.text).join();
     if (otp.length == 4) {
