@@ -5,10 +5,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
   factory FirebaseMessagingService.instance() => _instance;
-  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
+  static final FirebaseMessagingService _instance =
+      FirebaseMessagingService._internal();
   LocalNotificationsService? _localNotificationsService;
 
-  Future<void> init({required LocalNotificationsService localNotificationsService}) async {
+  Future<void> init(
+      {required LocalNotificationsService localNotificationsService}) async {
     _localNotificationsService = localNotificationsService;
     await _handlePushNotificationsToken();
     await _requestPermission();
@@ -44,7 +46,8 @@ class FirebaseMessagingService {
     print('Foreground message received: ${message.data.toString()}');
     final notificationData = message.notification;
     if (notificationData != null) {
-      _localNotificationsService?.showNotification(notificationData.title, notificationData.body, message.data.toString());
+      _localNotificationsService?.showNotification(notificationData.title,
+          notificationData.body, message.data.toString());
     }
   }
 

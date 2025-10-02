@@ -31,7 +31,8 @@ class NotificationService {
               print('FCM token sent successfully');
             } else {
               print(
-                  'Failed to send FCM token. Status code: ${response.statusCode}');
+                'Failed to send FCM token. Status code: ${response.statusCode}',
+              );
             }
           } catch (e) {
             print('Error sending FCM token: $e');
