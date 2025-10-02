@@ -1,7 +1,10 @@
-import 'package:atelyam/app/modules/settings_view/components/fav_button_product.dart';
+import 'package:atelyam/app/modules/product_profil_view/views/components/app_bar_actions_widget.dart';
+import 'package:atelyam/app/modules/product_profil_view/views/components/business_user_card.dart';
+import 'package:atelyam/app/modules/product_profil_view/views/components/product_description_section.dart';
+import 'package:atelyam/app/modules/product_profil_view/views/components/product_image_page_view.dart';
+import 'package:atelyam/app/modules/product_profil_view/views/components/product_thumbnail_list.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-// Make sure this path is correct
 
 class ProductProfilView extends StatefulWidget {
   const ProductProfilView({
@@ -114,82 +117,19 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                       SliverPadding(
                         padding: const EdgeInsets.all(12),
                         sliver: SliverToBoxAdapter(
-                          child: brendData(snapshot.data!),
+                          child: BusinessUserCard(
+                            businessUserModel: snapshot.data!,
+                            productModel: widget.productModel,
+                            businessUserID: widget.businessUserID,
+                          ),
                         ),
                       ),
                       Obx(
                         () => controller.productImages.isNotEmpty &&
                                 controller.selectedImageIndex.value ==
                                     controller.productImages.length - 1
-                            ? SliverPadding(
-                                padding: const EdgeInsets.all(12),
-                                sliver: SliverList(
-                                  delegate: SliverChildListDelegate([
-                                    widget.productModel.description.isEmpty
-                                        ? const SizedBox.shrink()
-                                        : Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 12,
-                                            ),
-                                            child: Text(
-                                              'info_product'.tr,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize:
-                                                    AppFontSizes.fontSize20,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                    Text(
-                                      widget.productModel.description,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: AppFontSizes.fontSize16 - 2,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: const BoxDecoration(
-                                        color: ColorConstants.kSecondaryColor,
-                                        borderRadius:
-                                            BorderRadii.borderRadius15,
-                                      ),
-                                      child: Text(
-                                        '${'sold'.tr} - ${widget.productModel.price.substring(0, widget.productModel.price.length - 3)} TMT',
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: ColorConstants.whiteMainColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: AppFontSizes.fontSize20,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 12,
-                                        top: 15,
-                                      ),
-                                      child: Text(
-                                        widget.productModel.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: ColorConstants.darkMainColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: AppFontSizes.fontSize20,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                ),
-                              )
+                            ? ProductDescriptionSection(
+                                productModel: widget.productModel)
                             : const SliverToBoxAdapter(
                                 child: SizedBox.shrink(),
                               ),
@@ -201,86 +141,6 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                   child: EmptyStates().noDataAvailable(),
                 );
               },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget brendData(BusinessUserModel businessUserModel) {
-    return GestureDetector(
-      onTap: () {
-        if (widget.productModel.user.toString() ==
-            widget.businessUserID.toString()) {
-          Get.back();
-        } else {
-          Get.to(
-            () => BusinessUserProfileView(
-              categoryID: businessUserModel.userID!,
-              businessUserModelFromOutside: businessUserModel,
-              whichPage: 'popular',
-            ),
-          );
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(
-          color: ColorConstants.whiteMainColor,
-          borderRadius: BorderRadii.borderRadius25,
-          boxShadow: [
-            BoxShadow(
-              color: ColorConstants.kThirdColor.withOpacity(0.4),
-              blurRadius: 5,
-              spreadRadius: 1,
-            ),
-          ],
-          border:
-              Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-        child: Row(
-          children: [
-            Container(
-              width: 70,
-              height: 70,
-              margin: const EdgeInsets.only(right: 15),
-              child: ClipRRect(
-                borderRadius: BorderRadii.borderRadius99,
-                child: WidgetsMine()
-                    .customCachedImage(businessUserModel.backPhoto),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    businessUserModel.businessName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: ColorConstants.darkMainColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppFontSizes.fontSize20 - 2,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    businessUserModel.address.toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: ColorConstants.darkMainColor.withOpacity(.6),
-                      fontWeight: FontWeight.w600,
-                      fontSize: AppFontSizes.fontSize16,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -308,105 +168,9 @@ class _ProductProfilViewState extends State<ProductProfilView> {
         ),
       ),
       actions: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Obx(
-              () => AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: controller.showMoreOptions.value
-                    ? Container(
-                        key: const ValueKey('rightPanel'),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadii.borderRadius15,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
-                              ),
-                              margin: EdgeInsets.only(right: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Icon(
-                                      IconlyLight.show,
-                                      color: ColorConstants.whiteMainColor,
-                                      size: AppFontSizes.fontSize24,
-                                    ),
-                                  ),
-                                  Obx(
-                                    () => Text(
-                                      controller.viewCount.toString(),
-                                      style: TextStyle(
-                                        color: ColorConstants.whiteMainColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: AppFontSizes.fontSize20 - 2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            // FavButton
-                            FavButtonProduct(
-                              productProfilStyle: true,
-                              product: widget.productModel,
-                            ),
-                            const SizedBox(height: 10),
-
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: IconButton(
-                                style: IconButton.styleFrom(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadii.borderRadius15,
-                                  ),
-                                  backgroundColor: Colors.grey.withOpacity(0.7),
-                                ),
-                                icon: Icon(
-                                  IconlyLight.download,
-                                  color: ColorConstants.whiteMainColor,
-                                  size: AppFontSizes.fontSize24,
-                                ),
-                                onPressed: () {
-                                  controller.checkPermissionAndDownloadImage(
-                                    controller.productImages[
-                                        controller.selectedImageIndex.value],
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                controller.showMoreOptions.toggle();
-              },
-              child: Container(
-                child: Icon(
-                  Icons.more_vert,
-                  color: ColorConstants.whiteMainColor,
-                  size: AppFontSizes.fontSize30,
-                ),
-              ),
-            ),
-          ],
+        AppBarActionsWidget(
+          controller: controller,
+          productModel: widget.productModel,
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -418,137 +182,16 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
-                child: Obx(
-                  () => AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    child: controller.isLoading.value
-                        ? EmptyStates().loadingData()
-                        : GestureDetector(
-                            onTap: () {
-                              Get.to(
-                                () => PhotoViewPage(
-                                  images: controller.productImages,
-                                  initialIndex:
-                                      controller.selectedImageIndex.value,
-                                ),
-                              );
-                            },
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: PageView.builder(
-                                scrollDirection: Axis.vertical,
-                                controller: _pageController,
-                                itemCount: controller.productImages.length,
-                                onPageChanged: (index) {
-                                  controller.updateSelectedImageIndex(index);
-                                },
-                                itemBuilder: (context, index) {
-                                  return CachedNetworkImage(
-                                    imageUrl:
-                                        controller.productImages.isNotEmpty
-                                            ? controller.productImages[index]
-                                            : '',
-                                    key: ValueKey<int>(index),
-                                    fit: BoxFit.cover,
-                                    height: Get.size.height,
-                                    width: Get.size.width,
-                                    placeholder: (context, url) =>
-                                        EmptyStates().loadingData(),
-                                    errorWidget: (context, url, error) =>
-                                        EmptyStates().noMiniCategoryImage(),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                  ),
+                child: ProductImagePageView(
+                  controller: controller,
+                  pageController: _pageController,
                 ),
               ),
             ),
-            Positioned(
-              left: 10,
-              top: AppBar().preferredSize.height + 20,
-              bottom: 20,
-              child: SizedBox(
-                width: 45,
-                child: Obx(() {
-                  final itemsCount = controller.productImages.length + 1;
-                  final displayCount = itemsCount > 4 ? 4 : itemsCount;
-                  return Container(
-                    height: displayCount * 85.0,
-                    child: ListView.builder(
-                      itemCount: itemsCount,
-                      itemBuilder: (context, index) {
-                        if (index == controller.productImages.length) {
-                          return GestureDetector(
-                            onTap: () {
-                              if (outSideBusinessuserModel != null) {
-                                _makePhoneCall(
-                                  '+${outSideBusinessuserModel!.businessPhone}',
-                                );
-                              } else {
-                                showSnackBar(
-                                  'error',
-                                  'phone_call_error',
-                                  ColorConstants.redColor,
-                                );
-                              }
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              width: 45,
-                              height: 75,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Icon(
-                                IconlyLight.call,
-                                color: ColorConstants.whiteMainColor,
-                                size: 28,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return GestureDetector(
-                            onTap: () {
-                              controller.updateSelectedImageIndex(index);
-                            },
-                            child: Obx(
-                              () => Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                width: 42,
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadii.borderRadius15,
-                                  border: Border.all(
-                                    color: index ==
-                                            controller.selectedImageIndex.value
-                                        ? Colors.white
-                                        : Colors.grey.withOpacity(0.3),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadii.borderRadius15,
-                                  child: CachedNetworkImage(
-                                    imageUrl: controller.productImages[index],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        EmptyStates().loadingData(),
-                                    errorWidget: (context, url, error) =>
-                                        EmptyStates().noMiniCategoryImage(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  );
-                }),
-              ),
+            ProductThumbnailList(
+              controller: controller,
+              outSideBusinessuserModel: outSideBusinessuserModel,
+              makePhoneCall: _makePhoneCall,
             ),
           ],
         ),

@@ -34,7 +34,8 @@ class _AllProductsViewState extends State<AllProductsView> {
             else if (_homeController.allProducts.isEmpty)
               Positioned.fill(
                 child: EmptyStates().noDataAvailablePage(
-                    textColor: ColorConstants.whiteMainColor,),
+                  textColor: ColorConstants.whiteMainColor,
+                ),
               )
             else
               _buildProductGrid(),
@@ -80,9 +81,10 @@ class _AllProductsViewState extends State<AllProductsView> {
               widget.title.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: ColorConstants.whiteMainColor,
-                  fontSize: AppFontSizes.fontSize20 + 2,
-                  fontWeight: FontWeight.bold,),
+                color: ColorConstants.whiteMainColor,
+                fontSize: AppFontSizes.fontSize20 + 2,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SizedBox(
@@ -163,15 +165,25 @@ class _AllProductsViewState extends State<AllProductsView> {
                     padding: EdgeInsets.only(top: 10),
                     children: [
                       radioListTileButton(
-                          text: 'last', value: FilterOption.last,),
+                        text: 'last',
+                        value: FilterOption.last,
+                      ),
                       radioListTileButton(
-                          text: 'first', value: FilterOption.first,),
+                        text: 'first',
+                        value: FilterOption.first,
+                      ),
                       radioListTileButton(
-                          text: 'viewcount', value: FilterOption.viewCount,),
+                        text: 'viewcount',
+                        value: FilterOption.viewCount,
+                      ),
                       radioListTileButton(
-                          text: 'LowPrice', value: FilterOption.lowPrice,),
+                        text: 'LowPrice',
+                        value: FilterOption.lowPrice,
+                      ),
                       radioListTileButton(
-                          text: 'HighPrice', value: FilterOption.highPrice,),
+                        text: 'HighPrice',
+                        value: FilterOption.highPrice,
+                      ),
                       TextButton(
                         onPressed: () {
                           _homeController.isFilterExpanded.toggle();
@@ -179,9 +191,10 @@ class _AllProductsViewState extends State<AllProductsView> {
                         child: Text(
                           'cancel'.tr,
                           style: TextStyle(
-                              color: Colors.black,
-                              fontSize: AppFontSizes.fontSize20,
-                              fontWeight: FontWeight.bold,),
+                            color: Colors.black,
+                            fontSize: AppFontSizes.fontSize20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -202,8 +215,10 @@ class _AllProductsViewState extends State<AllProductsView> {
     });
   }
 
-  Widget radioListTileButton(
-      {required String text, required FilterOption value,}) {
+  Widget radioListTileButton({
+    required String text,
+    required FilterOption value,
+  }) {
     return Obx(
       () => RadioListTile(
         title: Text(

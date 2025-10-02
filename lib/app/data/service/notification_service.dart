@@ -11,7 +11,6 @@ class NotificationService {
   final GetStorage _storage = GetStorage();
   final AuthController authController = Get.find();
 
-  static const String baseUrl = 'http://216.250.12.49:8000';
   static const String deviceIdEndpoint = '/notifications/deviceid/';
 
   Future<void> sendDeviceToken() async {
@@ -23,10 +22,11 @@ class NotificationService {
           try {
             print('FCM Token: $token');
             final response = await http.post(
-              Uri.parse('${baseUrl}${deviceIdEndpoint}'),
+              Uri.parse('${authController.ipAddress.value}${deviceIdEndpoint}'),
               headers: {
-                HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8'
-              ,},
+                HttpHeaders.contentTypeHeader:
+                    'application/json; charset=UTF-8',
+              },
               body: jsonEncode(<String, String>{'device_id': token}),
             );
             if (response.statusCode == 201 || response.statusCode == 200) {
