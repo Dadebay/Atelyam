@@ -11,6 +11,9 @@ class NotificationService {
   final GetStorage _storage = GetStorage();
   final AuthController authController = Get.find();
 
+  static const String baseUrl = 'http://216.250.12.49:8000';
+  static const String deviceIdEndpoint = '/notifications/deviceid/';
+
   Future<void> sendDeviceToken() async {
     try {
       final String? token = await FirebaseMessaging.instance.getToken();
@@ -20,7 +23,7 @@ class NotificationService {
           try {
             print('FCM Token: $token');
             final response = await http.post(
-              Uri.parse('http://216.250.12.49:8000/notifications/deviceid/'),
+              Uri.parse('${baseUrl}${deviceIdEndpoint}'),
               headers: {
                 HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8'
               },

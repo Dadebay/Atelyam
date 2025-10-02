@@ -36,7 +36,10 @@ class BottomNavBar extends StatelessWidget {
           ? UpgradeDialogStyle.material
           : UpgradeDialogStyle.cupertino,
       child: Scaffold(
-        body: Obx(() => pages[homeController.selectedIndex.value]),
+        body: Obx(() => IndexedStack(
+              index: homeController.selectedIndex.value,
+              children: pages,
+            )),
         bottomNavigationBar: Obx(() {
           return CustomBottomNavBar(
             currentIndex: homeController.selectedIndex.value,

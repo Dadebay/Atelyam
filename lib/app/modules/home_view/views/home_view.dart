@@ -1,3 +1,5 @@
+import 'package:atelyam/app/modules/home_view/views/widgets/products_view.dart';
+
 import '../../../product/custom_widgets/index.dart';
 
 class HomeView extends StatefulWidget {
@@ -50,8 +52,8 @@ class _HomeViewState extends State<HomeView> {
                   categoriesFuture: homeController.categoriesFuture.value,
                 ),
                 BusinessUsersHomeView(),
-                _buildProducts(
-                  Size(screenWidth, screenHeight),
+                ProductsView(
+                  size: Size(screenWidth, screenHeight),
                 ),
                 Container(
                   height: screenHeight * 0.10,
@@ -62,80 +64,6 @@ class _HomeViewState extends State<HomeView> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildProducts(Size size) {
-    return Obx(() {
-      return FutureBuilder<List<HashtagModel>>(
-        future: homeController.hashtagsFuture.value,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return EmptyStates().loadingData();
-          } else if (snapshot.hasError) {
-            return EmptyStates().errorData(snapshot.hasError.toString());
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final hashtag = snapshot.data![index];
-                return hashtag.count > 0
-                    ? _buildProductList(size, hashtag)
-                    : const SizedBox.shrink();
-              },
-            );
-          } else {
-            return EmptyStates().noDataAvailable();
-          }
-        },
-      );
-    });
-  }
-
-  Widget _buildProductList(Size size, HashtagModel hashtagModel) {
-    return Column(
-      children: [
-        ListviewTopNameAndIcon(
-          text: hashtagModel.name,
-          icon: true,
-          onTap: () => Get.to(
-            () =>
-                AllProductsView(title: hashtagModel.name, id: hashtagModel.id),
-          ),
-        ),
-        SizedBox(
-          height: size.height * 0.45,
-          child: FutureBuilder<List<ProductModel>>(
-            future: homeController.fetchProductsByHashtagId(hashtagModel.id),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return EmptyStates().loadingData();
-              } else if (snapshot.hasError) {
-                return EmptyStates().errorData(snapshot.hasError.toString());
-              } else if (snapshot.hasData) {
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemExtent: size.width * 0.55,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return DiscoveryCard(
-                      homePageStyle: true,
-                      productModel: snapshot.data![index],
-                    );
-                  },
-                );
-              } else {
-                return EmptyStates().noDataAvailable();
-              }
-            },
-          ),
-        ),
-      ],
     );
   }
 }
