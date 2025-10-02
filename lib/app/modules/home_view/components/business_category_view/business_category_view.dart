@@ -107,13 +107,18 @@ class BusinessCategoryView extends GetView<BusinessCategoryController> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: WidgetsMine().customCachedImage(
-                                  category.img,
+                              ClipOval(
+                                child: SizedBox(
+                                  width: 45,
+                                  height: 50,
+                                  child: WidgetsMine().customCachedImage(
+                                    width: 45,
+                                    height: 50,
+                                    category.img,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              SizedBox(width: 10),
                               Text(
                                 category.name,
                                 style: TextStyle(

@@ -12,28 +12,35 @@ class NotificationService {
   final AuthController authController = Get.find();
 
   Future<void> sendDeviceToken() async {
-    final String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      final String? storedToken = _storage.read('fcm_token');
-      if (storedToken != token) {
-        try {
-          print('FCM Token: $token');
-          final response = await http.post(
-            Uri.parse('http://216.250.12.49:8000/notifications/deviceid/'),
-            headers: {HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8'},
-            body: jsonEncode(<String, String>{'device_id': token}),
-          );
-          print('Response: ${response.body}');
-          if (response.statusCode == 201 || response.statusCode == 200) {
-            await _storage.write('fcm_token', token);
-            print('FCM token sent successfully');
-          } else {
-            print('Failed to send FCM token. Status code: ${response.statusCode}');
+    try {
+      final String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        final String? storedToken = _storage.read('fcm_token');
+        if (storedToken != token) {
+          try {
+            print('FCM Token: $token');
+            final response = await http.post(
+              Uri.parse('http://216.250.12.49:8000/notifications/deviceid/'),
+              headers: {
+                HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8'
+              },
+              body: jsonEncode(<String, String>{'device_id': token}),
+            );
+            if (response.statusCode == 201 || response.statusCode == 200) {
+              await _storage.write('fcm_token', token);
+              print('FCM token sent successfully');
+            } else {
+              print(
+                  'Failed to send FCM token. Status code: ${response.statusCode}');
+            }
+          } catch (e) {
+            print('Error sending FCM token: $e');
           }
-        } catch (e) {
-          print('Error sending FCM token: $e');
         }
       }
+    } catch (e) {
+      print('Error getting FCM token: $e');
+      // Release modda emulator baglanyşygy ýok bolsa, app crash etmez
     }
   }
 }
