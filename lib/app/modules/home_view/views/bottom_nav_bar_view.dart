@@ -39,7 +39,7 @@ class BottomNavBar extends StatelessWidget {
         body: Obx(() => IndexedStack(
               index: homeController.selectedIndex.value,
               children: pages,
-            )),
+            ),),
         bottomNavigationBar: Obx(() {
           return CustomBottomNavBar(
             currentIndex: homeController.selectedIndex.value,

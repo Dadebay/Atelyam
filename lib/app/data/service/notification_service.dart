@@ -26,7 +26,7 @@ class NotificationService {
               Uri.parse('${baseUrl}${deviceIdEndpoint}'),
               headers: {
                 HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8'
-              },
+              ,},
               body: jsonEncode(<String, String>{'device_id': token}),
             );
             if (response.statusCode == 201 || response.statusCode == 200) {

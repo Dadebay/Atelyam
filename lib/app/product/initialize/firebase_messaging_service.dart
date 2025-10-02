@@ -10,7 +10,7 @@ class FirebaseMessagingService {
   LocalNotificationsService? _localNotificationsService;
 
   Future<void> init(
-      {required LocalNotificationsService localNotificationsService}) async {
+      {required LocalNotificationsService localNotificationsService,}) async {
     _localNotificationsService = localNotificationsService;
     await _handlePushNotificationsToken();
     await _requestPermission();
@@ -47,7 +47,7 @@ class FirebaseMessagingService {
     final notificationData = message.notification;
     if (notificationData != null) {
       _localNotificationsService?.showNotification(notificationData.title,
-          notificationData.body, message.data.toString());
+          notificationData.body, message.data.toString(),);
     }
   }
 

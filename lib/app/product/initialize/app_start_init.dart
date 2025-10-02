@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
-
 import '../custom_widgets/index.dart';
 
 class MyHttpOverrides extends HttpOverrides {

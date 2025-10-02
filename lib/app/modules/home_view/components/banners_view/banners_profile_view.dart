@@ -29,7 +29,7 @@ class BannersProfile extends StatelessWidget {
               style: TextStyle(
                   color: ColorConstants.kPrimaryColor,
                   fontWeight: FontWeight.w400,
-                  fontSize: AppFontSizes.fontSize16),
+                  fontSize: AppFontSizes.fontSize16,),
             ),
           ),
         ],
