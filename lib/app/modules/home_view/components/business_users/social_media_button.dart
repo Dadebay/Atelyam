@@ -63,7 +63,7 @@ class SocialMediaIcon extends StatelessWidget {
           showSnackBar('url_error', 'url_error_message', ColorConstants.darkMainColor);
         }
       },
-      child: WidgetsMine().buildAnimatedWidget(
+      child: 
         Padding(
           padding: const EdgeInsets.only(right: 10, bottom: 50),
           child: Row(
@@ -86,12 +86,12 @@ class SocialMediaIcon extends StatelessWidget {
                           ? 10
                           : icon == Assets.address
                               ? 10
-                              : 7),
+                              : 7,),
                       height: AppFontSizes.getFontSize(icon == Assets.tiktok
                           ? 10
                           : icon == Assets.address
                               ? 10
-                              : 7),
+                              : 7,),
                     ),
                   ),
                 ),
@@ -136,8 +136,6 @@ class SocialMediaIcon extends StatelessWidget {
             ],
           ),
         ),
-        300 * index,
-      ),
     );
   }
 }

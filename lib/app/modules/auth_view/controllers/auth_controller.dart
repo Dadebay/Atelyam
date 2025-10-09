@@ -9,25 +9,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
-  final ipAddress = 'http://216.250.12.49:8000'.obs;
+  final RxString ipAddress = 'http://216.250.11.255:7000'.obs;
 
-  Future<void> handleAuthAction({required String phoneController, required String usernameController}) async {
+  Future<void> handleAuthAction(
+      {required String phoneController,
+      required String usernameController,}) async {
     final HomeController homeController = Get.find();
+    print(phoneController);
+    print(usernameController);
     homeController.agreeButton.toggle();
     final signInService = SignInService();
     final phoneNumber = phoneController;
     final userName = usernameController;
     try {
-      final registerResponse = await signInService.register(phoneNumber: phoneNumber, name: userName);
+      final registerResponse = await signInService.register(
+          phoneNumber: phoneNumber, name: userName,);
       if (registerResponse == 200) {
         homeController.agreeButton.toggle();
-        await Get.to(() => OTPView(phoneNumber: phoneNumber, userName: userName));
+        await Get.to(
+            () => OTPView(phoneNumber: phoneNumber, userName: userName),);
       } else {
         final loginResponse = await signInService.login(phone: phoneNumber);
 
         if (loginResponse == 200) {
           homeController.agreeButton.toggle();
-          await Get.to(() => OTPView(phoneNumber: phoneNumber, userName: userName));
+          await Get.to(
+              () => OTPView(phoneNumber: phoneNumber, userName: userName,),);
         } else {
           homeController.agreeButton.toggle();
           showSnackBar('error', 'errorLogin', ColorConstants.redColor);
@@ -39,10 +46,15 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> verifyOTP({required String phoneNumber, required List<TextEditingController> otpControllers, required String username}) async {
-    final String otp = otpControllers.map((controller) => controller.text).join();
+  Future<void> verifyOTP(
+      {required String phoneNumber,
+      required List<TextEditingController> otpControllers,
+      required String username,}) async {
+    final String otp =
+        otpControllers.map((controller) => controller.text).join();
     if (otp.length == 4) {
-      final response = await SignInService().otpCheck(phoneNumber: phoneNumber, otp: otp);
+      final response =
+          await SignInService().otpCheck(phoneNumber: phoneNumber, otp: otp);
       if (response == 200) {
         final homeController = Get.find<HomeController>();
         final settingsController = Get.find<NewSettingsPageController>();

@@ -81,13 +81,17 @@ class CustomTextField extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
           floatingLabelAlignment: FloatingLabelAlignment.start,
-          contentPadding: EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
+          contentPadding:
+              EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
           isDense: true,
           alignLabelWithHint: true,
           border: _buildOutlineInputBorder(borderColor: defaultColor),
           enabledBorder: _buildOutlineInputBorder(borderColor: defaultColor),
-          focusedBorder: _buildOutlineInputBorder(borderColor: ColorConstants.kSecondaryColor),
-          focusedErrorBorder: _buildOutlineInputBorder(borderColor: defaultColor),
+          focusedBorder: _buildOutlineInputBorder(
+            borderColor: ColorConstants.kSecondaryColor,
+          ),
+          focusedErrorBorder:
+              _buildOutlineInputBorder(borderColor: defaultColor),
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),
       ),
@@ -171,7 +175,8 @@ class PhoneNumberTextField extends StatelessWidget {
             fontSize: AppFontSizes.getFontSize(4.5),
           ),
           prefixIconConstraints: BoxConstraints(minWidth: 80),
-          contentPadding: const EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
+          contentPadding:
+              const EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
           isDense: true,
           border: _buildOutlineInputBorder(
             borderColor: ColorConstants.kPrimaryColor.withOpacity(.2),
@@ -179,7 +184,9 @@ class PhoneNumberTextField extends StatelessWidget {
           enabledBorder: _buildOutlineInputBorder(
             borderColor: ColorConstants.kPrimaryColor.withOpacity(.2),
           ),
-          focusedBorder: _buildOutlineInputBorder(borderColor: ColorConstants.kSecondaryColor),
+          focusedBorder: _buildOutlineInputBorder(
+            borderColor: ColorConstants.kSecondaryColor,
+          ),
           focusedErrorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),

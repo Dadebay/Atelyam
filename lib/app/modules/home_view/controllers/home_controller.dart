@@ -6,7 +6,6 @@ import 'package:atelyam/app/data/service/banner_service.dart';
 import 'package:atelyam/app/data/service/business_category_service.dart';
 import 'package:atelyam/app/data/service/hashtag_service.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -20,7 +19,8 @@ class HomeController extends GetxController {
   RxBool isLoadingProducts = false.obs;
   final RefreshController refreshController = RefreshController();
   RxList<ProductModel> allProducts = <ProductModel>[].obs;
-  RxMap<int, Future<List<ProductModel>>> productsFutures = <int, Future<List<ProductModel>>>{}.obs;
+  RxMap<int, Future<List<ProductModel>>> productsFutures =
+      <int, Future<List<ProductModel>>>{}.obs;
   Rx<FilterOption?> selectedFilter = Rx<FilterOption?>(FilterOption.last);
   late Rx<Future<List<BannerModel>>> bannersFuture;
   late Rx<Future<List<BusinessCategoryModel>?>> categoriesFuture;
@@ -58,7 +58,6 @@ class HomeController extends GetxController {
         allProducts.addAll(products);
       }
     } catch (e) {
-      showSnackBar('Hata', 'Bir hata oluştu: $e', ColorConstants.redColor); // Hata mesajı göster
     } finally {
       isLoadingProducts.value = false;
       refreshController.loadComplete();
@@ -87,8 +86,6 @@ class HomeController extends GetxController {
     bannersFuture.value = Future.value([]);
     categoriesFuture.value = Future.value([]);
     hashtagsFuture.value = Future.value([]);
-
-    // await Future.delayed(Duration(milliseconds: 300)); // UI'da boş görüntülenmesi için kısa gecikme
 
     bannersFuture.value = _bannerService.fetchBanners();
     categoriesFuture.value = _categoryService.fetchCategories();

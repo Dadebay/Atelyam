@@ -1,7 +1,6 @@
 import 'package:atelyam/app/data/models/category_model.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -26,23 +25,16 @@ class CategoryCard extends StatelessWidget {
       child: Hero(
         tag: categoryModel.name,
         child: Container(
-          margin: const EdgeInsets.only(top: 20, left: 15, right: 15),
-          height: Get.size.width >= 800 ? 350 : 220,
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+          height: Get.size.width >= 800 ? 350 : 200,
           decoration: BoxDecoration(
-            borderRadius: BorderRadii.borderRadius40,
+            borderRadius: BorderRadii.borderRadius15,
             color: Colors.transparent,
-            boxShadow: [
-              BoxShadow(
-                color: ColorConstants.kThirdColor.withOpacity(0.4),
-                blurRadius: 5,
-                spreadRadius: 4,
-              ),
-            ],
           ),
           child: Material(
-            borderRadius: BorderRadii.borderRadius40,
+            borderRadius: BorderRadii.borderRadius15,
             child: ClipRRect(
-              borderRadius: BorderRadii.borderRadius40,
+              borderRadius: BorderRadii.borderRadius15,
               child: Stack(
                 children: [
                   Positioned.fill(
@@ -55,13 +47,18 @@ class CategoryCard extends StatelessWidget {
                               keyImage: keyImage,
                             ),
                             children: [
-                              CachedNetworkImage(
-                                imageUrl: '${authController.ipAddress.value}${categoryModel.logo!}',
-                                fit: BoxFit.cover,
-                                key: keyImage,
-                                placeholder: (context, url) => EmptyStates().loadingData(),
-                                errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
-                              ),
+                              categoryModel.logo != null && categoryModel.logo!.isNotEmpty && categoryModel.logo! != 'null'
+                                  ? CachedNetworkImage(
+                                      imageUrl:
+                                          '${authController.ipAddress.value}${categoryModel.logo ?? ''}',
+                                      fit: BoxFit.cover,
+                                      key: keyImage,
+                                      placeholder: (context, url) =>
+                                          EmptyStates().loadingData(),
+                                      errorWidget: (context, url, error) =>
+                                          EmptyStates().noMiniCategoryImage(),
+                                    )
+                                  : EmptyStates().noMiniCategoryImage(),
                             ],
                           ),
                   ),
@@ -121,18 +118,23 @@ class ParallaxFlowDelegate extends FlowDelegate {
     required this.keyImage,
   }) : super(repaint: scrollable.position);
   @override
-  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) => BoxConstraints.tightFor(width: constraints.maxWidth);
+  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) =>
+      BoxConstraints.tightFor(width: constraints.maxWidth);
 
   @override
   void paintChildren(FlowPaintingContext context) {
     final scrollableBox = scrollable.context.findRenderObject() as RenderBox;
     final itemBox = itemContext.findRenderObject() as RenderBox;
-    final itemOffset = itemBox.localToGlobal(itemBox.size.centerLeft(Offset.zero), ancestor: scrollableBox);
+    final itemOffset = itemBox.localToGlobal(
+      itemBox.size.centerLeft(Offset.zero),
+      ancestor: scrollableBox,
+    );
     final viewportDimension = scrollable.position.viewportDimension;
     final scrollFraction = (itemOffset.dy / viewportDimension).clamp(0, 1);
     final verticalAlignment = Alignment(0, scrollFraction * 2 - 1);
     final imageBox = keyImage.currentContext!.findRenderObject() as RenderBox;
-    final childRect = verticalAlignment.inscribe(imageBox.size, Offset.zero & context.size);
+    final childRect =
+        verticalAlignment.inscribe(imageBox.size, Offset.zero & context.size);
     context.paintChild(
       0,
       transform: Transform.translate(
@@ -142,5 +144,8 @@ class ParallaxFlowDelegate extends FlowDelegate {
   }
 
   @override
-  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) => scrollable != oldDelegate.scrollable || itemContext != oldDelegate.itemContext || keyImage != oldDelegate.keyImage;
+  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) =>
+      scrollable != oldDelegate.scrollable ||
+      itemContext != oldDelegate.itemContext ||
+      keyImage != oldDelegate.keyImage;
 }

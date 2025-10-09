@@ -1,11 +1,4 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
-import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
+import '../../../product/custom_widgets/index.dart';
 
 class AuthView extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
@@ -24,7 +17,7 @@ class AuthView extends StatelessWidget {
           Positioned(
             top: 0,
             child: ClipPath(
-              clipper: WaveClipper(isTopWave: true), // Top wave
+              clipper: WaveClipper(isTopWave: true),
               child: BackgroundPattern(),
             ),
           ),
@@ -39,7 +32,7 @@ class AuthView extends StatelessWidget {
             right: 0,
             bottom: 0,
             child: ClipPath(
-              clipper: WaveClipper(isTopWave: false), // Bottom wave
+              clipper: WaveClipper(isTopWave: false),
               child: Container(
                 color: Colors.white,
                 height: Get.size.height / 1.9,
@@ -57,46 +50,37 @@ class AuthView extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        FadeInDown(
-          duration: const Duration(milliseconds: 600),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 30),
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 62,
             child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 62,
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: AssetImage(Assets.logoBlack), // Ensure this path is correct
-              ),
+              radius: 60,
+              backgroundImage: AssetImage(Assets.logoBlack),
             ),
           ),
         ),
-        FadeInDown(
-          duration: const Duration(milliseconds: 700),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              Assets.appName.tr,
-              style: TextStyle(
-                color: ColorConstants.whiteMainColor,
-                fontWeight: FontWeight.bold,
-                fontSize: AppFontSizes.getFontSize(7),
-              ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            Assets.appName.tr,
+            style: TextStyle(
+              color: ColorConstants.whiteMainColor,
+              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.getFontSize(7),
             ),
           ),
         ),
-        FadeInDown(
-          duration: const Duration(milliseconds: 700),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'brandingTitle1'.tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.w500,
-                fontSize: AppFontSizes.getFontSize(5),
-              ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'brandingTitle1'.tr,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white70,
+              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.getFontSize(5),
             ),
           ),
         ),
@@ -108,52 +92,42 @@ class AuthView extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        WidgetsMine().buildAnimatedWidget(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              'welcomeSubtitle'.tr,
-              style: TextStyle(
-                color: ColorConstants.kPrimaryColor,
-                fontWeight: FontWeight.w600,
-                fontSize: AppFontSizes.getFontSize(4.5),
-              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Text(
+            'welcomeSubtitle'.tr,
+            style: TextStyle(
+              color: ColorConstants.kPrimaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.getFontSize(4.5),
             ),
           ),
-          800,
         ),
-        WidgetsMine().buildAnimatedWidget(
-          CustomTextField(
-            labelName: 'name',
-            controller: usernameController,
-            focusNode: usernameFocusNode,
-            requestfocusNode: phoneFocusNode,
-            borderRadius: true,
-            showLabel: false,
-            customColor: ColorConstants.kPrimaryColor.withOpacity(.2),
-            prefixIcon: IconlyLight.profile,
-          ),
-          800,
+        CustomTextField(
+          labelName: 'name',
+          controller: usernameController,
+          focusNode: usernameFocusNode,
+          requestfocusNode: phoneFocusNode,
+          borderRadius: true,
+          showLabel: false,
+          customColor: ColorConstants.kPrimaryColor.withOpacity(.2),
+          prefixIcon: IconlyLight.profile,
         ),
-        WidgetsMine().buildAnimatedWidget(
-          PhoneNumberTextField(
-            controller: phoneController,
-            focusNode: phoneFocusNode,
-            requestfocusNode: usernameFocusNode,
-          ),
-          900,
+        PhoneNumberTextField(
+          controller: phoneController,
+          focusNode: phoneFocusNode,
+          requestfocusNode: usernameFocusNode,
         ),
-        WidgetsMine().buildAnimatedWidget(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: AgreeButton(
-              onTap: () {
-                authController.handleAuthAction(phoneController: phoneController.text, usernameController: usernameController.text);
-              },
-              text: 'login',
-            ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: AgreeButton(
+            onTap: () {
+              authController.handleAuthAction(
+                  phoneController: phoneController.text,
+                  usernameController: usernameController.text,);
+            },
+            text: 'login',
           ),
-          1000,
         ),
       ],
     );

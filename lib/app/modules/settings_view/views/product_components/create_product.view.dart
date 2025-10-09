@@ -1,19 +1,13 @@
-import 'package:atelyam/app/data/models/business_category_model.dart';
-import 'package:atelyam/app/data/models/hashtag_model.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 class CreateProductView extends StatelessWidget {
   CreateProductView({super.key});
   final ProductController controller = Get.put(ProductController());
 
   List<FocusNode> focusNodes = List.generate(3, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers = List.generate(3, (_) => TextEditingController());
+  List<TextEditingController> textEditingControllers =
+      List.generate(3, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -28,78 +22,195 @@ class CreateProductView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
             child: Obx(
-              () => DropdownButtonFormField<BusinessCategoryModel>(
-                decoration: InputDecoration(
-                  labelText: 'select_types_of_business'.tr,
-                  labelStyle: TextStyle(fontSize: AppFontSizes.getFontSize(4), fontWeight: FontWeight.w600, color: Colors.grey.shade400),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: ColorConstants.kPrimaryColor, width: 2),
-                  ),
-                ),
-                value: controller.selectedCategory.value,
-                items: controller.categories.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(category.name),
+              () => GestureDetector(
+                onTap: () {
+                  Get.bottomSheet(
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ColorConstants.whiteMainColor,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'select_types_of_business'.tr,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.getFontSize(5),
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstants.kPrimaryColor,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: controller.categories.length,
+                              itemBuilder: (context, index) {
+                                final category = controller.categories[index];
+                                return ListTile(
+                                  title: Text(category.name),
+                                  trailing: controller
+                                              .selectedCategory.value?.id ==
+                                          category.id
+                                      ? Icon(
+                                          Icons.check,
+                                          color: ColorConstants.kPrimaryColor,
+                                        )
+                                      : null,
+                                  onTap: () {
+                                    controller.selectedCategory.value =
+                                        category;
+                                    Get.back();
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
-                }).toList(),
-                icon: Icon(IconlyLight.arrow_down_circle, color: Colors.grey.shade300, size: 30), // Ok ikonunun boyutunu artır
-                iconSize: 30, // Ok ikonunun boyutunu artır
-                isExpanded: true, // Dropdown'u genişlet
-                itemHeight: 60, // D
-                onChanged: (value) => controller.selectedCategory.value = value,
-                validator: (value) => value == null ? 'fill_all_fields'.tr : null,
+                },
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                      text: controller.selectedCategory.value?.name ?? '',
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'select_types_of_business'.tr,
+                      labelStyle: TextStyle(
+                        fontSize: AppFontSizes.getFontSize(4),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade400,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade300, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide: BorderSide(
+                          color: ColorConstants.kPrimaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      suffixIcon: Icon(
+                        IconlyLight.arrow_down_circle,
+                        color: Colors.grey.shade300,
+                        size: 30,
+                      ),
+                    ),
+                    validator: (value) =>
+                        controller.selectedCategory.value == null
+                            ? 'fill_all_fields'.tr
+                            : null,
+                  ),
+                ),
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
             child: Obx(
-              () => DropdownButtonFormField<HashtagModel>(
-                decoration: InputDecoration(
-                  labelText: 'select_categories'.tr,
-                  labelStyle: TextStyle(fontSize: AppFontSizes.getFontSize(4), fontWeight: FontWeight.w600, color: Colors.grey.shade400),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: ColorConstants.kPrimaryColor, width: 2),
-                  ),
-                ),
-                value: controller.selectedHashtag.value,
-                items: controller.hashtags.map((hashtag) {
-                  return DropdownMenuItem(
-                    value: hashtag,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(hashtag.name),
+              () => GestureDetector(
+                onTap: () {
+                  Get.bottomSheet(
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ColorConstants.whiteMainColor,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'select_categories'.tr,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.getFontSize(5),
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstants.kPrimaryColor,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: controller.hashtags.length,
+                              itemBuilder: (context, index) {
+                                final hashtag = controller.hashtags[index];
+                                return ListTile(
+                                  title: Text(hashtag.name),
+                                  trailing: controller
+                                              .selectedHashtag.value?.id ==
+                                          hashtag.id
+                                      ? Icon(
+                                          Icons.check,
+                                          color: ColorConstants.kPrimaryColor,
+                                        )
+                                      : null,
+                                  onTap: () {
+                                    controller.selectedHashtag.value = hashtag;
+                                    Get.back();
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
-                }).toList(),
-                icon: Icon(IconlyLight.arrow_down_circle, color: Colors.grey.shade300, size: 30), // Ok ikonunun boyutunu artır
-                iconSize: 30, // Ok ikonunun boyutunu artır
-                isExpanded: true, // Dropdown'u genişlet
-                itemHeight: 60, // D
-                onChanged: (value) => controller.selectedHashtag.value = value,
-                validator: (value) => value == null ? 'fill_all_fields'.tr : null,
+                },
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                      text: controller.selectedHashtag.value?.name ?? '',
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'select_categories'.tr,
+                      labelStyle: TextStyle(
+                        fontSize: AppFontSizes.getFontSize(4),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade400,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade300, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadii.borderRadius20,
+                        borderSide: BorderSide(
+                          color: ColorConstants.kPrimaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      suffixIcon: Icon(
+                        IconlyLight.arrow_down_circle,
+                        color: Colors.grey.shade300,
+                        size: 30,
+                      ),
+                    ),
+                    validator: (value) =>
+                        controller.selectedHashtag.value == null
+                            ? 'fill_all_fields'.tr
+                            : null,
+                  ),
+                ),
               ),
             ),
           ),
@@ -151,7 +262,11 @@ class CreateProductView extends StatelessWidget {
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(IconlyLight.image, color: Colors.grey.shade400, size: 40),
+                            Icon(
+                              IconlyLight.image,
+                              color: Colors.grey.shade400,
+                              size: 40,
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
@@ -159,7 +274,10 @@ class CreateProductView extends StatelessWidget {
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.grey.shade400, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
@@ -201,7 +319,9 @@ class CreateProductView extends StatelessWidget {
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.8,
                     ),
-                    itemCount: controller.selectedImages.length < 4 ? controller.selectedImages.length + 1 : controller.selectedImages.length,
+                    itemCount: controller.selectedImages.length < 4
+                        ? controller.selectedImages.length + 1
+                        : controller.selectedImages.length,
                     itemBuilder: (context, index) {
                       if (index < controller.selectedImages.length) {
                         return WidgetsMine().buildImageItem(
@@ -211,7 +331,8 @@ class CreateProductView extends StatelessWidget {
                           },
                         );
                       } else {
-                        return controller.selectedImages.length < controller.maxImageCount
+                        return controller.selectedImages.length <
+                                controller.maxImageCount
                             ? WidgetsMine().buildUploadButton(
                                 onTap: () {
                                   controller.pickImages();

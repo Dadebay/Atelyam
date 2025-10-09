@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:animate_do/animate_do.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/back_button.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
@@ -32,11 +31,19 @@ SnackbarController showSnackBar(String title, String subtitle, Color color) {
         ? const SizedBox.shrink()
         : Text(
             title.tr,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20, color: Colors.white),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.fontSize20,
+              color: Colors.white,
+            ),
           ),
     messageText: Text(
       subtitle.tr,
-      style: TextStyle(fontWeight: FontWeight.w400, fontSize: AppFontSizes.fontSize16, color: Colors.white),
+      style: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: AppFontSizes.fontSize16,
+        color: Colors.white,
+      ),
     ),
     snackPosition: SnackPosition.TOP,
     backgroundColor: color,
@@ -105,7 +112,10 @@ class WidgetsMine {
     );
   }
 
-  Widget buildImageItemEditProduct({required String image, required VoidCallback onTap}) {
+  Widget buildImageItemEditProduct({
+    required String image,
+    required VoidCallback onTap,
+  }) {
     return Stack(
       children: [
         ClipRRect(
@@ -133,24 +143,15 @@ class WidgetsMine {
     );
   }
 
-  Widget customCachedImage(String image) {
+  Widget customCachedImage(String image, {double? width, double? height}) {
     final AuthController authController = Get.find();
 
     return CachedNetworkImage(
       imageUrl: authController.ipAddress.value + image,
       fit: BoxFit.cover,
       fadeInCurve: Curves.ease,
-      height: Get.size.height,
-      width: Get.size.width,
       placeholder: (context, url) => EmptyStates().loadingData(),
       errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
-    );
-  }
-
-  Widget buildAnimatedWidget(Widget child, int delay) {
-    return FadeInUp(
-      delay: Duration(milliseconds: delay),
-      child: child,
     );
   }
 
@@ -165,7 +166,8 @@ class WidgetsMine {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
+      systemOverlayStyle:
+          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: BackButtonMine(miniButton: true),
       actions: actions,
     );
@@ -175,14 +177,13 @@ class WidgetsMine {
 class WaveClipper extends CustomClipper<Path> {
   WaveClipper({this.isTopWave = true});
 
-  final bool isTopWave; // Parameter to control the clipping behavior
+  final bool isTopWave;
 
   @override
   Path getClip(Size size) {
     final path = Path();
 
     if (isTopWave) {
-      // Clipping logic for the top wave
       path.lineTo(0, size.height * 0.4);
 
       final firstControlPoint = Offset(size.width * 0.22, size.height * 0.35);
@@ -205,10 +206,10 @@ class WaveClipper extends CustomClipper<Path> {
 
       path.lineTo(size.width, 0);
     } else {
-      // Clipping logic for the bottom wave
       path.lineTo(0, size.height * 0.06);
 
-      final firstControlPointUp = Offset(size.width * 0.28, size.height * -0.05);
+      final firstControlPointUp =
+          Offset(size.width * 0.28, size.height * -0.05);
       final firstEndPointUp = Offset(size.width * 0.5, size.height * 0.06);
       path.quadraticBezierTo(
         firstControlPointUp.dx,
@@ -217,7 +218,8 @@ class WaveClipper extends CustomClipper<Path> {
         firstEndPointUp.dy,
       );
 
-      final firstControlPointDown = Offset(size.width * 0.75, size.height * 0.15);
+      final firstControlPointDown =
+          Offset(size.width * 0.75, size.height * 0.15);
       final firstEndPointDown = Offset(size.width, size.height * 0.05);
       path.quadraticBezierTo(
         firstControlPointDown.dx,

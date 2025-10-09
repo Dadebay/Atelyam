@@ -10,15 +10,19 @@ class MyProductCard extends StatelessWidget {
   final ProductModel productModel;
   final Function() onTap;
 
-  const MyProductCard({required this.productModel, required this.onTap, super.key});
+  const MyProductCard({
+    required this.productModel,
+    required this.onTap,
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: ColorConstants.whiteMainColor, // Pasif hesap rengi
-        borderRadius: BorderRadii.borderRadius20, // Köşe yuvarlaklığı
+        color: ColorConstants.whiteMainColor,
+        borderRadius: BorderRadii.borderRadius10,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade300,
@@ -32,8 +36,10 @@ class MyProductCard extends StatelessWidget {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: productModel.status.toString().toLowerCase() == 'true' ? Colors.grey.shade500 : ColorConstants.whiteMainColor, // Pasif hesap rengi
-                borderRadius: BorderRadii.borderRadius20, // Köşe yuvarlaklığı
+                color: productModel.status.toString().toLowerCase() == 'true'
+                    ? Colors.grey.shade200
+                    : ColorConstants.whiteMainColor,
+                borderRadius: BorderRadii.borderRadius10,
               ),
             ),
           ),
@@ -44,19 +50,22 @@ class MyProductCard extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius18,
-                    border: Border.all(color: ColorConstants.kSecondaryColor, width: 1),
+                    borderRadius: BorderRadii.borderRadius10,
+                    border: Border.all(
+                      color: ColorConstants.kSecondaryColor,
+                      width: 0.5,
+                    ),
                   ),
                   margin: EdgeInsets.only(right: 20),
                   child: ClipRRect(
-                    borderRadius: BorderRadii.borderRadius18, // Logo köşe yuvarlaklığı
+                    borderRadius: BorderRadii.borderRadius10,
                     child: productModel.img.toString() == 'null'
                         ? Icon(
                             IconlyLight.image_2,
                             color: Colors.grey,
                           )
                         : WidgetsMine().customCachedImage(
-                            productModel.img, // Logo URL'si
+                            productModel.img,
                           ),
                   ),
                 ),
@@ -90,10 +99,10 @@ class MyProductCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                // Düzenleme butonu
+               
                 IconButton(
                   onPressed: onTap,
-                  icon: Icon(IconlyLight.edit_square), // Düzenleme ikonusssss
+                  icon: Icon(IconlyLight.edit_square),
                 ),
               ],
             ),

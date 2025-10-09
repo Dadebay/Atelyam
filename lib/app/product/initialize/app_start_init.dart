@@ -1,12 +1,5 @@
 import 'dart:io';
-
-import 'package:atelyam/app/data/service/notification_service.dart';
-import 'package:atelyam/main.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get_storage/get_storage.dart';
+import '../custom_widgets/index.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -21,11 +14,17 @@ class AppStartInit {
     WidgetsFlutterBinding.ensureInitialized();
     HttpOverrides.global = MyHttpOverrides();
     await GetStorage.init();
-    await Firebase.initializeApp();
+    Get.put(AuthController());
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-    await FCMConfig().requestPermission();
-    await FCMConfig().initAwesomeNotification();
-    FirebaseMessaging.onBackgroundMessage(backgroundNotificationHandler);
+    final localNotificationsService = LocalNotificationsService.instance();
+    await localNotificationsService.init();
+
+    final firebaseMessagingService = FirebaseMessagingService.instance();
+    await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -42,11 +41,5 @@ class AppStartInit {
         statusBarBrightness: Brightness.light,
       ),
     );
-  }
-
-  static Future<void> getNotification() async {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      FCMConfig().sendNotification(body: message.notification!.body!, title: message.notification!.title!);
-    });
   }
 }

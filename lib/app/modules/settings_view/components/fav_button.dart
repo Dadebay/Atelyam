@@ -23,7 +23,8 @@ class FavButton extends StatefulWidget {
 }
 
 class _FavButtonState extends State<FavButton> {
-  final NewSettingsPageController settingsController = Get.find<NewSettingsPageController>();
+  final NewSettingsPageController settingsController =
+      Get.find<NewSettingsPageController>();
 
   bool isFavorited = false;
 
@@ -35,24 +36,24 @@ class _FavButtonState extends State<FavButton> {
         onTap: () {
           settingsController.toggleFavoriteProduct(widget.product);
           isFavorited = !isFavorited;
-          setState(() {}); // Durumu güncelle
+          setState(() {});
         },
         child: Container(
-          padding: const EdgeInsets.all(9),
+          padding: const EdgeInsets.all(5),
           margin: EdgeInsets.only(right: widget.productProfilStyle ? 8 : 0),
           decoration: BoxDecoration(
             color: widget.productProfilStyle
                 ? ColorConstants.whiteMainColor
                 : isFavorited
-                    ? Colors.white
-                    : ColorConstants.kThirdColor.withOpacity(0.6),
+                    ? ColorConstants.whiteMainColor.withOpacity(.8)
+                    : ColorConstants.whiteMainColor.withOpacity(.2),
             borderRadius: BorderRadii.borderRadius15,
           ),
           child: Icon(
             isFavorited ? IconlyBold.heart : IconlyLight.heart,
-            size: AppFontSizes.fontSize24,
+            size: AppFontSizes.fontSize20,
             color: isFavorited
-                ? Colors.red
+                ? Colors.pink
                 : widget.productProfilStyle
                     ? ColorConstants.darkMainColor
                     : ColorConstants.whiteMainColor,

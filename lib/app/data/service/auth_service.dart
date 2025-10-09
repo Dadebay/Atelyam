@@ -3,12 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 class Auth {
@@ -84,6 +80,8 @@ class SignInService {
   }
 
   Future<int?> register({required String phoneNumber, required String name}) async {
+    print(phoneNumber);
+    print('REGISTER');
     final result = await _handleApiRequest(
       '/mobile/signup/',
       body: <String, dynamic>{
@@ -93,6 +91,8 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
+        print(responseJson);
+
         return responseJson;
       },
       isForm: true,
@@ -102,6 +102,9 @@ class SignInService {
   }
 
   Future<int?> login({required String phone}) async {
+    print(phone);
+    print('LOGIN-------------------');
+
     return _handleApiRequest(
       '/mobile/login/',
       body: <String, dynamic>{
@@ -110,6 +113,8 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
+        print(responseJson);
+
         return responseJson;
       },
       isForm: true,

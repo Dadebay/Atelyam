@@ -1,38 +1,56 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:upgrader/upgrader.dart';
 
 class BottomNavBar extends StatelessWidget {
-  final HomeController homeController = Get.put<HomeController>(HomeController());
+  final HomeController homeController =
+      Get.put<HomeController>(HomeController());
+
   BottomNavBar({super.key});
+
   final List<Widget> pages = [
     HomeView(),
-    CategoryView(),
     DiscoveryView(),
+    CategoryView(),
+    FavoritesView(),
     SettingsView(),
   ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true, // BottomNavigationBar'ı body'ye genişletiyoruz
-      body: Obx(() => pages[homeController.selectedIndex.value]),
-      bottomNavigationBar: Obx(() {
-        return CustomBottomNavBar(
-          currentIndex: homeController.selectedIndex.value,
-          onTap: (index) {
-            homeController.selectedIndex.value = index;
-          },
-        );
-      }),
+    return UpgradeAlert(
+      upgrader: Upgrader(languageCode: 'tm'),
+      dialogStyle: Platform.isAndroid
+          ? UpgradeDialogStyle.material
+          : UpgradeDialogStyle.cupertino,
+      child: Scaffold(
+        body: Obx(
+          () => IndexedStack(
+            index: homeController.selectedIndex.value,
+            children: pages,
+          ),
+        ),
+        bottomNavigationBar: Obx(() {
+          return CustomBottomNavBar(
+            currentIndex: homeController.selectedIndex.value,
+            onTap: (index) {
+              homeController.selectedIndex.value = index;
+            },
+          );
+        }),
+      ),
     );
   }
 }
@@ -51,69 +69,56 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       IconlyLight.home,
-      IconlyLight.category,
       IconlyLight.discovery,
+      IconlyLight.category,
+      IconlyLight.heart,
       IconlyLight.profile,
     ];
     final selectedItem = [
       IconlyBold.home,
-      IconlyBold.category,
       IconlyBold.discovery,
+      IconlyBold.category,
+      IconlyBold.heart,
       IconlyBold.profile,
     ];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 25, left: 30, right: 30),
-      height: 60,
-      decoration: BoxDecoration(
-        color: ColorConstants.kSecondaryColor,
-        borderRadius: BorderRadii.borderRadius30,
-        boxShadow: [
-          BoxShadow(
-            color: ColorConstants.kThirdColor.withOpacity(0.1),
-            spreadRadius: 5,
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(items.length, (index) {
-          final isSelected = index == currentIndex;
-          return TweenAnimationBuilder<double>(
-            tween: Tween(begin: isSelected ? 0.0 : 1.0, end: isSelected ? 1.0 : 0.0),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            builder: (context, value, child) {
-              const selectedColor = ColorConstants.kThirdColor;
-              const unselectedColor = ColorConstants.whiteMainColor;
-              return GestureDetector(
-                onTap: () => onTap(index),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isSelected ? selectedItem[index] : items[index],
-                      size: 28,
-                      color: Color.lerp(unselectedColor, selectedColor, value),
+      color: ColorConstants.whiteMainColor,
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorConstants.whiteMainColor,
+        ),
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(items.length, (index) {
+            final isSelected = index == currentIndex;
+            return GestureDetector(
+              onTap: () => onTap(index),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isSelected ? selectedItem[index] : items[index],
+                    size: 28,
+                    color: isSelected
+                        ? ColorConstants.kSecondaryColor
+                        : Colors.grey,
+                  ),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: isSelected ? 4 : 0,
+                    width: 16,
+                    decoration: const BoxDecoration(
+                      color: ColorConstants.kSecondaryColor,
+                      borderRadius: BorderRadii.borderRadius10,
                     ),
-                    const SizedBox(height: 5),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      height: isSelected ? 4 : 0,
-                      width: 16,
-                      decoration: const BoxDecoration(
-                        color: selectedColor,
-                        borderRadius: BorderRadii.borderRadius10,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        }),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

@@ -1,15 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/modules/settings_view/components/settings_button.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
-
 import '../controllers/settings_controller.dart';
 
 class SettingsView extends StatelessWidget {
@@ -27,7 +19,12 @@ class SettingsView extends StatelessWidget {
           title: Text(
             'profil'.tr,
           ),
-          titleTextStyle: TextStyle(color: ColorConstants.whiteMainColor, fontFamily: Fonts.plusJakartaSans, fontSize: AppFontSizes.fontSize24, fontWeight: FontWeight.w600),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontFamily: Fonts.plusJakartaSans,
+            fontSize: AppFontSizes.fontSize24,
+            fontWeight: FontWeight.w600,
+          ),
           flexibleSpace: FlexibleSpaceBar(
             background: GestureDetector(
               onTap: () => Dialogs().showAvatarDialog(),
@@ -37,40 +34,38 @@ class SettingsView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 600),
+                      CircleAvatar(
+                        backgroundColor: Colors.grey.shade200,
+                        radius: 62,
                         child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 62,
-                          child: CircleAvatar(
-                            radius: 60,
-                            child: Image.asset(
-                              settingsController.avatars[settingsController.selectedAvatarIndex.value],
-                              width: 90,
-                              height: 90,
-                            ),
+                          radius: 60,
+                          child: Image.asset(
+                            settingsController.avatars[settingsController.selectedAvatarIndex.value],
+                            width: 90,
+                            height: 90,
                           ),
                         ),
                       ),
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 700),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            settingsController.username.value.isEmpty ? 'Ulanyjy 007 ' : settingsController.username.value,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: ColorConstants.whiteMainColor, fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 + 2),
-                          ),
-                        ),
-                      ),
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 900),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          settingsController.phoneNumber.value.isEmpty ? ' +993-60-00-00-00' : '+993-${formatPhoneNumber(settingsController.phoneNumber.value)}',
+                          settingsController.username.value.isEmpty ? 'Ulanyjy 007 ' : settingsController.username.value,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: ColorConstants.warmWhiteColor, fontSize: AppFontSizes.fontSize16),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.fontSize20 + 2,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        settingsController.phoneNumber.value.isEmpty ? ' +993-60-00-00-00' : '+993-${formatPhoneNumber(settingsController.phoneNumber.value)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: AppFontSizes.fontSize16,
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -105,16 +100,30 @@ class SettingsView extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SliverToBoxAdapter(child: EmptyStates().loadingData());
         } else if (snapshot.hasError) {
-          return SliverToBoxAdapter(child: EmptyStates().errorData(snapshot.error.toString()));
+          return SliverToBoxAdapter(
+            child: EmptyStates().errorData(snapshot.error.toString()),
+          );
         } else {
           final String? token = snapshot.data;
           final List<Map<String, dynamic>> currentSettingsViews = token != null && token.isNotEmpty ? loggedInSettingsViews : settingsViews;
 
           return SliverToBoxAdapter(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              decoration: BoxDecoration(
+                color: ColorConstants.whiteMainColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                border: Border(
+                  top: BorderSide(
+                    color: ColorConstants.kSecondaryColor.withOpacity(0.2),
+                    width: 2,
+                  ),
+                  left: BorderSide.none,
+                  right: BorderSide.none,
+                  bottom: BorderSide.none,
+                ),
               ),
               child: ListView.builder(
                 itemCount: currentSettingsViews.length,
@@ -124,41 +133,39 @@ class SettingsView extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   final item = currentSettingsViews[index];
                   return token != null && token.isNotEmpty && item['name'] == 'login'
-                      ? WidgetsMine().buildAnimatedWidget(
-                          SettingsButton(
-                            name: 'logout'.tr,
-                            lang: false,
-                            onTap: () {
-                              Get.bottomSheet(
-                                Dialogs().logOut(
-                                  onYestapped: () async {
-                                    settingsController.isLoginView.value = false;
-                                    await Auth().logout();
-                                    Get.back();
-                                    await Get.offAll(() => BottomNavBar());
-                                    showSnackBar('logout', 'logOutUser', Colors.red);
-                                  },
-                                ),
-                              );
-                            },
-                            icon: Icon(IconlyLight.logout, color: ColorConstants.kSecondaryColor),
+                      ? SettingsButton(
+                          name: 'delete_account'.tr,
+                          lang: false,
+                          onTap: () {
+                            Get.bottomSheet(
+                              Dialogs().deleteAccount(
+                                onYestapped: () async {
+                                  await Auth().logout();
+                                  Get.back();
+                                  await Get.offAll(() => BottomNavBar());
+                                },
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            IconlyLight.delete,
+                            color: ColorConstants.kSecondaryColor,
                           ),
-                          500 * index,
                         )
-                      : WidgetsMine().buildAnimatedWidget(
-                          SettingsButton(
-                            name: "${item['name']}".tr,
-                            lang: item['name'] == 'lang',
-                            onTap: () {
-                              if (item['name'] == 'lang') {
-                                settingsController.showLanguageDialog(context);
-                              } else {
-                                Get.to(item['page']);
-                              }
-                            },
-                            icon: Icon(item['icon'], color: ColorConstants.kSecondaryColor),
+                      : SettingsButton(
+                          name: "${item['name']}".tr,
+                          lang: item['name'] == 'lang',
+                          onTap: () {
+                            if (item['name'] == 'lang') {
+                              settingsController.showLanguageDialog(context);
+                            } else {
+                              Get.to(item['page']);
+                            }
+                          },
+                          icon: Icon(
+                            item['icon'],
+                            color: ColorConstants.kSecondaryColor,
                           ),
-                          500 * index,
                         );
                 },
               ),
@@ -172,7 +179,7 @@ class SettingsView extends StatelessWidget {
   SliverToBoxAdapter _buildSpacer() {
     return SliverToBoxAdapter(
       child: Container(
-        color: Colors.white,
+        color: ColorConstants.whiteMainColor,
         height: Get.size.width >= 800 ? Get.size.height / 2 : Get.size.height / 4,
       ),
     );
@@ -180,17 +187,15 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(top: 0, left: 0, right: 0, child: BackgroundPattern()),
-        CustomScrollView(
-          slivers: [
-            _buildSliverAppBar(context),
-            _buildSettingsList(),
-            _buildSpacer(),
-          ],
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: ColorConstants.whiteMainColor,
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          _buildSettingsList(),
+          _buildSpacer(),
+        ],
+      ),
     );
   }
 }

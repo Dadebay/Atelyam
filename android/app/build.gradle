@@ -29,6 +29,8 @@ android {
     namespace = "com.gurbanov.atelyam"
     compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
     compileOptions {
+        // ADD THIS LINE
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -36,6 +38,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -68,4 +71,5 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }

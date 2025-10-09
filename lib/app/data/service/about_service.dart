@@ -11,14 +11,15 @@ class AboutService {
   final String _apiEndpoint = '/mobile/about/';
 
   Future<AboutModel> fetchAboutData() async {
-    final response = await http.get(Uri.parse(authController.ipAddress.value + _apiEndpoint));
+    final response = await http
+        .get(Uri.parse(authController.ipAddress.value + _apiEndpoint));
 
     if (response.statusCode == 200) {
-      final responseBody = utf8.decode(response.bodyBytes); // Force UTF-8 decoding
+      final responseBody = utf8.decode(response.bodyBytes);
 
       final List<dynamic> jsonList = json.decode(responseBody);
       if (jsonList.isNotEmpty) {
-        return AboutModel.fromJson(jsonList[0]); // Take the first item
+        return AboutModel.fromJson(jsonList[0]);
       } else {
         throw Exception('No data found.');
       }

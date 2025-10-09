@@ -1,47 +1,140 @@
-// lib/app/modules/home_view/components/categories_mini.dart
-// ignore_for_file: deprecated_member_use
-
 import 'package:atelyam/app/data/models/business_category_model.dart';
 import 'package:atelyam/app/modules/home_view/components/business_category_view/all_business_users_view.dart';
+import 'package:atelyam/app/modules/home_view/controllers/business_category_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class BusinessCategoryView extends StatelessWidget {
+class BusinessCategoryView extends GetView<BusinessCategoryController> {
   final double screenWidth;
   final Future<List<BusinessCategoryModel>?> categoriesFuture;
-  BusinessCategoryView({required this.screenWidth, required this.categoriesFuture, super.key});
+  const BusinessCategoryView({
+    required this.screenWidth,
+    required this.categoriesFuture,
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
+    Get.put(BusinessCategoryController());
+
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListviewTopNameAndIcon(
-          text: 'types_of_business',
-          icon: false,
-          onTap: () {},
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 4.0,
+          ),
+          child: Text(
+            'types_of_business'.tr,
+            style: TextStyle(
+              fontSize: AppFontSizes.fontSize20,
+              fontWeight: FontWeight.w600,
+              color: ColorConstants.darkMainColor,
+            ),
+          ),
         ),
         SizedBox(
-          height: screenWidth >= 800 ? screenWidth * 0.25 : screenWidth * 0.40,
+          height: 80,
           child: FutureBuilder<List<BusinessCategoryModel>?>(
             future: categoriesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return EmptyStates().loadingData();
               } else if (snapshot.hasError || snapshot.data == null) {
-                return EmptyStates().errorData(snapshot.hasError.toString());
+                return EmptyStates().errorData(snapshot.error.toString());
               } else {
                 final List<BusinessCategoryModel> categories = snapshot.data!;
                 return ListView.builder(
                   itemCount: categories.length,
-                  physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   itemBuilder: (BuildContext context, int index) {
                     final category = categories[index];
-                    return _businessCard(category);
+
+                    return Obx(() {
+                      final bool isSelected =
+                          controller.selectedIndex.value == index;
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(
+                            () => AllBusinessUsersView(categoryId: category.id),
+                          );
+                          controller.setSelectedIndex(index);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 14,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: isSelected
+                                ? LinearGradient(
+                                    colors: [
+                                      ColorConstants.kSecondaryColor
+                                          .withOpacity(0.7),
+                                      ColorConstants.kSecondaryColor,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  )
+                                : LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.9),
+                                      Colors.grey.shade200,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isSelected
+                                    ? ColorConstants.kSecondaryColor
+                                        .withOpacity(0.2)
+                                    : Colors.black12,
+                                spreadRadius: 1,
+                                blurRadius: 10,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ClipOval(
+                                child: SizedBox(
+                                  width: 45,
+                                  height: 50,
+                                  child: WidgetsMine().customCachedImage(
+                                    width: 45,
+                                    height: 50,
+                                    category.img,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                category.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : ColorConstants.darkMainColor
+                                          .withOpacity(0.9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
                   },
                 );
               }
@@ -49,57 +142,6 @@ class BusinessCategoryView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  GestureDetector _businessCard(BusinessCategoryModel category) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(() => AllBusinessUsersView(categoryId: category.id));
-      },
-      child: Hero(
-        tag: category.name,
-        child: Container(
-          margin: const EdgeInsets.only(left: 25, top: 10, bottom: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: screenWidth >= 800 ? screenWidth * 0.15 : screenWidth * 0.24,
-                height: screenWidth >= 800 ? screenWidth * 0.15 : screenWidth * 0.24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorConstants.kThirdColor.withOpacity(0.5),
-                      blurRadius: 5,
-                      spreadRadius: 4,
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadii.borderRadius99,
-                  child: WidgetsMine().customCachedImage(category.img),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 8),
-                child: Text(
-                  category.name,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: ColorConstants.darkMainColor,
-                    height: 1.0,
-                    fontWeight: FontWeight.w600,
-                    fontSize: AppFontSizes.fontSize16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

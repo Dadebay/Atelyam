@@ -358,7 +358,7 @@ class Dialogs {
     );
   }
 
-  Widget logOut({required Function() onYestapped}) {
+  Widget deleteAccount({required Function() onYestapped}) {
     return Container(
       decoration: const BoxDecoration(color: Colors.white),
       child: Wrap(
@@ -370,7 +370,7 @@ class Dialogs {
               children: [
                 const SizedBox.shrink(),
                 Text(
-                  'logout'.tr,
+                  'delete_account'.tr,
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 GestureDetector(
@@ -388,7 +388,7 @@ class Dialogs {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
             child: Text(
-              'log_out_title'.tr,
+              'are_you_sure_user'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.grey[500],

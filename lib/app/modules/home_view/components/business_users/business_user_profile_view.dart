@@ -1,34 +1,30 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:atelyam/app/data/models/business_user_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
-import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/modules/home_view/components/business_users/social_media_button.dart';
 import 'package:atelyam/app/modules/home_view/controllers/brands_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 
 class BusinessUserProfileView extends StatefulWidget {
   final BusinessUserModel businessUserModelFromOutside;
   final int categoryID;
   final String whichPage;
-  const BusinessUserProfileView({required this.businessUserModelFromOutside, required this.categoryID, required this.whichPage, super.key});
-  State<BusinessUserProfileView> createState() => _BusinessUserProfileViewState();
+  const BusinessUserProfileView({
+    required this.businessUserModelFromOutside,
+    required this.categoryID,
+    required this.whichPage,
+    super.key,
+  });
+  State<BusinessUserProfileView> createState() =>
+      _BusinessUserProfileViewState();
 }
 
 class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
-  final BrandsController _homeController = Get.put<BrandsController>(BrandsController());
+  final BrandsController _homeController =
+      Get.put<BrandsController>(BrandsController());
   final AuthController authController = Get.find<AuthController>();
   @override
   void initState() {
     super.initState();
-    // _homeController.fetchBusinessUserData(widget.businessUserModelFromOutside, widget.categoryID);
+
     _homeController.fetchBusinessUserData(
       businessUserModelFromOutside: widget.businessUserModelFromOutside,
       categoryID: widget.categoryID,
@@ -41,27 +37,28 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        bottomSheet: WidgetsMine().buildAnimatedWidget(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: AgreeButton(
-              onTap: () {
-                final String phoneNumberText =
-                    _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
+        bottomSheet: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: AgreeButton(
+            onTap: () {
+              final String phoneNumberText = _homeController
+                      .businessUser.value!.businessPhone
+                      .contains('+993')
+                  ? _homeController.businessUser.value!.businessPhone
+                  : '+993${_homeController.businessUser.value!.businessPhone}';
 
-                _homeController.makePhoneCall(phoneNumberText);
-              },
-              text: 'call'.tr,
-            ),
+              _homeController.makePhoneCall(phoneNumberText);
+            },
+            text: 'call'.tr,
           ),
-          500,
         ),
-        backgroundColor: ColorConstants.whiteMainColor,
+        backgroundColor: Colors.white,
         body: Obx(
           () => _homeController.isLoadingBrandsProfile.value
               ? EmptyStates().loadingData()
               : NestedScrollView(
-                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
                     return <Widget>[
                       _buildSliverAppBar(),
                     ];
@@ -81,7 +78,9 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
 
   Widget _buildInfoTab() {
     final String phoneNumberText =
-        _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
+        _homeController.businessUser.value!.businessPhone.contains('+993')
+            ? _homeController.businessUser.value!.businessPhone
+            : '+993${_homeController.businessUser.value!.businessPhone}';
     return Obx(
       () => Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, top: 25),
@@ -91,17 +90,53 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
           children: [
             _homeController.businessUser.value!.instagram!.isEmpty
                 ? SizedBox.shrink()
-                : SocialMediaIcon(name: 'instagram', userName: _homeController.businessUser.value!.instagram.toString(), icon: Assets.instagram, maxline: 1, index: 3),
+                : SocialMediaIcon(
+                    name: 'instagram',
+                    userName: _homeController.businessUser.value!.instagram
+                        .toString(),
+                    icon: Assets.instagram,
+                    maxline: 1,
+                    index: 3,
+                  ),
             _homeController.businessUser.value!.youtube!.isEmpty
                 ? SizedBox.shrink()
-                : SocialMediaIcon(name: 'youtube', userName: _homeController.businessUser.value!.youtube.toString(), icon: Assets.youtube, index: 4, maxline: 1),
+                : SocialMediaIcon(
+                    name: 'youtube',
+                    userName:
+                        _homeController.businessUser.value!.youtube.toString(),
+                    icon: Assets.youtube,
+                    index: 4,
+                    maxline: 1,
+                  ),
             _homeController.businessUser.value!.tiktok!.isEmpty
                 ? SizedBox.shrink()
-                : SocialMediaIcon(name: 'tiktok', userName: _homeController.businessUser.value!.tiktok.toString(), icon: Assets.tiktok, index: 5, maxline: 1),
-            phoneNumberText.isEmpty ? SizedBox.shrink() : SocialMediaIcon(name: 'phone_number', userName: phoneNumberText, icon: Assets.phone, index: 6, maxline: 1),
+                : SocialMediaIcon(
+                    name: 'tiktok',
+                    userName:
+                        _homeController.businessUser.value!.tiktok.toString(),
+                    icon: Assets.tiktok,
+                    index: 5,
+                    maxline: 1,
+                  ),
+            phoneNumberText.isEmpty
+                ? SizedBox.shrink()
+                : SocialMediaIcon(
+                    name: 'phone_number',
+                    userName: phoneNumberText,
+                    icon: Assets.phone,
+                    index: 6,
+                    maxline: 1,
+                  ),
             _homeController.businessUser.value!.address!.isEmpty
                 ? SizedBox.shrink()
-                : SocialMediaIcon(name: 'location', userName: _homeController.businessUser.value!.address.toString(), icon: Assets.address, index: 6, maxline: 4),
+                : SocialMediaIcon(
+                    name: 'location',
+                    userName:
+                        _homeController.businessUser.value!.address.toString(),
+                    icon: Assets.address,
+                    index: 6,
+                    maxline: 4,
+                  ),
           ],
         ),
       ),
@@ -126,7 +161,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             final products = snapshot.data!;
             return MasonryGridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:
+                  const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
               ),
               itemCount: products.length,
@@ -134,16 +170,14 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
               crossAxisSpacing: 15.0,
               itemBuilder: (BuildContext context, int index) {
                 final product = products[index];
-                return WidgetsMine().buildAnimatedWidget(
-                  SizedBox(
-                    height: index % 2 == 0 ? 250 : 220,
-                    child: DiscoveryCard(
-                      productModel: product,
-                      homePageStyle: false,
-                      businessUserID: widget.businessUserModelFromOutside.userID.toString(),
-                    ),
+                return SizedBox(
+                  height: index % 2 == 0 ? 250 : 220,
+                  child: DiscoveryCard(
+                    productModel: product,
+                    homePageStyle: false,
+                    businessUserID:
+                        widget.businessUserModelFromOutside.userID.toString(),
                   ),
-                  100 * index,
                 );
               },
             );
@@ -155,7 +189,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
 
   Widget _buildVideosTab() {
     return Container(
-      color: ColorConstants.whiteMainColor,
+      color: Colors.white,
       padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,7 +199,11 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             'comingTitle'.tr,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppFontSizes.fontSize20 + 2, color: ColorConstants.kPrimaryColor),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.fontSize20 + 2,
+              color: ColorConstants.kPrimaryColor,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 15),
@@ -174,7 +212,11 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
               maxLines: 3,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: AppFontSizes.fontSize16, color: ColorConstants.kPrimaryColor),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: AppFontSizes.fontSize16,
+                color: ColorConstants.kPrimaryColor,
+              ),
             ),
           ),
         ],
@@ -191,7 +233,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
       scrolledUnderElevation: 0.0,
       expandedHeight: 360.0,
       foregroundColor: ColorConstants.kSecondaryColor,
-      actionsIconTheme: const IconThemeData(color: ColorConstants.kSecondaryColor),
+      actionsIconTheme:
+          const IconThemeData(color: ColorConstants.kSecondaryColor),
       backgroundColor: Colors.white,
       automaticallyImplyLeading: true,
       bottom: TabBar(
@@ -211,7 +254,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
         dividerColor: Colors.transparent,
         indicator: const UnderlineTabIndicator(
           borderRadius: BorderRadii.borderRadius40,
-          borderSide: BorderSide(color: ColorConstants.kSecondaryColor, width: 5.0),
+          borderSide:
+              BorderSide(color: ColorConstants.kSecondaryColor, width: 5.0),
         ),
         unselectedLabelColor: Colors.grey,
         tabs: [
@@ -233,7 +277,11 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
           top: 0,
           left: 0,
           right: 0,
-          child: Image.asset(Assets.backgorundPattern3, height: 250, fit: BoxFit.cover),
+          child: Image.asset(
+            Assets.backgorundPattern3,
+            height: 250,
+            fit: BoxFit.cover,
+          ),
         ),
         Positioned(
           top: 0,
@@ -247,7 +295,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 end: Alignment.topCenter,
                 colors: [
                   Colors.white,
-                  Colors.white.withOpacity(.5),
+                  Colors.white.withOpacity(.4),
                   Colors.transparent,
                 ],
               ),
@@ -259,66 +307,62 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             () => Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FadeInDown(
-                  duration: const Duration(milliseconds: 600),
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadii.borderRadius30,
-                      boxShadow: [BoxShadow(color: ColorConstants.kPrimaryColor.withOpacity(.4), spreadRadius: 4, blurRadius: 4)],
-                      border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.4)),
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadii.borderRadius99,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(.4),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadii.borderRadius30,
-                      child: CachedNetworkImage(
-                        fadeInCurve: Curves.ease,
-                        imageUrl: authController.ipAddress.value + _homeController.businessUser.value!.backPhoto,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadii.borderRadius10,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadii.borderRadius50,
+                    child: CachedNetworkImage(
+                      fadeInCurve: Curves.ease,
+                      imageUrl: authController.ipAddress.value +
+                          (_homeController.businessUser.value?.backPhoto ?? ''),
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadii.borderRadius99,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        placeholder: (context, url) => EmptyStates().loadingData(),
-                        errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
                       ),
+                      placeholder: (context, url) =>
+                          EmptyStates().loadingData(),
+                      errorWidget: (context, url, error) =>
+                          EmptyStates().noMiniCategoryImage(),
                     ),
                   ),
                 ),
-                FadeInDown(
-                  duration: const Duration(milliseconds: 700),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      _homeController.businessUser.value!.businessName.toString(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: ColorConstants.kPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppFontSizes.fontSize20,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    _homeController.businessUser.value!.businessName.toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: ColorConstants.kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.fontSize20,
                     ),
                   ),
                 ),
-                FadeInDown(
-                  duration: const Duration(milliseconds: 800),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
-                    child: Text(
-                      _homeController.businessUser.value!.description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ColorConstants.darkMainColor.withOpacity(.6),
-                        fontSize: AppFontSizes.fontSize14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 70),
+                  child: Text(
+                    _homeController.businessUser.value!.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: ColorConstants.darkMainColor.withOpacity(.6),
+                      fontSize: AppFontSizes.fontSize14,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),

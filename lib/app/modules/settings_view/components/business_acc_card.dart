@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 
 class BusinessAccCard extends StatelessWidget {
-  const BusinessAccCard({required this.businessUser, required this.onTap, super.key});
+  const BusinessAccCard(
+      {required this.businessUser, required this.onTap, super.key,});
   final GetMyStatusModel businessUser;
   final Function() onTap;
   @override
@@ -17,7 +18,7 @@ class BusinessAccCard extends StatelessWidget {
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: ColorConstants.whiteMainColor, // Pasif hesap rengi
-        borderRadius: BorderRadii.borderRadius20, // Köşe yuvarlaklığı
+        borderRadius: BorderRadii.borderRadius10, // Köşe yuvarlaklığı
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade300,
@@ -31,12 +32,13 @@ class BusinessAccCard extends StatelessWidget {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: businessUser.status.toString().toLowerCase() == 'inactive'
+                color: businessUser.status.toString().toLowerCase() ==
+                        'inactive'
                     ? ColorConstants.redColor.withOpacity(.8)
                     : businessUser.status.toString().toLowerCase() == 'pending'
-                        ? Colors.grey.shade500
-                        : ColorConstants.whiteMainColor, // Pasif hesap rengi
-                borderRadius: BorderRadii.borderRadius20, // Köşe yuvarlaklığı
+                        ? Colors.grey.shade200
+                        : ColorConstants.whiteMainColor,
+                borderRadius: BorderRadii.borderRadius10,
               ),
             ),
           ),
@@ -47,20 +49,25 @@ class BusinessAccCard extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius20,
+                    borderRadius: BorderRadii.borderRadius10,
                     color: Colors.white,
-                    border: businessUser.backPhoto == null ? Border.all(color: ColorConstants.kSecondaryColor, width: 1) : Border.all(),
+                    border: businessUser.backPhoto == null
+                        ? Border.all(
+                            color: ColorConstants.kSecondaryColor,
+                            width: 0.5,
+                          )
+                        : Border.all(),
                   ),
                   margin: EdgeInsets.only(right: 20),
                   child: ClipRRect(
-                    borderRadius: BorderRadii.borderRadius18, // Logo köşe yuvarlaklığı
+                    borderRadius: BorderRadii.borderRadius10,
                     child: businessUser.backPhoto == null
                         ? Icon(
                             IconlyLight.image_2,
                             color: Colors.grey,
                           )
                         : WidgetsMine().customCachedImage(
-                            businessUser.backPhoto!, // Logo URL'si
+                            businessUser.backPhoto ?? '',
                           ),
                   ),
                 ),
@@ -136,7 +143,9 @@ class BusinessAccCard extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '+993' + businessUser.businessPhone!, // İşletme telefonu
+                                  '+993' +
+                                      businessUser
+                                          .businessPhone!, // İşletme telefonu
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(

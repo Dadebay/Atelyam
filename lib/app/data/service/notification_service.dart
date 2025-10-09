@@ -1,73 +1,50 @@
-// ignore_for_file: file_names
-import 'package:awesome_notifications/awesome_notifications.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
 
-class FCMConfig {
-  Future initAwesomeNotification() async {
-    await AwesomeNotifications()
-        .initialize(
-      null,
-      [
-        NotificationChannel(
-          channelGroupKey: 'basic_channel_group',
-          channelKey: 'basic_channel',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
-          defaultColor: Color(0xFF9D50DD),
-          ledColor: Colors.white,
-          importance: NotificationImportance.Max,
-          channelShowBadge: true,
-          locked: true,
-          defaultRingtoneType: DefaultRingtoneType.Ringtone,
-        ),
-      ],
-      channelGroups: [
-        NotificationChannelGroup(
-          channelGroupKey: 'basic_channel_group',
-          channelGroupName: 'Basic group',
-        ),
-      ],
-      debug: false,
-    )
-        .then((a) {
-      print('asd');
-    });
-    ;
-  }
+class NotificationService {
+  final GetStorage _storage = GetStorage();
+  final AuthController authController = Get.find();
 
-  Future<void> requestPermission() async {
-    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static const String deviceIdEndpoint = '/notifications/deviceid/';
 
-    await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
+  Future<void> sendDeviceToken() async {
+    try {
+      final String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        final String? storedToken = _storage.read('fcm_token');
+        if (storedToken != token) {
+          try {
+            print('FCM Token: $token');
+            final response = await http.post(
+              Uri.parse('${authController.ipAddress.value}${deviceIdEndpoint}'),
+              headers: {
+                HttpHeaders.contentTypeHeader:
+                    'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, String>{'device_id': token}),
+            );
+            if (response.statusCode == 201 || response.statusCode == 200) {
+              await _storage.write('fcm_token', token);
+              print('FCM token sent successfully');
+            } else {
+              print(
+                'Failed to send FCM token. Status code: ${response.statusCode}',
+              );
+            }
+          } catch (e) {
+            print('Error sending FCM token: $e');
+          }
+        }
       }
-    });
-  }
-
-  int a = 0;
-  Future sendNotification({required String title, required String body}) async {
-    a++;
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: a,
-        channelKey: 'basic_channel',
-        title: title,
-        body: body,
-        notificationLayout: NotificationLayout.BigText,
-        wakeUpScreen: true,
-      ),
-    );
+    } catch (e) {
+      print('Error getting FCM token: $e');
+      // Release modda emulator baglanyşygy ýok bolsa, app crash etmez
+    }
   }
 }

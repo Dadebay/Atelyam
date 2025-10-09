@@ -1,66 +1,77 @@
 name: atelyam
-version: 1.0.0+1
-publish_to: none
 description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
 environment:
-  sdk: ">=3.3.3 <4.0.0"
-  # flutter: 3.24.0
+  sdk: '>=3.3.3 <4.0.0'
 
 dependencies:
-  cupertino_icons: ^1.0.6
-  get: ^4.6.6
-  iconly: 
-  flutter_svg:
-  firebase_messaging: ^15.2.2
-  firebase_core:
-  awesome_notifications:
-  firebase_core_platform_interface: ^5.3.1
-  lottie: ^3.1.0
-  get_storage: ^2.0.0  # Added version for get_storage
-  image_picker: ^0.8.5+3  # Added version for image_picker
-  cached_network_image: ^3.3.1
-  permission_handler: ^11.3.0
-  flutter_staggered_grid_view: ^0.7.0
-  carousel_slider: 
-  path_provider:
-  animate_do: ^3.3.4
-  gal: ^2.3.1
-  url_launcher:
-  pull_to_refresh:
-  photo_view:
-  flutter_widget_from_html: ^0.15.3
-  dio:
   flutter:
     sdk: flutter
+
+  # 🔥 FIREBASE & NOTIFICATIONS
+  firebase_core: ^4.1.1
+  firebase_messaging: ^16.0.2
+  flutter_local_notifications: ^19.0.0
+
+  # 📦 STATE MANAGEMENT
+  get: ^4.6.6
+  get_storage: ^2.0.0
+  upgrader: ^10.3.0
+
+  # 🖼️ UI & UX
+  iconly: ^1.0.1
+  lottie: ^3.1.0
+  cached_network_image: ^3.3.1
+  flutter_staggered_grid_view: ^0.7.0
+  carousel_slider: ^5.1.1
+  pull_to_refresh: ^2.0.0
+  photo_view: ^0.15.0
+  flutter_widget_from_html: ^0.15.3
+  sliver_tools: ^0.2.0
+
+  # ⚙️ UTILS
+  flutter_image_compress: ^2.4.0
+  image_picker: ^0.8.5+3
+  permission_handler: ^11.3.0
+  path_provider: ^2.1.5
+  url_launcher: ^6.1.12
+  dio: ^5.9.0
+  hugeicons: ^0.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^7.0.0  
-  flutter_lints: ^4.0.0
 
 flutter:
+  uses-material-design: true
+  generate: true
+
   assets:
     - assets/fonts/
     - assets/icons/
     - assets/lottie/
     - assets/image/
-    - assets/image/flags/
     - assets/image/fasonlar/
+    - assets/image/flags/
     - assets/image/patterns/
 
   fonts:
-    - family: PlusJakartaSans
-      fonts:
-        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/PlusJakartaSans-Light.ttf
-          weight: 300
-        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
-          weight: 600
-  uses-material-design: true
-  generate: true
+  - family: PlusJakartaSans
+    fonts:
+      - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+        weight: 700
+      - asset: assets/fonts/PlusJakartaSans-Light.ttf
+        weight: 300
+      - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+        weight: 500
+      - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+        weight: 600
+
+  - family: Bell
+    fonts:
+      - asset: assets/fonts/BellRegular.otf
+        weight: 400    

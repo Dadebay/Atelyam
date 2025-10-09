@@ -26,7 +26,10 @@ class BannersProfile extends StatelessWidget {
             padding: const EdgeInsets.all(15.0),
             child: Text(
               banner.description,
-              style: TextStyle(color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.w400, fontSize: AppFontSizes.fontSize16),
+              style: TextStyle(
+                  color: ColorConstants.kPrimaryColor,
+                  fontWeight: FontWeight.w400,
+                  fontSize: AppFontSizes.fontSize16,),
             ),
           ),
         ],

@@ -1,15 +1,5 @@
-import 'package:atelyam/app/data/models/business_user_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 class EditBusinessAccountView extends StatefulWidget {
   final GetMyStatusModel businessUser;
@@ -162,7 +152,7 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                                       },
                                     )
                                   : CachedNetworkImage(
-                                      imageUrl: authController.ipAddress.value + widget.businessUser.backPhoto!,
+                                      imageUrl: authController.ipAddress.value + (widget.businessUser.backPhoto ?? ''),
                                       fit: BoxFit.cover,
                                       fadeInCurve: Curves.ease,
                                       height: Get.size.height,

@@ -23,23 +23,29 @@ class BackButtonMine extends StatelessWidget {
               ),
             ),
           )
-        : ElevatedButton(
-            onPressed: () {
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadii.borderRadius20,
-                side: BorderSide(
-                  color: ColorConstants.whiteMainColor,
-                ),
+        : Container(
+            margin: EdgeInsets.only(left: 10),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black.withOpacity(0.2),
+              border: Border.all(
+                color: ColorConstants
+                    .whiteMainColor, 
+                width: 1,
               ),
             ),
-            child: const Icon(
-              IconlyLight.arrow_left_2,
-              color: ColorConstants.warmWhiteColor,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              iconSize: 25,
+              icon: Icon(
+                IconlyLight.arrow_left_2,
+                color: ColorConstants.whiteMainColor,
+              ),
+              onPressed: () {
+                Get.back();
+              },
             ),
           );
   }

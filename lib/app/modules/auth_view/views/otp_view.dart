@@ -1,11 +1,4 @@
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 
 class OTPView extends StatelessWidget {
@@ -38,35 +31,6 @@ class OTPView extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar() {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(IconlyLight.arrow_left_circle, size: 28, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              'verify_phone'.tr,
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppFontSizes.fontSize20 + 2,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        Icon(
-          IconlyBold.time_circle,
-          color: Colors.transparent,
-        ),
-      ],
-    );
-  }
 
   Widget _buildOTPContent(BuildContext context) {
     return Container(

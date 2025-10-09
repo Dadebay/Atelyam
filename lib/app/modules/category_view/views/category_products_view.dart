@@ -1,16 +1,6 @@
-import 'package:atelyam/app/data/models/category_model.dart';
-import 'package:atelyam/app/data/models/product_model.dart';
-import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/category_view/controllers/category_controller.dart';
-import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/empty_states/empty_states.dart';
-import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoryProductView extends StatefulWidget {
@@ -46,7 +36,37 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           TransparentAppBar(
             title: widget.categoryModel.name,
             removeLeading: false,
-            color: Colors.white,
+            color: ColorConstants.whiteMainColor,
+            actions: [
+              Obx(
+                () => Container(
+                  margin: EdgeInsets.only(right: 16),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black.withOpacity(0.2),
+                    border: Border.all(
+                      color: ColorConstants.whiteMainColor,
+                      width: 1,
+                    ),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 26,
+                    icon: Icon(
+                      _categoryController.isFilterExpanded.value
+                          ? Icons.close
+                          : IconlyLight.filter,
+                      color: ColorConstants.whiteMainColor,
+                    ),
+                    onPressed: () {
+                      _showFilterBottomSheet(context);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
           Positioned(
             top: Get.size.height * 0.15,
@@ -55,16 +75,16 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             right: 0,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(40),
-                topRight: Radius.circular(40),
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
               ),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.9),
+                  color: ColorConstants.whiteMainColor,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
                 ),
                 child: Obx(
@@ -72,7 +92,9 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                     if (_categoryController.isLoadingProducts.value) {
                       return EmptyStates().loadingData();
                     } else if (_categoryController.allProducts.isEmpty) {
-                      return EmptyStates().noDataAvailablePage(textColor: ColorConstants.darkMainColor);
+                      return EmptyStates().noDataAvailablePage(
+                        textColor: ColorConstants.darkMainColor,
+                      );
                     } else {
                       return _buildProductGrid();
                     }
@@ -81,7 +103,6 @@ class _CategoryProductViewState extends State<CategoryProductView> {
               ),
             ),
           ),
-          _buildFilterContainer(context),
         ],
       ),
     );
@@ -95,10 +116,12 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       child: SizedBox(
         height: Get.size.height * 0.80,
         child: CachedNetworkImage(
-          imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo}',
+          imageUrl:
+              '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
           fit: BoxFit.cover,
           placeholder: (context, url) => EmptyStates().loadingData(),
-          errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+          errorWidget: (context, url, error) =>
+              EmptyStates().noMiniCategoryImage(),
         ),
       ),
     );
@@ -106,16 +129,18 @@ class _CategoryProductViewState extends State<CategoryProductView> {
 
   SizedBox _imagePart() {
     return SizedBox(
-      height: Get.size.height * 0.60, // Reduced height for better layout
+      height: Get.size.height * 0.60,
       child: Hero(
         tag: widget.categoryModel.name,
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius30,
           child: CachedNetworkImage(
-            imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo}',
+            imageUrl:
+                '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
             fit: BoxFit.cover,
             placeholder: (context, url) => EmptyStates().loadingData(),
-            errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+            errorWidget: (context, url, error) =>
+                EmptyStates().noMiniCategoryImage(),
           ),
         ),
       ),
@@ -127,8 +152,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       controller: _categoryController.refreshController,
       enablePullUp: true,
       scrollDirection: Axis.vertical,
-      onRefresh: () => _categoryController.refreshProducts(widget.categoryModel.id),
-      onLoading: () => _categoryController.loadMoreProducts(widget.categoryModel.id),
+      onRefresh: () =>
+          _categoryController.refreshProducts(widget.categoryModel.id),
+      onLoading: () =>
+          _categoryController.loadMoreProducts(widget.categoryModel.id),
       child: Container(
         margin: const EdgeInsets.only(top: 10),
         child: MasonryGridView.builder(
@@ -155,88 +182,11 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     );
   }
 
-  Widget _buildFilterContainer(BuildContext context) {
-    return Obx(() {
-      return Align(
-        alignment: Alignment.bottomCenter,
-        child: GestureDetector(
-          onTap: () {
-            _categoryController.toggleFilterExpanded(); // Filtre durumunu değiştir
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            height: _categoryController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.4 : 60,
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              color: ColorConstants.whiteMainColor,
-              border: Border.all(color: ColorConstants.kSecondaryColor, width: 2),
-              borderRadius: BorderRadii.borderRadius20,
-            ),
-            child: _categoryController.isFilterExpanded.value
-                ? ListView(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(top: 10),
-                    children: [
-                      radioListTileButton(text: 'last', value: FilterOption.last),
-                      radioListTileButton(text: 'first', value: FilterOption.first),
-                      radioListTileButton(text: 'viewcount', value: FilterOption.viewCount),
-                      radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
-                      radioListTileButton(text: 'HighPrice', value: FilterOption.highPrice),
-                      TextButton(
-                        onPressed: () {
-                          _categoryController.toggleFilterExpanded(); // Filtre durumunu değiştir
-                        },
-                        child: Text(
-                          'cancel'.tr,
-                          style: TextStyle(color: Colors.black, fontSize: AppFontSizes.fontSize20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  )
-                : Center(
-                    child: Text(
-                      'filter'.tr,
-                      style: TextStyle(
-                        color: ColorConstants.darkMainColor,
-                        fontSize: AppFontSizes.fontSize20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget radioListTileButton({required String text, required FilterOption value}) {
-    return Obx(
-      () => RadioListTile(
-        title: Text(
-          text.tr,
-          maxLines: 1,
-          style: TextStyle(
-            color: ColorConstants.darkMainColor,
-            fontSize: AppFontSizes.fontSize16,
-            fontWeight: _categoryController.selectedFilter.value == value ? FontWeight.bold : FontWeight.w300,
-          ),
-        ),
-        value: value,
-        groupValue: _categoryController.selectedFilter.value,
-        onChanged: (FilterOption? value) {
-          if (value != null) {
-            _categoryController.selectedFilter.value = value;
-            _categoryController.activeFilter.value = text.toString();
-            _categoryController.initializeProducts(widget.categoryModel.id);
-            _categoryController.toggleFilterExpanded();
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildCard({required int index, required ProductModel product, required bool isAnimated}) {
+  Widget _buildCard({
+    required int index,
+    required ProductModel product,
+    required bool isAnimated,
+  }) {
     if (isAnimated) {
       return SizedBox(
         height: index % 2 == 0 ? 250 : 200,
@@ -246,16 +196,94 @@ class _CategoryProductViewState extends State<CategoryProductView> {
         ),
       );
     } else {
-      return WidgetsMine().buildAnimatedWidget(
-        SizedBox(
-          height: index % 2 == 0 ? 250 : 200,
-          child: DiscoveryCard(
-            homePageStyle: false,
-            productModel: product,
-          ),
+      return SizedBox(
+        height: index % 2 == 0 ? 250 : 200,
+        child: DiscoveryCard(
+          homePageStyle: false,
+          productModel: product,
         ),
-        200 * index,
       );
     }
+  }
+
+  void _showFilterBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.only(top: 15, right: 8, left: 8, bottom: 8),
+        decoration: BoxDecoration(
+          color: ColorConstants.whiteMainColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'filter'.tr,
+              style: TextStyle(
+                color: ColorConstants.darkMainColor,
+                fontSize: AppFontSizes.fontSize20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            radioListTileButton(text: 'last', value: FilterOption.last),
+            radioListTileButton(text: 'first', value: FilterOption.first),
+            radioListTileButton(
+                text: 'viewcount', value: FilterOption.viewCount,),
+            radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
+            radioListTileButton(
+                text: 'HighPrice', value: FilterOption.highPrice,),
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text(
+                'cancel'.tr,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: AppFontSizes.fontSize20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget radioListTileButton({
+    required String text,
+    required FilterOption value,
+  }) {
+    return Obx(
+      () => RadioListTile(
+        title: Text(
+          text.tr,
+          maxLines: 1,
+          style: TextStyle(
+            color: ColorConstants.darkMainColor,
+            fontSize: AppFontSizes.fontSize16,
+            fontWeight: _categoryController.selectedFilter.value == value
+                ? FontWeight.bold
+                : FontWeight.w400,
+          ),
+        ),
+        value: value,
+        activeColor: ColorConstants.kSecondaryColor,
+        groupValue: _categoryController.selectedFilter.value,
+        onChanged: (FilterOption? value) {
+          if (value != null) {
+            _categoryController.selectedFilter.value = value;
+            _categoryController.activeFilter.value = text.toString();
+            _categoryController.initializeProducts(widget.categoryModel.id);
+            Get.back();
+          }
+        },
+      ),
+    );
   }
 }

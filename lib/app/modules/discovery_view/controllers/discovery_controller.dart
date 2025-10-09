@@ -6,10 +6,12 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DiscoveryController extends GetxController {
-  final RefreshController refreshController = RefreshController(initialRefresh: false);
+  final RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  final TextEditingController textEditingController = TextEditingController();
   final List<ProductModel> products = <ProductModel>[].obs;
   int page = 1;
-  final int size = 10;
+  final int size = 15;
   bool hasMore = true;
 
   @override
@@ -18,39 +20,72 @@ class DiscoveryController extends GetxController {
     fetchProducts();
   }
 
+  @override
+  void onClose() {
+    textEditingController.dispose();
+    super.onClose();
+  }
+
   Future<void> fetchProducts({bool isRefresh = false}) async {
     if (isRefresh) {
-      page = 1; // Sayfayı sıfırla
-      hasMore = true; // Daha fazla veri olduğunu varsay
-      products.clear(); // Listeyi temizle
-      refreshController.resetNoData(); // RefreshController'ı sıfırla
+      page = 1;
+      hasMore = true;
+      products.clear();
+      refreshController.resetNoData();
     }
 
     if (!hasMore) {
-      refreshController.loadNoData(); // Daha fazla veri yoksa RefreshController'ı güncelle
+      refreshController.loadNoData();
       return;
     }
 
     try {
-      final newProducts = await ProductService().fetchPopularProducts(page: page, size: size);
+      final newProducts =
+          await ProductService().fetchPopularProducts(page: page, size: size);
       if (newProducts != null && newProducts.isNotEmpty) {
-        products.addAll(newProducts); // Yeni ürünleri listeye ekle
-        page++; // Sayfayı artır
+        products.addAll(newProducts);
+        page++;
       } else {
-        hasMore = false; // Daha fazla veri yok
-        refreshController.loadNoData(); // RefreshController'ı güncelle
+        hasMore = false;
+        refreshController.loadNoData();
       }
     } catch (e) {
+      print(e);
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
     } finally {
       if (isRefresh) {
-        refreshController.refreshCompleted(); // Yenileme işlemi tamamlandı
+        refreshController.refreshCompleted();
       } else {
-        refreshController.loadComplete(); // Yükleme işlemi tamamlandı
+        refreshController.loadComplete();
       }
     }
   }
 
-  void onRefresh() => fetchProducts(isRefresh: true); // Yenileme işlemi
-  void onLoading() => fetchProducts(); // Yükleme işlemi
+  Future<void> searchProducts(String name) async {
+    if (name.isEmpty) {
+      await fetchProducts(isRefresh: true);
+      return;
+    }
+    try {
+      final newProducts = await ProductService().searchProducts(name: name);
+      if (newProducts != null && newProducts.isNotEmpty) {
+        products.assignAll(newProducts);
+        hasMore = true;
+      } else {
+        products.clear();
+        hasMore = false;
+      }
+    } catch (e) {
+      print(e);
+      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
+    }
+  }
+
+  void clearSearch() {
+    textEditingController.clear();
+    fetchProducts(isRefresh: true);
+  }
+
+  void onRefresh() => fetchProducts(isRefresh: true);
+  void onLoading() => fetchProducts();
 }

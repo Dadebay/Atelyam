@@ -45,7 +45,7 @@ class BannerCard extends StatelessWidget {
         borderRadius: BorderRadii.borderRadius30,
         child: CachedNetworkImage(
           fadeInCurve: Curves.ease,
-          imageUrl: authController.ipAddress.value + banner.img,
+          imageUrl: authController.ipAddress.value + (banner.img),
           imageBuilder: (context, imageProvider) => Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadii.borderRadius10,
