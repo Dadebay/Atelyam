@@ -32,8 +32,6 @@ class _AllProductViewState extends State<AllProductView> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BackButtonMine(
@@ -57,8 +55,10 @@ class _AllProductViewState extends State<AllProductView> {
             return Column(
               children: [
                 Expanded(
-                    child: EmptyStates().noDataAvailablePage(
-                        textColor: ColorConstants.kPrimaryColor,),),
+                  child: EmptyStates().noDataAvailablePage(
+                    textColor: ColorConstants.kPrimaryColor,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AgreeButton(
@@ -87,8 +87,9 @@ class _AllProductViewState extends State<AllProductView> {
                     return MyProductCard(
                       productModel: snapshot.data![index],
                       onTap: () async {
-                        final result = await Get.to(() =>
-                            UpdateProductView(product: snapshot.data![index]),);
+                        final result = await Get.to(
+                          () => UpdateProductView(product: snapshot.data![index]),
+                        );
                         if (result == true) {
                           setState(() {});
                         }

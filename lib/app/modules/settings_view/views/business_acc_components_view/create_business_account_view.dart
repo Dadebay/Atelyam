@@ -4,8 +4,7 @@ import 'package:atelyam/app/modules/settings_view/controllers/product_controller
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 
 class CreateBusinessAccountView extends StatelessWidget {
-  final ProductController controller =
-      Get.put<ProductController>(ProductController());
+  final ProductController controller = Get.put<ProductController>(ProductController());
   AppBar _appBar(BuildContext context) {
     return AppBar(
       backgroundColor: ColorConstants.kSecondaryColor,
@@ -17,8 +16,6 @@ class CreateBusinessAccountView extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: BackButtonMine(
         miniButton: true,
       ),
@@ -26,8 +23,7 @@ class CreateBusinessAccountView extends StatelessWidget {
   }
 
   List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers =
-      List.generate(8, (_) => TextEditingController());
+  List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +33,7 @@ class CreateBusinessAccountView extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
             child: Obx(
               () => DropdownButtonFormField<BusinessCategoryModel>(
                 decoration: InputDecoration(
@@ -53,8 +48,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
-                    borderSide:
-                        BorderSide(color: Colors.grey.shade400, width: 2),
+                    borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadii.borderRadius20,
@@ -78,8 +72,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (value) => controller.selectedCategory.value = value,
-                validator: (value) =>
-                    value == null ? 'fill_all_fields'.tr : null,
+                validator: (value) => value == null ? 'fill_all_fields'.tr : null,
               ),
             ),
           ),

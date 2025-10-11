@@ -29,10 +29,10 @@ class BannerCard extends StatelessWidget {
 
   Widget _buildBannerContainer(Size size) {
     return Container(
-      margin: const EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15).copyWith(top: 8),
       width: size.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadii.borderRadius30,
+        borderRadius: BorderRadii.borderRadius20,
         boxShadow: [
           BoxShadow(
             color: ColorConstants.kThirdColor.withOpacity(0.2),
@@ -42,7 +42,7 @@ class BannerCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadii.borderRadius30,
+        borderRadius: BorderRadii.borderRadius20,
         child: CachedNetworkImage(
           fadeInCurve: Curves.ease,
           imageUrl: authController.ipAddress.value + (banner.img),

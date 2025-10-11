@@ -213,7 +213,6 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
           },
         ),
       ],
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: GestureDetector(
         onTap: () {
           Get.back();
@@ -222,7 +221,7 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
           padding: const EdgeInsets.all(8.0),
           child: Icon(
             IconlyLight.arrow_left_circle,
-            color: ColorConstants.warmWhiteColor,
+            color: ColorConstants.whiteMainColor,
             size: AppFontSizes.getFontSize(8),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/custom_widgets/transparent_app_bar.dart';
 import 'package:lottie/lottie.dart';
 
 class OTPView extends StatelessWidget {
@@ -30,7 +31,6 @@ class OTPView extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildOTPContent(BuildContext context) {
     return Container(
@@ -91,7 +91,7 @@ class OTPView extends StatelessWidget {
               counterText: '',
               border: OutlineInputBorder(
                 borderRadius: BorderRadii.borderRadius15,
-                borderSide: const BorderSide(color: ColorConstants.warmWhiteColor),
+                borderSide: const BorderSide(color: ColorConstants.whiteMainColor),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadii.borderRadius20,

@@ -72,7 +72,7 @@ class _AllProductsViewState extends State<AllProductsView> {
               ),
               child: const Icon(
                 IconlyLight.arrow_left_2,
-                color: ColorConstants.warmWhiteColor,
+                color: ColorConstants.whiteMainColor,
               ),
             ),
           ),
@@ -150,9 +150,7 @@ class _AllProductsViewState extends State<AllProductsView> {
             _homeController.isFilterExpanded.toggle();
           },
           child: Container(
-            height: _homeController.isFilterExpanded.value
-                ? MediaQuery.of(context).size.height * 0.4
-                : 60,
+            height: _homeController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.4 : 60,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
@@ -227,9 +225,7 @@ class _AllProductsViewState extends State<AllProductsView> {
           style: TextStyle(
             color: ColorConstants.darkMainColor,
             fontSize: AppFontSizes.fontSize16,
-            fontWeight: _homeController.selectedFilter.value == value
-                ? FontWeight.bold
-                : FontWeight.w300,
+            fontWeight: _homeController.selectedFilter.value == value ? FontWeight.bold : FontWeight.w300,
           ),
         ),
         value: value,

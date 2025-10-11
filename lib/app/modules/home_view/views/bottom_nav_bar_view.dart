@@ -8,15 +8,16 @@ import 'package:atelyam/app/modules/home_view/views/home_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
-import 'package:atelyam/app/product/theme/theme.dart';
+import 'package:atelyam/app/utils/upgrade_messages_tm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:iconly/iconly.dart';
 import 'package:upgrader/upgrader.dart';
 
 class BottomNavBar extends StatelessWidget {
-  final HomeController homeController =
-      Get.put<HomeController>(HomeController());
+  final HomeController homeController = Get.put<HomeController>(HomeController());
 
   BottomNavBar({super.key});
 
@@ -28,98 +29,76 @@ class BottomNavBar extends StatelessWidget {
     SettingsView(),
   ];
 
+  final List<String> pageTitles = [
+    'home'.tr,
+    'discovery'.tr,
+    'categories'.tr,
+    'favorites'.tr,
+    'settings'.tr,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
-      upgrader: Upgrader(languageCode: 'tm'),
-      dialogStyle: Platform.isAndroid
-          ? UpgradeDialogStyle.material
-          : UpgradeDialogStyle.cupertino,
-      child: Scaffold(
-        body: Obx(
-          () => IndexedStack(
+      upgrader: Upgrader(
+        languageCode: Get.locale!.languageCode,
+        messages: Get.locale!.languageCode == 'tm' ? UpgraderMessagesTm() : UpgraderMessages(),
+      ),
+      dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
+      child: Obx(() {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(pageTitles[homeController.selectedIndex.value], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+            backgroundColor: ColorConstants.whiteMainColor,
+            scrolledUnderElevation: 0.0,
+            leading: IconButton(onPressed: () {}, icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
+          ),
+          body: IndexedStack(
             index: homeController.selectedIndex.value,
             children: pages,
           ),
-        ),
-        bottomNavigationBar: Obx(() {
-          return CustomBottomNavBar(
+          bottomNavigationBar: BottomNavigationBar(
             currentIndex: homeController.selectedIndex.value,
             onTap: (index) {
               homeController.selectedIndex.value = index;
             },
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class CustomBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final Function(int) onTap;
-
-  const CustomBottomNavBar({
-    required this.currentIndex,
-    required this.onTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final items = [
-      IconlyLight.home,
-      IconlyLight.discovery,
-      IconlyLight.category,
-      IconlyLight.heart,
-      IconlyLight.profile,
-    ];
-    final selectedItem = [
-      IconlyBold.home,
-      IconlyBold.discovery,
-      IconlyBold.category,
-      IconlyBold.heart,
-      IconlyBold.profile,
-    ];
-
-    return Container(
-      color: ColorConstants.whiteMainColor,
-      child: Container(
-        decoration: BoxDecoration(
-          color: ColorConstants.whiteMainColor,
-        ),
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(items.length, (index) {
-            final isSelected = index == currentIndex;
-            return GestureDetector(
-              onTap: () => onTap(index),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isSelected ? selectedItem[index] : items[index],
-                    size: 28,
-                    color: isSelected
-                        ? ColorConstants.kSecondaryColor
-                        : Colors.grey,
-                  ),
-                  const SizedBox(height: 5),
-                  Container(
-                    height: isSelected ? 4 : 0,
-                    width: 16,
-                    decoration: const BoxDecoration(
-                      color: ColorConstants.kSecondaryColor,
-                      borderRadius: BorderRadii.borderRadius10,
-                    ),
-                  ),
-                ],
+            selectedItemColor: ColorConstants.kSecondaryColor,
+            unselectedItemColor: Colors.grey,
+            backgroundColor: ColorConstants.whiteMainColor,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+            selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            items: [
+              BottomNavigationBarItem(
+                icon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: Colors.grey),
+                activeIcon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: ColorConstants.kSecondaryColor),
+                label: pageTitles[0].tr,
               ),
-            );
-          }),
-        ),
-      ),
+              BottomNavigationBarItem(
+                icon: Icon(IconlyLight.discovery),
+                activeIcon: Icon(IconlyBold.discovery),
+                label: pageTitles[1].tr,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(IconlyLight.category),
+                activeIcon: Icon(IconlyBold.category),
+                label: pageTitles[2].tr,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(IconlyLight.heart),
+                activeIcon: Icon(IconlyBold.heart),
+                label: pageTitles[3].tr,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(IconlyLight.profile),
+                activeIcon: Icon(IconlyBold.profile),
+                label: pageTitles[4].tr,
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

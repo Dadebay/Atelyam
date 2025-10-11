@@ -14,7 +14,6 @@ Future<void> main() async {
 
 class MyApp extends StatefulWidget {
   MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -35,11 +34,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => MediaQuery(
-        data:
-            MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
-        child: child!,
-      ),
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)), child: child!),
       title: Assets.appName,
       theme: AppThemes.lightTheme,
       fallbackLocale: const Locale('tr'),

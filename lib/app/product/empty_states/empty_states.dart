@@ -1,8 +1,10 @@
+import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EmptyStates {
   Center noMiniCategoryImage() {
@@ -13,7 +15,7 @@ class EmptyStates {
         textAlign: TextAlign.center,
         maxLines: 1,
         style: const TextStyle(
-          color: ColorConstants.warmWhiteColor,
+          color: ColorConstants.whiteMainColor,
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),
@@ -115,7 +117,19 @@ class EmptyStates {
     );
   }
 
-  dynamic loadingData() {
-    return Center(child: Lottie.asset(Assets.loading));
+  Widget loadingData() {
+    return Center(
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey,
+        highlightColor: ColorConstants.kThirdColor,
+        child: const Text(
+          'Atelyam',
+          style: TextStyle(
+            fontSize: 32.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 }

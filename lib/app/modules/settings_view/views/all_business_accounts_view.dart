@@ -7,8 +7,7 @@ class AllBusinessAccountsView extends StatefulWidget {
   AllBusinessAccountsView({super.key});
 
   @override
-  State<AllBusinessAccountsView> createState() =>
-      _AllBusinessAccountsViewState();
+  State<AllBusinessAccountsView> createState() => _AllBusinessAccountsViewState();
 }
 
 class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
@@ -17,7 +16,7 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,
       appBar: _appBar(),
-      body: getBusinessAccounts(), 
+      body: getBusinessAccounts(),
     );
   }
 
@@ -32,8 +31,6 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BackButtonMine(
@@ -88,8 +85,11 @@ class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
               return BusinessAccCard(
                 businessUser: snapshot.data![index],
                 onTap: () async {
-                  final result = await Get.to(() => EditBusinessAccountView(
-                      businessUser: snapshot.data![index],),);
+                  final result = await Get.to(
+                    () => EditBusinessAccountView(
+                      businessUser: snapshot.data![index],
+                    ),
+                  );
                   if (result == true) {
                     setState(() {});
                   }

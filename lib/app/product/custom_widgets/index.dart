@@ -6,7 +6,6 @@ export 'background_pattern.dart';
 export 'custom_text_field.dart';
 export 'dialogs.dart';
 export 'listview_top_name_and_icon.dart';
-export 'transparent_app_bar.dart';
 export 'widgets.dart';
 export 'package:atelyam/app/data/models/hashtag_model.dart';
 export 'package:atelyam/app/data/models/product_model.dart';

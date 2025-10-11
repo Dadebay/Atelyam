@@ -33,41 +33,41 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             right: 0,
             child: _imagePart(),
           ),
-          TransparentAppBar(
-            title: widget.categoryModel.name,
-            removeLeading: false,
-            color: ColorConstants.whiteMainColor,
-            actions: [
-              Obx(
-                () => Container(
-                  margin: EdgeInsets.only(right: 16),
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black.withOpacity(0.2),
-                    border: Border.all(
-                      color: ColorConstants.whiteMainColor,
-                      width: 1,
-                    ),
-                  ),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    iconSize: 26,
-                    icon: Icon(
-                      _categoryController.isFilterExpanded.value
-                          ? Icons.close
-                          : IconlyLight.filter,
-                      color: ColorConstants.whiteMainColor,
-                    ),
-                    onPressed: () {
-                      _showFilterBottomSheet(context);
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // TransparentAppBar(
+          //   title: widget.categoryModel.name,
+          //   removeLeading: false,
+          //   color: ColorConstants.whiteMainColor,
+          //   actions: [
+          //     Obx(
+          //       () => Container(
+          //         margin: EdgeInsets.only(right: 16),
+          //         width: 40,
+          //         height: 40,
+          //         decoration: BoxDecoration(
+          //           shape: BoxShape.circle,
+          //           color: Colors.black.withOpacity(0.2),
+          //           border: Border.all(
+          //             color: ColorConstants.whiteMainColor,
+          //             width: 1,
+          //           ),
+          //         ),
+          //         child: IconButton(
+          //           padding: EdgeInsets.zero,
+          //           iconSize: 26,
+          //           icon: Icon(
+          //             _categoryController.isFilterExpanded.value
+          //                 ? Icons.close
+          //                 : IconlyLight.filter,
+          //             color: ColorConstants.whiteMainColor,
+          //           ),
+          //           onPressed: () {
+          //             _showFilterBottomSheet(context);
+          //           },
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Positioned(
             top: Get.size.height * 0.15,
             bottom: 0,

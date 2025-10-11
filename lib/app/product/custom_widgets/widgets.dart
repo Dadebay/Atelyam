@@ -166,8 +166,6 @@ class WidgetsMine {
           fontWeight: FontWeight.bold,
         ),
       ),
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: ColorConstants.kSecondaryColor),
       leading: BackButtonMine(miniButton: true),
       actions: actions,
     );
@@ -208,8 +206,7 @@ class WaveClipper extends CustomClipper<Path> {
     } else {
       path.lineTo(0, size.height * 0.06);
 
-      final firstControlPointUp =
-          Offset(size.width * 0.28, size.height * -0.05);
+      final firstControlPointUp = Offset(size.width * 0.28, size.height * -0.05);
       final firstEndPointUp = Offset(size.width * 0.5, size.height * 0.06);
       path.quadraticBezierTo(
         firstControlPointUp.dx,
@@ -218,8 +215,7 @@ class WaveClipper extends CustomClipper<Path> {
         firstEndPointUp.dy,
       );
 
-      final firstControlPointDown =
-          Offset(size.width * 0.75, size.height * 0.15);
+      final firstControlPointDown = Offset(size.width * 0.75, size.height * 0.15);
       final firstEndPointDown = Offset(size.width, size.height * 0.05);
       path.quadraticBezierTo(
         firstControlPointDown.dx,
