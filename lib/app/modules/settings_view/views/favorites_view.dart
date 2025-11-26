@@ -8,49 +8,30 @@ import 'package:get/get.dart';
 
 class FavoritesView extends StatelessWidget {
   FavoritesView({super.key});
-  final NewSettingsPageController settingsController =
-      Get.put(NewSettingsPageController());
+  final NewSettingsPageController settingsController = Get.put(NewSettingsPageController());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      appBar: AppBar(
-        backgroundColor: ColorConstants.whiteMainColor,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'favorites'.tr,
-          style: TextStyle(
-            color: ColorConstants.kSecondaryColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 22,
-          ),
-        ),
-      ),
-      body: Obx(() {
-        if (settingsController.favoriteProducts.isEmpty) {
-          return Center(child: EmptyStates().noFavoritesFound());
-        }
+    return Obx(() {
+      if (settingsController.favoriteProducts.isEmpty) {
+        return Center(child: EmptyStates().noFavoritesFound());
+      }
 
-        return MasonryGridView.builder(
-          gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          itemCount: settingsController.favoriteProducts.length,
-          mainAxisSpacing: 15.0,
-          crossAxisSpacing: 15.0,
-          itemBuilder: (BuildContext context, int index) {
-            final product = settingsController.favoriteProducts[index];
-            return Container(
-              height: index % 2 == 0 ? 250 : 300,
-              child: DiscoveryCard(productModel: product, homePageStyle: false),
-            );
-          },
-        );
-      }),
-    );
+      return MasonryGridView.builder(
+        gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        itemCount: settingsController.favoriteProducts.length,
+        mainAxisSpacing: 15.0,
+        crossAxisSpacing: 15.0,
+        itemBuilder: (BuildContext context, int index) {
+          final product = settingsController.favoriteProducts[index];
+          return Container(
+            height: index % 2 == 0 ? 250 : 300,
+            child: DiscoveryCard(productModel: product, homePageStyle: false),
+          );
+        },
+      );
+    });
   }
 }

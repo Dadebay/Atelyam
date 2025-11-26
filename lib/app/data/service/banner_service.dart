@@ -21,4 +21,25 @@ class BannerService {
       return [];
     }
   }
+
+  Future<List<String>> fetchPhoneNumbers() async {
+    final response = await http.get(Uri.parse(authController.ipAddress.value + '/mobile/getphones/'));
+
+    print(authController.ipAddress.value + '/mobile/getphones/');
+    print("response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonMap = json.decode(response.body);
+
+      if (jsonMap.containsKey('phones')) {
+        return List<String>.from(jsonMap['phones']);
+      } else {
+        showSnackBar('networkError'.tr, 'noInternet'.tr, ColorConstants.redColor);
+        return [];
+      }
+    } else {
+      showSnackBar('networkError'.tr, 'noInternet'.tr, ColorConstants.redColor);
+      return [];
+    }
+  }
 }

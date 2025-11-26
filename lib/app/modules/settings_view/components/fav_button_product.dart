@@ -23,8 +23,7 @@ class FavButtonProduct extends StatefulWidget {
 }
 
 class _FavButtonState extends State<FavButtonProduct> {
-  final NewSettingsPageController settingsController =
-      Get.find<NewSettingsPageController>();
+  final NewSettingsPageController settingsController = Get.find<NewSettingsPageController>();
 
   bool isFavorited = false;
 
@@ -40,9 +39,9 @@ class _FavButtonState extends State<FavButtonProduct> {
         },
         child: Container(
           padding: const EdgeInsets.all(9),
-          margin: EdgeInsets.only(right: widget.productProfilStyle ? 8 : 0),
+          // margin: EdgeInsets.only(right: widget.productProfilStyle ? 8 : 0),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.7),
+            color: widget.productProfilStyle ? ColorConstants.whiteMainColor.withOpacity(.8) : Colors.grey.withOpacity(0.7),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Icon(
@@ -51,7 +50,7 @@ class _FavButtonState extends State<FavButtonProduct> {
             color: isFavorited
                 ? Colors.red
                 : widget.productProfilStyle
-                    ? ColorConstants.whiteMainColor
+                    ? ColorConstants.kPrimaryColor
                     : ColorConstants.whiteMainColor,
           ),
         ),

@@ -15,13 +15,6 @@ class AuthView extends StatelessWidget {
       body: Stack(
         children: [
           Positioned(
-            top: 0,
-            child: ClipPath(
-              clipper: WaveClipper(isTopWave: true),
-              child: BackgroundPattern(),
-            ),
-          ),
-          Positioned(
             left: 0,
             right: 0,
             height: Get.size.height / 2,
@@ -31,14 +24,11 @@ class AuthView extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: ClipPath(
-              clipper: WaveClipper(isTopWave: false),
-              child: Container(
-                color: Colors.white,
-                height: Get.size.height / 1.9,
-                padding: const EdgeInsets.only(bottom: 40, top: 50),
-                child: _buildFormSection(),
-              ),
+            child: Container(
+              color: Colors.white,
+              height: Get.size.height / 1.9,
+              padding: const EdgeInsets.only(bottom: 40, top: 50),
+              child: _buildFormSection(),
             ),
           ),
         ],
@@ -123,8 +113,9 @@ class AuthView extends StatelessWidget {
           child: AgreeButton(
             onTap: () {
               authController.handleAuthAction(
-                  phoneController: phoneController.text,
-                  usernameController: usernameController.text,);
+                phoneController: phoneController.text,
+                usernameController: usernameController.text,
+              );
             },
             text: 'login',
           ),

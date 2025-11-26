@@ -11,36 +11,56 @@ class ProductDescriptionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12).copyWith(bottom: 80),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           productModel.description.isEmpty
               ? const SizedBox.shrink()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                  ),
-                  child: Text(
-                    'info_product'.tr,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: AppFontSizes.fontSize20,
-                      fontWeight: FontWeight.w600,
-                    ),
+              : Text(
+                  'info_product'.tr,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: AppFontSizes.fontSize20,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 14),
+            child: RichText(
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "product_name".tr + ": ",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.fontSize20,
+                    ),
+                  ),
+                  TextSpan(
+                    text: productModel.name,
+                    style: TextStyle(
+                      color: ColorConstants.darkMainColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.fontSize20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Text(
             productModel.description,
             style: TextStyle(
               color: Colors.grey,
-              fontSize: AppFontSizes.fontSize16 - 2,
+              fontSize: AppFontSizes.fontSize16,
               fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
           Container(
+            margin: EdgeInsets.only(top: 15),
             padding: const EdgeInsets.all(8),
             decoration: const BoxDecoration(
               color: ColorConstants.kSecondaryColor,
@@ -54,22 +74,6 @@ class ProductDescriptionSection extends StatelessWidget {
               style: TextStyle(
                 color: ColorConstants.whiteMainColor,
                 fontWeight: FontWeight.bold,
-                fontSize: AppFontSizes.fontSize20,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 12,
-              top: 15,
-            ),
-            child: Text(
-              productModel.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: ColorConstants.darkMainColor,
-                fontWeight: FontWeight.w600,
                 fontSize: AppFontSizes.fontSize20,
               ),
             ),

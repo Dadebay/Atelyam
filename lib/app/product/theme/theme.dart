@@ -30,7 +30,7 @@ class Assets {
   static const String turkLangIcon = 'assets/image/flags/lang_tr.svg';
   static const String turkmenLangIcon = 'assets/image/flags/lang_tm.svg';
   static const String backgorundPattern1 = 'assets/image/patterns/pattern_1.png';
-  static const String backgorundPattern2 = 'assets/image/patterns/pattern_2.png';
+  static const String backgroundPattern2 = 'assets/image/patterns/pattern_2.png';
   static const String backgorundPattern3 = 'assets/image/patterns/pattern_3.png';
 }
 
@@ -80,7 +80,7 @@ final List<Map<String, dynamic>> loggedInSettingsViews = [
 ];
 
 class Fonts {
-  static const String plusJakartaSans = 'PlusJakartaSans';
+  static const String gilroy = 'Gilroy';
 }
 
 class BorderRadii {
@@ -122,7 +122,7 @@ class AppThemes {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      fontFamily: Fonts.plusJakartaSans,
+      fontFamily: Fonts.gilroy,
       colorSchemeSeed: ColorConstants.darkMainColor,
       useMaterial3: true,
       scaffoldBackgroundColor: ColorConstants.whiteMainColor,
@@ -131,7 +131,7 @@ class AppThemes {
         backgroundColor: ColorConstants.darkMainColor,
         titleTextStyle: TextStyle(
           color: ColorConstants.whiteMainColor,
-          fontFamily: Fonts.plusJakartaSans,
+          fontFamily: Fonts.gilroy,
           fontSize: 20,
         ),
         elevation: 0,

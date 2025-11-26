@@ -23,24 +23,25 @@ class BusinessUsersCardView extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Get.to(
-          () => BusinessUserProfileView(
-            businessUserModelFromOutside: category,
-            categoryID: categoryID,
-            whichPage: '',
-          ),
+          () => BusinessUserProfileView(businessUserModelFromOutside: category, categoryID: categoryID, whichPage: ''),
         );
       },
       child: Container(
-        height: 300,
-        margin: const EdgeInsets.all(10),
+        height: 310,
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          borderRadius: BorderRadii.borderRadius15,
-          color: ColorConstants.whiteMainColor.withOpacity(.8),
-          border: Border.all(
-            color: ColorConstants.kPrimaryColor.withOpacity(.2),
-          ),
-        ),
+            borderRadius: BorderRadii.borderRadius15,
+            color: ColorConstants.whiteMainColor,
+            border: Border.all(
+              color: ColorConstants.kPrimaryColor.withOpacity(.2),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: ColorConstants.kThirdColor.withOpacity(0.4),
+                blurRadius: 5,
+                spreadRadius: 1,
+              )
+            ]),
         child: topPart(),
       ),
     );
@@ -52,30 +53,29 @@ class BusinessUsersCardView extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            width: 105,
-            height: 90,
-            margin: const EdgeInsets.only(top: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadii.borderRadius5,
-              child: CachedNetworkImage(
-                fadeInCurve: Curves.ease,
-                imageUrl: authController.ipAddress.value + (category.backPhoto),
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius50,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
+        Container(
+          width: 105,
+          height: 105,
+          color: Colors.transparent,
+          margin: const EdgeInsets.only(top: 10),
+          child: ClipRRect(
+            borderRadius: BorderRadii.borderRadius5,
+            child: CachedNetworkImage(
+              fadeInCurve: Curves.ease,
+              imageUrl: authController.ipAddress.value + (category.backPhoto),
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: ColorConstants.kPrimaryColor),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                placeholder: (context, url) => EmptyStates().loadingData(),
-                errorWidget: (context, url, error) =>
-                    EmptyStates().noMiniCategoryImage(),
               ),
+              placeholder: (context, url) => EmptyStates().loadingData(),
+              errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
             ),
           ),
         ),

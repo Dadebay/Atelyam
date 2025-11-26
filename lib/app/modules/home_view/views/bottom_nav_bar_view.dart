@@ -1,12 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:io';
+import 'package:atelyam/app/data/service/banner_service.dart';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
+import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/utils/upgrade_messages_tm.dart';
 import 'package:flutter/material.dart';
@@ -16,26 +18,41 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:iconly/iconly.dart';
 import 'package:upgrader/upgrader.dart';
 
-class BottomNavBar extends StatelessWidget {
-  final HomeController homeController = Get.put<HomeController>(HomeController());
-
+class BottomNavBar extends StatefulWidget {
   BottomNavBar({super.key});
 
-  final List<Widget> pages = [
-    HomeView(),
-    DiscoveryView(),
-    CategoryView(),
-    FavoritesView(),
-    SettingsView(),
-  ];
+  @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
 
-  final List<String> pageTitles = [
-    'home'.tr,
-    'discovery'.tr,
-    'categories'.tr,
-    'favorites'.tr,
-    'settings'.tr,
-  ];
+class _BottomNavBarState extends State<BottomNavBar> {
+  final HomeController homeController = Get.put<HomeController>(HomeController());
+  List phoneNumbers = [];
+  dynamic getPhoneNumber() async {
+    phoneNumbers = await BannerService().fetchPhoneNumbers();
+    setState(() {});
+  }
+
+  final List<Widget> pages = [HomeView(), DiscoveryView(), CategoryView(), FavoritesView(), SettingsView()];
+
+  final List<String> pageTitles = ['home'.tr, 'discovery'.tr, 'categories'.tr, 'favorites'.tr, 'settings'.tr];
+
+  @override
+  void initState() {
+    super.initState();
+    getPhoneNumber();
+  }
+
+  Future<void> makePhoneCall(String phoneNumber) async {
+    print(phoneNumber);
+    final Uri launchUri = Uri.parse('tel:$phoneNumber');
+
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      showSnackBar('error', 'phone_call_error'.tr, ColorConstants.redColor);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +68,15 @@ class BottomNavBar extends StatelessWidget {
             title: Text(pageTitles[homeController.selectedIndex.value], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
             backgroundColor: ColorConstants.whiteMainColor,
             scrolledUnderElevation: 0.0,
-            leading: IconButton(onPressed: () {}, icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
+            leading: IconButton(
+                onPressed: () {
+                  if (phoneNumbers.isNotEmpty) {
+                    makePhoneCall(phoneNumbers[0]);
+                  } else {
+                    print("No phone numbers loaded!");
+                  }
+                },
+                icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
           ),
           body: IndexedStack(
             index: homeController.selectedIndex.value,

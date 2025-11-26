@@ -23,27 +23,30 @@ class _AllProductsViewState extends State<AllProductsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      body: Obx(() {
-        return Stack(
-          children: [
-            BackgroundPattern(),
-            if (_homeController.isLoadingProducts.value)
-              EmptyStates().loadingData()
-            else if (_homeController.allProducts.isEmpty)
-              Positioned.fill(
-                child: EmptyStates().noDataAvailablePage(
-                  textColor: ColorConstants.whiteMainColor,
-                ),
-              )
-            else
-              _buildProductGrid(),
-            _buildFilterContainer(context),
-            _appBar(),
-          ],
-        );
-      }),
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
+        backgroundColor: ColorConstants.whiteMainColor,
+        body: Obx(() {
+          return Stack(
+            children: [
+              if (_homeController.isLoadingProducts.value)
+                EmptyStates().loadingData()
+              else if (_homeController.allProducts.isEmpty)
+                Positioned.fill(
+                  child: EmptyStates().noDataAvailablePage(
+                    textColor: ColorConstants.whiteMainColor,
+                  ),
+                )
+              else
+                _buildProductGrid(),
+              _buildFilterContainer(context),
+              _appBar(),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -61,8 +64,9 @@ class _AllProductsViewState extends State<AllProductsView> {
                 Get.back();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.white.withOpacity(.1),
                 padding: EdgeInsets.zero,
+                foregroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadii.borderRadius15,
                   side: BorderSide(
@@ -81,7 +85,7 @@ class _AllProductsViewState extends State<AllProductsView> {
               widget.title.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: ColorConstants.whiteMainColor,
+                color: ColorConstants.kPrimaryColor,
                 fontSize: AppFontSizes.fontSize20 + 2,
                 fontWeight: FontWeight.bold,
               ),
@@ -149,14 +153,16 @@ class _AllProductsViewState extends State<AllProductsView> {
           onTap: () {
             _homeController.isFilterExpanded.toggle();
           },
-          child: Container(
-            height: _homeController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.4 : 60,
+          child: AnimatedContainer(
+            height: _homeController.isFilterExpanded.value ? MediaQuery.of(context).size.height * 0.42 : 60,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
               color: ColorConstants.whiteMainColor,
               borderRadius: BorderRadii.borderRadius20,
             ),
+            duration: const Duration(milliseconds: 400),
+            transformAlignment: Alignment.bottomCenter,
             child: _homeController.isFilterExpanded.value
                 ? ListView(
                     physics: NeverScrollableScrollPhysics(),

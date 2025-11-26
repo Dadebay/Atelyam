@@ -20,10 +20,7 @@ class ProductListView extends StatelessWidget {
         ListviewTopNameAndIcon(
           text: hashtagModel.name,
           icon: true,
-          onTap: () => Get.to(
-            () =>
-                AllProductsView(title: hashtagModel.name, id: hashtagModel.id),
-          ),
+          onTap: () => Get.to(() => AllProductsView(title: hashtagModel.name, id: hashtagModel.id)),
         ),
         SizedBox(
           height: size.height * 0.45,

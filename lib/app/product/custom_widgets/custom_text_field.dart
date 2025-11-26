@@ -70,19 +70,18 @@ class CustomTextField extends StatelessWidget {
           labelText: showLabel == true ? labelName.tr : null,
           labelStyle: TextStyle(
             color: defaultColor,
-            fontFamily: Fonts.plusJakartaSans,
+            fontFamily: Fonts.gilroy,
             fontSize: AppFontSizes.getFontSize(4.5),
             fontWeight: FontWeight.w600,
           ),
           hintStyle: TextStyle(
             color: defaultColor,
-            fontFamily: Fonts.plusJakartaSans,
+            fontFamily: Fonts.gilroy,
             fontSize: AppFontSizes.getFontSize(4.5),
             fontWeight: FontWeight.w600,
           ),
           floatingLabelAlignment: FloatingLabelAlignment.start,
-          contentPadding:
-              EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
+          contentPadding: EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
           isDense: true,
           alignLabelWithHint: true,
           border: _buildOutlineInputBorder(borderColor: defaultColor),
@@ -90,8 +89,7 @@ class CustomTextField extends StatelessWidget {
           focusedBorder: _buildOutlineInputBorder(
             borderColor: ColorConstants.kSecondaryColor,
           ),
-          focusedErrorBorder:
-              _buildOutlineInputBorder(borderColor: defaultColor),
+          focusedErrorBorder: _buildOutlineInputBorder(borderColor: defaultColor),
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),
       ),
@@ -175,8 +173,7 @@ class PhoneNumberTextField extends StatelessWidget {
             fontSize: AppFontSizes.getFontSize(4.5),
           ),
           prefixIconConstraints: BoxConstraints(minWidth: 80),
-          contentPadding:
-              const EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
+          contentPadding: const EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
           isDense: true,
           border: _buildOutlineInputBorder(
             borderColor: ColorConstants.kPrimaryColor.withOpacity(.2),

@@ -45,7 +45,7 @@ class BusinessUserModel {
       id: json['id'] as int? ?? 0,
       userID: json['user_id'] ?? 0,
       businessName: json['businessName'] as String? ?? '',
-      businessPhone: json['businessPhone'] as String? ?? json['phone'],
+      businessPhone: json['businessPhone'] as String? ?? json['phone'] ?? '',
       backPhoto: json['back_photo'] as String? ?? '',
       description: json['description'] as String? ?? '',
       address: json['address'] ?? '',

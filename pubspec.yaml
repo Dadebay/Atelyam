@@ -1,10 +1,10 @@
 name: atelyam
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.3 <4.0.0'
+  sdk: ">=3.3.3 <4.0.0"
 
 dependencies:
   flutter:
@@ -13,6 +13,7 @@ dependencies:
   # 🔥 FIREBASE & NOTIFICATIONS
   firebase_core: ^4.1.1
   firebase_messaging: ^16.0.2
+  firebase_analytics: ^12.0.2
   flutter_local_notifications: ^19.0.0
 
   # 📦 STATE MANAGEMENT
@@ -59,20 +60,18 @@ flutter:
     - assets/image/patterns/
 
   fonts:
-  - family: PlusJakartaSans
-    fonts:
-      - asset: assets/fonts/PlusJakartaSans-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/PlusJakartaSans-Light.ttf
-        weight: 300
-      - asset: assets/fonts/PlusJakartaSans-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/PlusJakartaSans-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
-        weight: 600
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Gilroy-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Gilroy-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Gilroy-Bold.ttf
+          weight: 700
 
-  - family: Bell
-    fonts:
-      - asset: assets/fonts/BellRegular.otf
-        weight: 400    
+    - family: Bell
+      fonts:
+        - asset: assets/fonts/BellRegular.otf
+          weight: 400

@@ -1,5 +1,6 @@
 import 'dart:io';
 import '../custom_widgets/index.dart';
+import 'firebase_analytics_service.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -24,6 +25,18 @@ class AppStartInit {
 
     final firebaseMessagingService = FirebaseMessagingService.instance();
     await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+
+    final firebaseAnalyticsService = FirebaseAnalyticsService.instance();
+    await firebaseAnalyticsService.init();
+
+    // Test event - Analytics çalışıyor mu kontrol et
+    await firebaseAnalyticsService.logEvent(
+      name: 'app_started',
+      parameters: {
+        'platform': Platform.isAndroid ? 'android' : 'ios',
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
 
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

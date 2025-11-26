@@ -18,26 +18,38 @@ class _HomeViewState extends State<HomeView> {
         final double screenHeight = constraints.maxHeight;
         final double screenWidth = constraints.maxWidth;
 
-        return RefreshIndicator(
-          onRefresh: homeController.refreshBanners,
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(child: Banners()),
-              SliverToBoxAdapter(
-                child: BusinessCategoryView(
-                  screenWidth: screenWidth,
-                  categoriesFuture: homeController.categoriesFuture.value,
+        return Obx(() {
+          return FutureBuilder(
+            future: Future.wait([
+              homeController.bannersFuture.value,
+              homeController.categoriesFuture.value,
+              homeController.hashtagsFuture.value,
+            ]),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: EmptyStates().loadingData());
+              }
+
+              if (snapshot.hasError) {
+                return Center(child: EmptyStates().errorData(snapshot.error.toString()));
+              }
+
+              return RefreshIndicator(
+                onRefresh: homeController.refreshBanners,
+                child: ListView(
+                  children: [
+                    Banners(),
+                    BusinessCategoryView(screenWidth: screenWidth, categoriesFuture: homeController.categoriesFuture.value),
+                    BusinessUsersHomeView(),
+                    ProductsView(
+                      size: Size(screenWidth, screenHeight),
+                    ),
+                  ],
                 ),
-              ),
-              SliverToBoxAdapter(child: BusinessUsersHomeView()),
-              SliverToBoxAdapter(
-                child: ProductsView(
-                  size: Size(screenWidth, screenHeight),
-                ),
-              ),
-            ],
-          ),
-        );
+              );
+            },
+          );
+        });
       },
     );
   }

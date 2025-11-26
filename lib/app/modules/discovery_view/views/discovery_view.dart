@@ -37,52 +37,27 @@ class _DiscoveryViewState extends State<DiscoveryView> {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadii.borderRadius10,
+    return TextField(
+      controller: controller.textEditingController,
+      decoration: InputDecoration(
+        hintText: 'discovery'.tr + "...",
+        prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
+        suffixIcon: controller.textEditingController.text.isNotEmpty
+            ? IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: () => controller.clearSearch(),
+              )
+            : null,
+        filled: true,
+        fillColor: ColorConstants.searchColor.withOpacity(0.6),
+        border: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: ColorConstants.kPrimaryColor)),
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
       ),
-      child: TextField(
-        controller: controller.textEditingController,
-        decoration: InputDecoration(
-          hintText: 'Search',
-          prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
-          suffixIcon: controller.textEditingController.text.isNotEmpty
-              ? IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed: () {
-                    controller.clearSearch();
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-        ),
-        onSubmitted: (value) {
-          controller.searchProducts(value);
-        },
-      ),
-    );
-  }
-
-  Widget _buildNoDataFound() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset('assets/lottie/nodata.json'),
-          const SizedBox(height: 10),
-          Text(
-            'Maglumat tapylmady',
-            style: TextStyle(
-              color: ColorConstants.kPrimaryColor,
-              fontSize: AppFontSizes.fontSize20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+      onSubmitted: (value) {
+        controller.searchProducts(value);
+      },
     );
   }
 
@@ -91,7 +66,7 @@ class _DiscoveryViewState extends State<DiscoveryView> {
       if (controller.products.isEmpty && controller.hasMore) {
         return EmptyStates().loadingData();
       } else if (controller.products.isEmpty && !controller.hasMore) {
-        return _buildNoDataFound();
+        return EmptyStates().noDataAvailable();
       }
 
       final List<Map<String, int>> tileSizes = [

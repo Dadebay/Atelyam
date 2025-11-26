@@ -13,13 +13,11 @@ class BusinessUserProfileView extends StatefulWidget {
     required this.whichPage,
     super.key,
   });
-  State<BusinessUserProfileView> createState() =>
-      _BusinessUserProfileViewState();
+  State<BusinessUserProfileView> createState() => _BusinessUserProfileViewState();
 }
 
 class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
-  final BrandsController _homeController =
-      Get.put<BrandsController>(BrandsController());
+  final BrandsController _homeController = Get.put<BrandsController>(BrandsController());
   final AuthController authController = Get.find<AuthController>();
   @override
   void initState() {
@@ -41,12 +39,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: AgreeButton(
             onTap: () {
-              final String phoneNumberText = _homeController
-                      .businessUser.value!.businessPhone
-                      .contains('+993')
-                  ? _homeController.businessUser.value!.businessPhone
-                  : '+993${_homeController.businessUser.value!.businessPhone}';
-
+              final String phoneNumberText =
+                  _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
               _homeController.makePhoneCall(phoneNumberText);
             },
             text: 'call'.tr,
@@ -57,8 +51,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
           () => _homeController.isLoadingBrandsProfile.value
               ? EmptyStates().loadingData()
               : NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
+                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                     return <Widget>[
                       _buildSliverAppBar(),
                     ];
@@ -78,9 +71,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
 
   Widget _buildInfoTab() {
     final String phoneNumberText =
-        _homeController.businessUser.value!.businessPhone.contains('+993')
-            ? _homeController.businessUser.value!.businessPhone
-            : '+993${_homeController.businessUser.value!.businessPhone}';
+        _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
     return Obx(
       () => Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, top: 25),
@@ -92,8 +83,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 ? SizedBox.shrink()
                 : SocialMediaIcon(
                     name: 'instagram',
-                    userName: _homeController.businessUser.value!.instagram
-                        .toString(),
+                    userName: _homeController.businessUser.value!.instagram.toString(),
                     icon: Assets.instagram,
                     maxline: 1,
                     index: 3,
@@ -102,8 +92,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 ? SizedBox.shrink()
                 : SocialMediaIcon(
                     name: 'youtube',
-                    userName:
-                        _homeController.businessUser.value!.youtube.toString(),
+                    userName: _homeController.businessUser.value!.youtube.toString(),
                     icon: Assets.youtube,
                     index: 4,
                     maxline: 1,
@@ -112,8 +101,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 ? SizedBox.shrink()
                 : SocialMediaIcon(
                     name: 'tiktok',
-                    userName:
-                        _homeController.businessUser.value!.tiktok.toString(),
+                    userName: _homeController.businessUser.value!.tiktok.toString(),
                     icon: Assets.tiktok,
                     index: 5,
                     maxline: 1,
@@ -131,8 +119,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 ? SizedBox.shrink()
                 : SocialMediaIcon(
                     name: 'location',
-                    userName:
-                        _homeController.businessUser.value!.address.toString(),
+                    userName: _homeController.businessUser.value!.address.toString(),
                     icon: Assets.address,
                     index: 6,
                     maxline: 4,
@@ -161,8 +148,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             final products = snapshot.data!;
             return MasonryGridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              gridDelegate:
-                  const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
               ),
               itemCount: products.length,
@@ -175,8 +161,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   child: DiscoveryCard(
                     productModel: product,
                     homePageStyle: false,
-                    businessUserID:
-                        widget.businessUserModelFromOutside.userID.toString(),
+                    businessUserID: widget.businessUserModelFromOutside.userID.toString(),
                   ),
                 );
               },
@@ -233,8 +218,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
       scrolledUnderElevation: 0.0,
       expandedHeight: 360.0,
       foregroundColor: ColorConstants.kSecondaryColor,
-      actionsIconTheme:
-          const IconThemeData(color: ColorConstants.kSecondaryColor),
+      actionsIconTheme: const IconThemeData(color: ColorConstants.kSecondaryColor),
       backgroundColor: Colors.white,
       automaticallyImplyLeading: true,
       bottom: TabBar(
@@ -243,19 +227,18 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
         splashBorderRadius: BorderRadii.borderRadius20,
         labelStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          fontFamily: Fonts.plusJakartaSans,
+          fontFamily: Fonts.gilroy,
           fontSize: AppFontSizes.fontSize20 - 2,
         ),
         unselectedLabelStyle: TextStyle(
           fontWeight: FontWeight.w500,
-          fontFamily: Fonts.plusJakartaSans,
+          fontFamily: Fonts.gilroy,
           fontSize: AppFontSizes.fontSize20 - 2,
         ),
         dividerColor: Colors.transparent,
         indicator: const UnderlineTabIndicator(
           borderRadius: BorderRadii.borderRadius40,
-          borderSide:
-              BorderSide(color: ColorConstants.kSecondaryColor, width: 5.0),
+          borderSide: BorderSide(color: ColorConstants.kSecondaryColor, width: 5.0),
         ),
         unselectedLabelColor: Colors.grey,
         tabs: [
@@ -320,8 +303,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                     borderRadius: BorderRadii.borderRadius50,
                     child: CachedNetworkImage(
                       fadeInCurve: Curves.ease,
-                      imageUrl: authController.ipAddress.value +
-                          (_homeController.businessUser.value?.backPhoto ?? ''),
+                      imageUrl: authController.ipAddress.value + (_homeController.businessUser.value?.backPhoto ?? ''),
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadii.borderRadius99,
@@ -331,10 +313,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                           ),
                         ),
                       ),
-                      placeholder: (context, url) =>
-                          EmptyStates().loadingData(),
-                      errorWidget: (context, url, error) =>
-                          EmptyStates().noMiniCategoryImage(),
+                      placeholder: (context, url) => EmptyStates().loadingData(),
+                      errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
                     ),
                   ),
                 ),
@@ -352,8 +332,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20, right: 20, bottom: 70),
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
                   child: Text(
                     _homeController.businessUser.value!.description,
                     maxLines: 3,

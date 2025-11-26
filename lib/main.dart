@@ -1,6 +1,7 @@
 import 'package:atelyam/app/modules/auth_view/views/connection_check_view.dart';
 import 'package:atelyam/app/product/initialize/app_start_init.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
+import 'package:atelyam/app/utils/global_safe_area_wrapper.dart';
 import 'package:atelyam/app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -41,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       locale: getLocale(),
       translations: MyTranslations(),
       defaultTransition: Transition.fadeIn,
-      home: ConnectionCheckView(),
+      home: GlobalSafeAreaWrapper(top: false, bottom: true, child: ConnectionCheckView()),
     );
   }
 }

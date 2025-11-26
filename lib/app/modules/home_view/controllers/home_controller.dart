@@ -19,8 +19,7 @@ class HomeController extends GetxController {
   RxBool isLoadingProducts = false.obs;
   final RefreshController refreshController = RefreshController();
   RxList<ProductModel> allProducts = <ProductModel>[].obs;
-  RxMap<int, Future<List<ProductModel>>> productsFutures =
-      <int, Future<List<ProductModel>>>{}.obs;
+  RxMap<int, Future<List<ProductModel>>> productsFutures = <int, Future<List<ProductModel>>>{}.obs;
   Rx<FilterOption?> selectedFilter = Rx<FilterOption?>(FilterOption.last);
   late Rx<Future<List<BannerModel>>> bannersFuture;
   late Rx<Future<List<BusinessCategoryModel>?>> categoriesFuture;

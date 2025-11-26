@@ -21,6 +21,8 @@ class BusinessCategoryService {
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8', //Setting header explicitly
         },
       );
+      print('${authController.ipAddress.value}/mobile/cats/');
+      print(response.body);
       if (response.statusCode == 200) {
         final responseBody = utf8.decode(response.bodyBytes); // Force UTF-8 decoding
         final List<dynamic> responseData = json.decode(responseBody);

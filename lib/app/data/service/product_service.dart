@@ -18,21 +18,48 @@ class ProductService {
 
   Future<List<ProductModel>?> fetchProducts(int categoryId, int userId) async {
     try {
-      final response = await _client.get(
-        Uri.parse(
-          '${authController.ipAddress.value}/mobile/products/$categoryId/$userId/',
-        ),
-      );
-      if (response.statusCode == 200) {
-        final responseBody = utf8.decode(response.bodyBytes);
-        final List<dynamic> data = json.decode(responseBody);
-        final List<ProductModel> products =
-            data.map((json) => ProductModel.fromJson(json)).toList();
-        return products;
-      } else {
-        _handleApiError(response.statusCode);
-        return null;
+      List<ProductModel> allProducts = [];
+      int page = 1;
+      bool hasMore = true;
+
+      while (hasMore) {
+        final response = await _client.get(
+          Uri.parse(
+            '${authController.ipAddress.value}/mobile/products/$categoryId/$userId/?page=$page',
+          ),
+        );
+        if (response.statusCode == 200) {
+          final responseBody = utf8.decode(response.bodyBytes);
+          final jsonData = json.decode(responseBody);
+          
+          // Check if response is a list or has results key
+          List<dynamic> data;
+          if (jsonData is List) {
+            data = jsonData;
+            hasMore = false; // If it's a list, no pagination
+          } else if (jsonData is Map && jsonData.containsKey('results')) {
+            data = jsonData['results'];
+            hasMore = jsonData['next'] != null;
+          } else {
+            hasMore = false;
+            break;
+          }
+          
+          if (data.isEmpty) {
+            hasMore = false;
+          } else {
+            allProducts.addAll(
+              data.map((json) => ProductModel.fromJson(json)).toList()
+            );
+            page++;
+          }
+        } else {
+          _handleApiError(response.statusCode);
+          hasMore = false;
+        }
       }
+      
+      return allProducts.isNotEmpty ? allProducts : null;
     } on SocketException {
       return null;
     } catch (e) {
@@ -46,22 +73,40 @@ class ProductService {
   Future<List<ProductModel>?> fetchPopularProductsByUserID(int userId) async {
     print(userId);
     try {
-      final response = await _client.get(
-        Uri.parse(
-          '${authController.ipAddress.value}/mobile/getProduct/$userId/',
-        ),
-      );
-      print(response.body);
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final responseBody = utf8.decode(response.bodyBytes);
-        final List<dynamic> data = json.decode(responseBody)['results'];
-        final List<ProductModel> products =
-            data.map((json) => ProductModel.fromJson(json)).toList();
-        return products;
-      } else {
-        return null;
+      List<ProductModel> allProducts = [];
+      int page = 1;
+      bool hasMore = true;
+
+      while (hasMore) {
+        final response = await _client.get(
+          Uri.parse(
+            '${authController.ipAddress.value}/mobile/getProduct/$userId/?page=$page',
+          ),
+        );
+        print(response.body);
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          final responseBody = utf8.decode(response.bodyBytes);
+          final jsonData = json.decode(responseBody);
+          final List<dynamic> data = jsonData['results'];
+          
+          if (data.isEmpty) {
+            hasMore = false;
+          } else {
+            allProducts.addAll(
+              data.map((json) => ProductModel.fromJson(json)).toList()
+            );
+            
+            // Check if there's a next page
+            hasMore = jsonData['next'] != null;
+            page++;
+          }
+        } else {
+          hasMore = false;
+        }
       }
+      
+      return allProducts.isNotEmpty ? allProducts : null;
     } on SocketException catch (e) {
       print(e);
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);

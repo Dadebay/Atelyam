@@ -2,7 +2,10 @@ import 'package:atelyam/app/product/custom_widgets/index.dart';
 
 class BusinessUserCard extends StatelessWidget {
   const BusinessUserCard({
-    required this.businessUserModel, required this.productModel, required this.businessUserID, Key? key,
+    required this.businessUserModel,
+    required this.productModel,
+    required this.businessUserID,
+    Key? key,
   }) : super(key: key);
 
   final BusinessUserModel businessUserModel;
@@ -37,20 +40,18 @@ class BusinessUserCard extends StatelessWidget {
               spreadRadius: 1,
             ),
           ],
-          border:
-              Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2)),
+          border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.2)),
         ),
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         child: Row(
           children: [
             Container(
-              width: 70,
-              height: 70,
-              margin: const EdgeInsets.only(right: 15),
+              width: 60,
+              height: 60,
+              margin: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
               child: ClipRRect(
                 borderRadius: BorderRadii.borderRadius99,
-                child: WidgetsMine()
-                    .customCachedImage(businessUserModel.backPhoto),
+                child: WidgetsMine().customCachedImage(businessUserModel.backPhoto),
               ),
             ),
             Expanded(
@@ -67,9 +68,7 @@ class BusinessUserCard extends StatelessWidget {
                       fontSize: AppFontSizes.fontSize20 - 2,
                     ),
                   ),
-                  const SizedBox(
-                    height: 6,
-                  ),
+                  const SizedBox(height: 6),
                   Text(
                     businessUserModel.address.toString(),
                     maxLines: 1,

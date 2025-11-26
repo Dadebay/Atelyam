@@ -13,43 +13,43 @@ class AllBusinessUsersView extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,
       appBar: AppBar(
-          title: Text(
-            'commecial_users'.tr,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: AppFontSizes.fontSize20,
-              fontWeight: FontWeight.w500,
-            ),
+        title: Text(
+          'commecial_users'.tr,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: AppFontSizes.fontSize20,
+            fontWeight: FontWeight.bold,
           ),
-          leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(IconlyLight.arrow_left_circle),
-          ),
-          backgroundColor: ColorConstants.whiteMainColor,),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: FutureBuilder<List<BusinessUserModel>?>(
-          future: BusinessUserService()
-              .getBusinessAccountsByCategory(categoryID: categoryId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return EmptyStates().loadingData();
-            } else if (snapshot.hasError) {
-              return EmptyStates().errorData(snapshot.hasError.toString());
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return EmptyStates().noDataAvailablePage(
-                textColor: ColorConstants.whiteMainColor,
-              );
-            } else {
-              final List<BusinessUserModel> categories = snapshot.data!;
-              return GridView.builder(
+        ),
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Icon(IconlyLight.arrow_left_circle),
+        ),
+        backgroundColor: ColorConstants.whiteMainColor,
+      ),
+      body: FutureBuilder<List<BusinessUserModel>?>(
+        future: BusinessUserService().getBusinessAccountsByCategory(categoryID: categoryId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return EmptyStates().loadingData();
+          } else if (snapshot.hasError) {
+            return EmptyStates().errorData(snapshot.hasError.toString());
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return EmptyStates().noDataAvailablePage(
+              textColor: ColorConstants.whiteMainColor,
+            );
+          } else {
+            final List<BusinessUserModel> categories = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
                 itemCount: categories.length,
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.8,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
                 ),
                 itemBuilder: (BuildContext context, index) {
                   return BusinessUsersCardView(
@@ -57,10 +57,10 @@ class AllBusinessUsersView extends StatelessWidget {
                     categoryID: categoryId,
                   );
                 },
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

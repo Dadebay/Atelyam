@@ -19,7 +19,6 @@ class OTPView extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          Positioned.fill(child: BackgroundPattern()),
           TransparentAppBar(title: 'verify_phone', miniBackButton: true, removeLeading: false, color: Colors.white),
           Positioned(
             left: 0,

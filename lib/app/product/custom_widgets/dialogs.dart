@@ -165,14 +165,14 @@ class Dialogs {
                   children: <Widget>[
                     Text(
                       'noConnection1'.tr,
-                      style: const TextStyle(fontSize: 24.0, color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.bold, fontFamily: Fonts.plusJakartaSans),
+                      style: const TextStyle(fontSize: 24.0, color: ColorConstants.kPrimaryColor, fontWeight: FontWeight.bold, fontFamily: Fonts.gilroy),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                       child: Text(
                         'noConnection2'.tr,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.black, fontFamily: Fonts.plusJakartaSans, fontSize: 16.0),
+                        style: const TextStyle(color: Colors.black, fontFamily: Fonts.gilroy, fontSize: 16.0),
                       ),
                     ),
                     ElevatedButton(
@@ -187,7 +187,7 @@ class Dialogs {
                       ),
                       child: Text(
                         'noConnection3'.tr,
-                        style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold, fontFamily: Fonts.plusJakartaSans),
+                        style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold, fontFamily: Fonts.gilroy),
                       ),
                     ),
                     const SizedBox(height: 20),

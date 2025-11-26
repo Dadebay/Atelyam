@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/auth_view/components/connection_check_card.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
+import 'package:atelyam/app/modules/home_view/controllers/business_category_controller.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -16,18 +17,10 @@ class ConnectionCheckView extends StatefulWidget {
 
 class _ConnectionCheckViewState extends State<ConnectionCheckView> {
   final AuthController authController = Get.find<AuthController>();
+  final BusinessCategoryController businessCategoryController = Get.put(BusinessCategoryController());
   late List<int> extendedItemList;
   final int itemCount = 29;
-  List<String> loadingMessages = [
-    'brandingTitle1',
-    'brandingTitle2',
-    'brandingTitle3',
-    'brandingTitle4',
-    'brandingTitle5',
-    'brandingTitle6',
-    'brandingTitle7',
-    'brandingTitle8',
-  ];
+  List<String> loadingMessages = ['brandingTitle1', 'brandingTitle2', 'brandingTitle3', 'brandingTitle4', 'brandingTitle5', 'brandingTitle6', 'brandingTitle7', 'brandingTitle8'];
   final ScrollController _scrollController = ScrollController();
   late Timer _scrollTimer;
 
