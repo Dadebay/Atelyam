@@ -24,101 +24,92 @@ class _CategoryProductViewState extends State<CategoryProductView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _topImage(),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _imagePart(),
-          ),
-          TransparentAppBar(
-            title: widget.categoryModel.name,
-            removeLeading: false,
-            color: ColorConstants.whiteMainColor,
-            actions: [
-              Obx(
-                () => Container(
-                  margin: EdgeInsets.only(right: 16),
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white30,
-                    borderRadius: BorderRadii.borderRadius10,
-                    border: Border.all(
-                      color: ColorConstants.whiteMainColor,
-                      width: 1,
+    return WillPopScope(
+      onWillPop: () async {
+        print('🔴 CategoryProductView: WillPop - Clearing focus');
+        // Klavyeyi kapat ve focus'u temizle
+        FocusScope.of(context).unfocus();
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _imagePart(),
+            ),
+            TransparentAppBar(
+              title: widget.categoryModel.name,
+              removeLeading: false,
+              color: ColorConstants.whiteMainColor,
+              actions: [
+                Obx(
+                  () => Container(
+                    margin: EdgeInsets.only(right: 16),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white30,
+                      borderRadius: BorderRadii.borderRadius10,
+                      border: Border.all(
+                        color: ColorConstants.whiteMainColor,
+                        width: 1,
+                      ),
+                    ),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 26,
+                      icon: Icon(
+                        _categoryController.isFilterExpanded.value ? Icons.close : IconlyLight.filter,
+                        color: ColorConstants.whiteMainColor,
+                      ),
+                      onPressed: () {
+                        _showFilterBottomSheet(context);
+                      },
                     ),
                   ),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    iconSize: 26,
-                    icon: Icon(
-                      _categoryController.isFilterExpanded.value ? Icons.close : IconlyLight.filter,
-                      color: ColorConstants.whiteMainColor,
+                ),
+              ],
+            ),
+            Positioned(
+              top: Get.size.height * 0.15,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.whiteMainColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
                     ),
-                    onPressed: () {
-                      _showFilterBottomSheet(context);
+                  ),
+                  child: Obx(
+                    () {
+                      if (_categoryController.isLoadingProducts.value) {
+                        return EmptyStates().loadingData();
+                      } else if (_categoryController.allProducts.isEmpty) {
+                        return EmptyStates().noDataAvailablePage(
+                          textColor: ColorConstants.darkMainColor,
+                        );
+                      } else {
+                        return _buildProductGrid();
+                      }
                     },
                   ),
                 ),
               ),
-            ],
-          ),
-          Positioned(
-            top: Get.size.height * 0.15,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: ColorConstants.whiteMainColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Obx(
-                  () {
-                    if (_categoryController.isLoadingProducts.value) {
-                      return EmptyStates().loadingData();
-                    } else if (_categoryController.allProducts.isEmpty) {
-                      return EmptyStates().noDataAvailablePage(
-                        textColor: ColorConstants.darkMainColor,
-                      );
-                    } else {
-                      return _buildProductGrid();
-                    }
-                  },
-                ),
-              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Positioned _topImage() {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: SizedBox(
-        height: Get.size.height * 0.80,
-        child: CachedNetworkImage(
-          imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
-          fit: BoxFit.cover,
-          placeholder: (context, url) => EmptyStates().loadingData(),
-          errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
+          ],
         ),
       ),
     );
@@ -152,8 +143,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       child: Container(
         margin: const EdgeInsets.only(top: 10),
         child: MasonryGridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -162,12 +152,9 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           mainAxisSpacing: 15,
           crossAxisSpacing: 15,
           itemBuilder: (context, index) {
-            return Obx(
-              () => _buildCard(
-                index: index,
-                product: _categoryController.allProducts[index],
-                isAnimated: _categoryController.value.value,
-              ),
+            return _buildCard(
+              index: index,
+              product: _categoryController.allProducts[index],
             );
           },
         ),
@@ -175,48 +162,37 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     );
   }
 
+  static final _cardShadow = [
+    BoxShadow(
+      color: ColorConstants.kPrimaryColor.withOpacity(0.8),
+      blurRadius: 10,
+      offset: const Offset(0, 5),
+    )
+  ];
+
   Widget _buildCard({
     required int index,
     required ProductModel product,
-    required bool isAnimated,
   }) {
-    if (isAnimated) {
-      return Container(
+    return RepaintBoundary(
+      child: Container(
         height: index % 2 == 0 ? 250 : 200,
-        decoration: BoxDecoration(borderRadius: BorderRadii.borderRadius20, boxShadow: [
-          BoxShadow(
-            color: ColorConstants.kPrimaryColor.withOpacity(0.8),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ]),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadii.borderRadius20,
+          boxShadow: _cardShadow,
+        ),
         child: DiscoveryCard(
           productModel: product,
           homePageStyle: false,
         ),
-      );
-    } else {
-      return Container(
-        height: index % 2 == 0 ? 250 : 200,
-        decoration: BoxDecoration(borderRadius: BorderRadii.borderRadius20, boxShadow: [
-          BoxShadow(
-            color: ColorConstants.kPrimaryColor.withOpacity(0.8),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ]),
-        child: DiscoveryCard(
-          homePageStyle: false,
-          productModel: product,
-        ),
-      );
-    }
+      ),
+    );
   }
 
   void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.only(top: 15, right: 8, left: 8, bottom: 8),
+        padding: const EdgeInsets.only(top: 15, right: 8, left: 8, bottom: 40),
         decoration: BoxDecoration(
           color: ColorConstants.whiteMainColor,
           borderRadius: const BorderRadius.only(

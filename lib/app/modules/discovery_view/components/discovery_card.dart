@@ -29,6 +29,20 @@ class DiscoveryCard extends StatelessWidget {
 
   final AuthController authController = Get.find();
 
+  // Static decorations to avoid recreating on every build
+  static final _alternativeCardDecoration = BoxDecoration(
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: Colors.white, width: 2.5),
+  );
+
+  static final _standardCardShadow = [
+    BoxShadow(
+      color: ColorConstants.darkMainColor.withOpacity(0.1),
+      spreadRadius: 5,
+      blurRadius: 5,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final bool isEvenIndex = (index ?? 1) % 2 == 0;
@@ -48,10 +62,7 @@ class DiscoveryCard extends StatelessWidget {
       onTap: _navigateToProductDetail,
       child: Container(
         margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white, width: 2.5),
-        ),
+        decoration: _alternativeCardDecoration,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Stack(
@@ -93,15 +104,7 @@ class DiscoveryCard extends StatelessWidget {
       child: Container(
         margin: homePageStyle ? const EdgeInsets.only(left: 20, top: 10, bottom: 10) : EdgeInsets.zero,
         decoration: BoxDecoration(
-          boxShadow: homePageStyle
-              ? [
-                  BoxShadow(
-                    color: ColorConstants.darkMainColor.withOpacity(0.1),
-                    spreadRadius: 5,
-                    blurRadius: 5,
-                  ),
-                ]
-              : [],
+          boxShadow: homePageStyle ? _standardCardShadow : const [],
           borderRadius: BorderRadii.borderRadius20,
         ),
         child: ClipRRect(
@@ -246,10 +249,10 @@ class DiscoveryCard extends StatelessWidget {
 
   /// Ok ikonu (alternatif kart için)
   Widget _buildArrowIcon() {
-    return const Positioned(
+    return Positioned(
       bottom: 16,
       right: 16,
-      child: Icon(
+      child: const Icon(
         Icons.north_east,
         color: Colors.black,
         size: 18,

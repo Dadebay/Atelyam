@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CategoryController extends GetxController {
-  RxBool value = false.obs;
   RxList<ProductModel> allProducts = <ProductModel>[].obs;
   RxBool isLoadingProducts = false.obs;
   RxString activeFilter = 'last'.obs;
@@ -13,14 +12,6 @@ class CategoryController extends GetxController {
   final RefreshController refreshController = RefreshController();
   RxBool isFilterExpanded = false.obs;
   Rx<FilterOption?> selectedFilter = Rx<FilterOption?>(FilterOption.last);
-
-  @override
-  void onInit() {
-    super.onInit();
-    Future.delayed(const Duration(seconds: 3), () {
-      value.value = true;
-    });
-  }
 
   void toggleFilterExpanded() {
     isFilterExpanded.toggle();

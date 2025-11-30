@@ -65,6 +65,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
       child: Obx(() {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: Text(pageTitles[homeController.selectedIndex.value], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
             backgroundColor: ColorConstants.whiteMainColor,
@@ -106,6 +107,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: homeController.selectedIndex.value,
             onTap: (index) {
+              // Klavyeyi kapat ve focus'u temizle
+              FocusScope.of(context).unfocus();
               homeController.selectedIndex.value = index;
             },
             selectedItemColor: ColorConstants.kSecondaryColor,
