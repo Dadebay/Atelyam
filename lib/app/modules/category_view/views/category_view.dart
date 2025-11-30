@@ -31,15 +31,12 @@ class _CategoryViewState extends State<CategoryView> {
             itemCount: categories.length,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: index == categories.length - 1 ? 16 : 8),
-                child: CategoryCard(
-                  categoryModel: categories[index],
-                  onTap: () {
-                    Get.to(() => CategoryProductView(categoryModel: categories[index]));
-                  },
-                  scrollableState: Scrollable.of(context),
-                ),
+              return CategoryCard(
+                categoryModel: categories[index],
+                onTap: () {
+                  Get.to(() => CategoryProductView(categoryModel: categories[index]));
+                },
+                scrollableState: Scrollable.of(context),
               );
             },
           );

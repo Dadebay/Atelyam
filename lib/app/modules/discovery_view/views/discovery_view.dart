@@ -12,52 +12,64 @@ class DiscoveryView extends StatefulWidget {
 }
 
 class _DiscoveryViewState extends State<DiscoveryView> {
-  final DiscoveryController controller = Get.put(DiscoveryController());
+  late final DiscoveryController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = Get.put(DiscoveryController(), tag: 'discovery_${DateTime.now().millisecondsSinceEpoch}');
     controller.textEditingController.addListener(() {
       setState(() {});
     });
   }
 
   @override
+  void dispose() {
+    Get.delete<DiscoveryController>(tag: 'discovery_${controller.hashCode}');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      appBar: AppBar(
-        backgroundColor: ColorConstants.whiteMainColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: _buildSearchBar(),
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
+          children: [
+            Positioned.fill(top: 0, child: _buildGridView()),
+            Positioned(top: 10, left: 6, right: 6, child: _buildSearchBar()),
+          ],
+        ),
       ),
-      body: _buildGridView(),
     );
   }
 
   Widget _buildSearchBar() {
-    return TextField(
-      controller: controller.textEditingController,
-      decoration: InputDecoration(
-        hintText: 'discovery'.tr + "...",
-        prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
-        suffixIcon: controller.textEditingController.text.isNotEmpty
-            ? IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: () => controller.clearSearch(),
-              )
-            : null,
-        filled: true,
-        fillColor: ColorConstants.searchColor.withOpacity(0.6),
-        border: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: ColorConstants.kPrimaryColor)),
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+    return SizedBox(
+      height: 50,
+      child: TextField(
+        controller: controller.textEditingController,
+        decoration: InputDecoration(
+          hintText: 'discovery'.tr + "...",
+          prefixIcon: Icon(IconlyLight.search, color: Colors.grey),
+          suffixIcon: controller.textEditingController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () => controller.clearSearch(),
+                )
+              : null,
+          filled: true,
+          fillColor: ColorConstants.searchColor,
+          border: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: Colors.transparent)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20, borderSide: BorderSide(color: ColorConstants.kPrimaryColor)),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        ),
+        onSubmitted: (value) {
+          controller.searchProducts(value);
+        },
       ),
-      onSubmitted: (value) {
-        controller.searchProducts(value);
-      },
     );
   }
 
@@ -69,13 +81,15 @@ class _DiscoveryViewState extends State<DiscoveryView> {
         return EmptyStates().noDataAvailable();
       }
 
+      // Kıyafet reklamları için optimize edilmiş tile düzeni
+      // Daha dengeli ve çekici görünüm
       final List<Map<String, int>> tileSizes = [
-        {'cross': 2, 'main': 2},
-        {'cross': 2, 'main': 1},
-        {'cross': 1, 'main': 2},
-        {'cross': 2, 'main': 1},
-        {'cross': 1, 'main': 2},
-        {'cross': 1, 'main': 2},
+        {'cross': 2, 'main': 3}, // Büyük dikey - öne çıkan ürün
+        {'cross': 2, 'main': 2}, // Orta kare
+        {'cross': 2, 'main': 2}, // Orta kare
+        {'cross': 2, 'main': 3}, // Büyük dikey
+        {'cross': 2, 'main': 2}, // Orta kare
+        {'cross': 2, 'main': 2}, // Orta kare
       ];
 
       return SmartRefresher(
@@ -83,26 +97,25 @@ class _DiscoveryViewState extends State<DiscoveryView> {
         enablePullUp: true,
         onRefresh: controller.onRefresh,
         onLoading: controller.onLoading,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: StaggeredGrid.count(
-            crossAxisCount: 4,
-            mainAxisSpacing: 3,
-            crossAxisSpacing: 3,
-            children: List.generate(controller.products.length, (index) {
-              final tile = tileSizes[index % tileSizes.length];
-              return StaggeredGridTile.count(
-                crossAxisCellCount: tile['cross']!,
-                mainAxisCellCount: tile['main']!,
+        child: StaggeredGrid.count(
+          crossAxisCount: 4,
+          mainAxisSpacing: 8, // Daha geniş boşluk
+          crossAxisSpacing: 8, // Daha geniş boşluk
+          children: List.generate(controller.products.length, (index) {
+            final tile = tileSizes[index % tileSizes.length];
+            return StaggeredGridTile.count(
+              crossAxisCellCount: tile['cross']!,
+              mainAxisCellCount: tile['main']!,
+              child: ClipRRect(
+                borderRadius: BorderRadii.borderRadius10,
                 child: DiscoveryCard(
                   productModel: controller.products[index],
                   homePageStyle: false,
-                  showFavButton: false,
-                  showViewCount: true,
+                  showFavButton: true,
                 ),
-              );
-            }),
-          ),
+              ),
+            );
+          }),
         ),
       );
     });

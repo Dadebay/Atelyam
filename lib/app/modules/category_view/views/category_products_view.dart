@@ -1,5 +1,6 @@
 import 'package:atelyam/app/modules/category_view/controllers/category_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/custom_widgets/transparent_app_bar.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -33,41 +34,39 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             right: 0,
             child: _imagePart(),
           ),
-          // TransparentAppBar(
-          //   title: widget.categoryModel.name,
-          //   removeLeading: false,
-          //   color: ColorConstants.whiteMainColor,
-          //   actions: [
-          //     Obx(
-          //       () => Container(
-          //         margin: EdgeInsets.only(right: 16),
-          //         width: 40,
-          //         height: 40,
-          //         decoration: BoxDecoration(
-          //           shape: BoxShape.circle,
-          //           color: Colors.black.withOpacity(0.2),
-          //           border: Border.all(
-          //             color: ColorConstants.whiteMainColor,
-          //             width: 1,
-          //           ),
-          //         ),
-          //         child: IconButton(
-          //           padding: EdgeInsets.zero,
-          //           iconSize: 26,
-          //           icon: Icon(
-          //             _categoryController.isFilterExpanded.value
-          //                 ? Icons.close
-          //                 : IconlyLight.filter,
-          //             color: ColorConstants.whiteMainColor,
-          //           ),
-          //           onPressed: () {
-          //             _showFilterBottomSheet(context);
-          //           },
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          TransparentAppBar(
+            title: widget.categoryModel.name,
+            removeLeading: false,
+            color: ColorConstants.whiteMainColor,
+            actions: [
+              Obx(
+                () => Container(
+                  margin: EdgeInsets.only(right: 16),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white30,
+                    borderRadius: BorderRadii.borderRadius10,
+                    border: Border.all(
+                      color: ColorConstants.whiteMainColor,
+                      width: 1,
+                    ),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 26,
+                    icon: Icon(
+                      _categoryController.isFilterExpanded.value ? Icons.close : IconlyLight.filter,
+                      color: ColorConstants.whiteMainColor,
+                    ),
+                    onPressed: () {
+                      _showFilterBottomSheet(context);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
           Positioned(
             top: Get.size.height * 0.15,
             bottom: 0,
@@ -116,12 +115,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       child: SizedBox(
         height: Get.size.height * 0.80,
         child: CachedNetworkImage(
-          imageUrl:
-              '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
+          imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
           fit: BoxFit.cover,
           placeholder: (context, url) => EmptyStates().loadingData(),
-          errorWidget: (context, url, error) =>
-              EmptyStates().noMiniCategoryImage(),
+          errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
         ),
       ),
     );
@@ -135,12 +132,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius30,
           child: CachedNetworkImage(
-            imageUrl:
-                '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
+            imageUrl: '${authController.ipAddress.value}${widget.categoryModel.logo ?? ''}',
             fit: BoxFit.cover,
             placeholder: (context, url) => EmptyStates().loadingData(),
-            errorWidget: (context, url, error) =>
-                EmptyStates().noMiniCategoryImage(),
+            errorWidget: (context, url, error) => EmptyStates().noMiniCategoryImage(),
           ),
         ),
       ),
@@ -152,10 +147,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       controller: _categoryController.refreshController,
       enablePullUp: true,
       scrollDirection: Axis.vertical,
-      onRefresh: () =>
-          _categoryController.refreshProducts(widget.categoryModel.id),
-      onLoading: () =>
-          _categoryController.loadMoreProducts(widget.categoryModel.id),
+      onRefresh: () => _categoryController.refreshProducts(widget.categoryModel.id),
+      onLoading: () => _categoryController.loadMoreProducts(widget.categoryModel.id),
       child: Container(
         margin: const EdgeInsets.only(top: 10),
         child: MasonryGridView.builder(
@@ -188,16 +181,30 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     required bool isAnimated,
   }) {
     if (isAnimated) {
-      return SizedBox(
+      return Container(
         height: index % 2 == 0 ? 250 : 200,
+        decoration: BoxDecoration(borderRadius: BorderRadii.borderRadius20, boxShadow: [
+          BoxShadow(
+            color: ColorConstants.kPrimaryColor.withOpacity(0.8),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
+        ]),
         child: DiscoveryCard(
           productModel: product,
           homePageStyle: false,
         ),
       );
     } else {
-      return SizedBox(
+      return Container(
         height: index % 2 == 0 ? 250 : 200,
+        decoration: BoxDecoration(borderRadius: BorderRadii.borderRadius20, boxShadow: [
+          BoxShadow(
+            color: ColorConstants.kPrimaryColor.withOpacity(0.8),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
+        ]),
         child: DiscoveryCard(
           homePageStyle: false,
           productModel: product,
@@ -232,10 +239,14 @@ class _CategoryProductViewState extends State<CategoryProductView> {
             radioListTileButton(text: 'last', value: FilterOption.last),
             radioListTileButton(text: 'first', value: FilterOption.first),
             radioListTileButton(
-                text: 'viewcount', value: FilterOption.viewCount,),
+              text: 'viewcount',
+              value: FilterOption.viewCount,
+            ),
             radioListTileButton(text: 'LowPrice', value: FilterOption.lowPrice),
             radioListTileButton(
-                text: 'HighPrice', value: FilterOption.highPrice,),
+              text: 'HighPrice',
+              value: FilterOption.highPrice,
+            ),
             TextButton(
               onPressed: () {
                 Get.back();
@@ -267,9 +278,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           style: TextStyle(
             color: ColorConstants.darkMainColor,
             fontSize: AppFontSizes.fontSize16,
-            fontWeight: _categoryController.selectedFilter.value == value
-                ? FontWeight.bold
-                : FontWeight.w400,
+            fontWeight: _categoryController.selectedFilter.value == value ? FontWeight.bold : FontWeight.w400,
           ),
         ),
         value: value,

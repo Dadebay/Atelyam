@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TransparentAppBar(
-      {required this.title,
-      required this.color,
-      Key? key,
-      this.actions,
-      this.miniBackButton,
-      this.removeLeading,})
-      : super(key: key);
+  const TransparentAppBar({
+    required this.title,
+    required this.color,
+    Key? key,
+    this.actions,
+    this.miniBackButton,
+    this.removeLeading,
+  }) : super(key: key);
   final String title;
   final Color color;
   final bool? miniBackButton;
@@ -32,6 +32,7 @@ class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       scrolledUnderElevation: 0.0,
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       leadingWidth: 60,
       leading: removeLeading == false

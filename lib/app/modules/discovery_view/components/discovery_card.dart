@@ -14,7 +14,6 @@ import 'package:iconly/iconly.dart';
 class DiscoveryCard extends StatelessWidget {
   final ProductModel productModel;
   final bool homePageStyle;
-  final bool? showViewCount;
   final bool showFavButton;
   final String? businessUserID;
   final int? index;
@@ -22,7 +21,6 @@ class DiscoveryCard extends StatelessWidget {
   DiscoveryCard({
     required this.productModel,
     required this.homePageStyle,
-    this.showViewCount,
     this.businessUserID,
     this.showFavButton = true,
     this.index,
@@ -234,7 +232,7 @@ class DiscoveryCard extends StatelessWidget {
         width: 110,
         child: Text(
           productModel.name,
-          maxLines: 2,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.white,
@@ -302,166 +300,6 @@ class DiscoveryCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  /// 3. Minimal ve modern tasarım (Yeni Design)
-  Widget _buildMinimalCard() {
-    return GestureDetector(
-      onTap: _navigateToProductDetail,
-      child: Container(
-        margin: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: ColorConstants.darkMainColor.withOpacity(0.08),
-              spreadRadius: 3,
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-          borderRadius: BorderRadii.borderRadius20,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadii.borderRadius20,
-          child: Stack(
-            children: [
-              // Arka plan resmi
-              _buildProductImage(),
-
-              // Gradient overlay - Yumuşak alt gölgelendirme
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.75),
-                      ],
-                      stops: const [0.4, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Favori butonu (sağ üst)
-              _buildFavoriteButton(top: 10, right: 10),
-
-              // Görüntülenme sayısı - Compact & Modern (sol üst)
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: BorderRadii.borderRadius10,
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        IconlyLight.show,
-                        color: Colors.white,
-                        size: AppFontSizes.fontSize12,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        productModel.viewCount.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: AppFontSizes.fontSize12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Alt kısım - Modern bilgi paneli
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 14,
-                  ),
-                  child: Row(
-                    children: [
-                      // Sol taraf - Ürün bilgileri
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Ürün adı
-                            Text(
-                              productModel.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                height: 1.2,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            // Ürün açıklaması
-                            Text(
-                              productModel.description,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.85),
-                                fontWeight: FontWeight.w400,
-                                fontSize: AppFontSizes.fontSize14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // Sağ taraf - Modern ok butonu
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: ColorConstants.kPrimaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorConstants.kPrimaryColor.withOpacity(0.4),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

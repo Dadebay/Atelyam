@@ -6,8 +6,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DiscoveryController extends GetxController {
-  final RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController refreshController = RefreshController(initialRefresh: false);
   final TextEditingController textEditingController = TextEditingController();
   final List<ProductModel> products = <ProductModel>[].obs;
   int page = 1;
@@ -40,8 +39,7 @@ class DiscoveryController extends GetxController {
     }
 
     try {
-      final newProducts =
-          await ProductService().fetchPopularProducts(page: page, size: size);
+      final newProducts = await ProductService().fetchPopularProducts(page: page, size: size);
       if (newProducts != null && newProducts.isNotEmpty) {
         products.addAll(newProducts);
         page++;

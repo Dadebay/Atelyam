@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:atelyam/app/data/service/banner_service.dart';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
+import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
@@ -77,6 +78,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   }
                 },
                 icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
+            actions: homeController.selectedIndex.value == 1
+                ? [
+                    IconButton(
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedRefresh,
+                        color: ColorConstants.kPrimaryColor,
+                      ),
+                      onPressed: () {
+                        // DiscoveryController'ı bul ve refresh yap
+                        try {
+                          final discoveryController = Get.find<DiscoveryController>();
+                          discoveryController.onRefresh();
+                        } catch (e) {
+                          print('DiscoveryController not found: $e');
+                        }
+                      },
+                      tooltip: 'refresh'.tr,
+                    ),
+                  ]
+                : null,
           ),
           body: IndexedStack(
             index: homeController.selectedIndex.value,

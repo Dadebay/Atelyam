@@ -24,15 +24,12 @@ class BackButtonMine extends StatelessWidget {
             ),
           )
         : Container(
-            margin: EdgeInsets.only(left: 10),
-            width: 40,
-            height: 40,
+            margin: EdgeInsets.only(left: 10, top: 5, bottom: 5),
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.black.withOpacity(0.2),
+              borderRadius: BorderRadii.borderRadius10,
+              color: ColorConstants.whiteMainColor.withOpacity(.4),
               border: Border.all(
-                color: ColorConstants
-                    .whiteMainColor, 
+                color: ColorConstants.whiteMainColor,
                 width: 1,
               ),
             ),
