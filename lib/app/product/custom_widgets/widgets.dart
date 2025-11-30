@@ -116,30 +116,33 @@ class WidgetsMine {
     required String image,
     required VoidCallback onTap,
   }) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: WidgetsMine().customCachedImage(
-            image,
-          ),
-        ),
-        Positioned(
-          right: 5,
-          top: 5,
-          child: GestureDetector(
-            onTap: onTap,
-            child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.close, color: Colors.white, size: 20),
+    return Container(
+      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadii.borderRadius25),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: WidgetsMine().customCachedImage(
+              image,
             ),
           ),
-        ),
-      ],
+          Positioned(
+            right: 5,
+            top: 5,
+            child: GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.close, color: Colors.white, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

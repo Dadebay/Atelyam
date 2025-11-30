@@ -139,24 +139,31 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       enablePullUp: true,
       scrollDirection: Axis.vertical,
       onRefresh: () => _categoryController.refreshProducts(widget.categoryModel.id),
-      onLoading: () => _categoryController.loadMoreProducts(widget.categoryModel.id),
-      child: Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: MasonryGridView.builder(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+      onLoading: () {
+        print('🔵 Loading more products...');
+        _categoryController.loadMoreProducts(widget.categoryModel.id);
+      },
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Container(
+          margin: const EdgeInsets.only(top: 10),
+          child: MasonryGridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
+            itemCount: _categoryController.allProducts.length,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            itemBuilder: (context, index) {
+              return _buildCard(
+                index: index,
+                product: _categoryController.allProducts[index],
+              );
+            },
           ),
-          itemCount: _categoryController.allProducts.length,
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 15,
-          itemBuilder: (context, index) {
-            return _buildCard(
-              index: index,
-              product: _categoryController.allProducts[index],
-            );
-          },
         ),
       ),
     );

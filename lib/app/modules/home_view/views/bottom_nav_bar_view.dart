@@ -36,7 +36,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> pages = [HomeView(), DiscoveryView(), CategoryView(), FavoritesView(), SettingsView()];
 
-  final List<String> pageTitles = ['home'.tr, 'discovery'.tr, 'categories'.tr, 'favorites'.tr, 'settings'.tr];
+  final List<String> pageTitles = ['home', 'discovery', 'categories', 'favorites', 'settings'];
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: Text(pageTitles[homeController.selectedIndex.value], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+            title: Text(pageTitles[homeController.selectedIndex.value].tr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
             backgroundColor: ColorConstants.whiteMainColor,
             scrolledUnderElevation: 0.0,
             leading: IconButton(
@@ -87,12 +87,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         color: ColorConstants.kPrimaryColor,
                       ),
                       onPressed: () {
-                        // DiscoveryController'ı bul ve refresh yap
-                        try {
+                        print('🔵 Refresh button pressed');
+                        // DiscoveryController'ın kayıtlı olup olmadığını kontrol et
+                        if (Get.isRegistered<DiscoveryController>()) {
                           final discoveryController = Get.find<DiscoveryController>();
+                          print('🟢 DiscoveryController found, calling onRefresh()');
                           discoveryController.onRefresh();
-                        } catch (e) {
-                          print('DiscoveryController not found: $e');
+                        } else {
+                          print('🟡 DiscoveryController not registered yet, switching to DiscoveryView first');
+                          // Controller henüz oluşturulmamış, önce sayfaya geç
+                          homeController.selectedIndex.value = 1;
+                          // Bir frame sonra refresh yap
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (Get.isRegistered<DiscoveryController>()) {
+                              Get.find<DiscoveryController>().onRefresh();
+                              print('� DiscoveryController created and refreshed');
+                            }
+                          });
                         }
                       },
                       tooltip: 'refresh'.tr,

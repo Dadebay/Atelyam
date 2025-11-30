@@ -22,7 +22,7 @@ class MyProductCard extends StatelessWidget {
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: ColorConstants.whiteMainColor,
-        borderRadius: BorderRadii.borderRadius10,
+        borderRadius: BorderRadii.borderRadius25,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade300,
@@ -36,10 +36,8 @@ class MyProductCard extends StatelessWidget {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: productModel.status.toString().toLowerCase() == 'true'
-                    ? Colors.grey.shade200
-                    : ColorConstants.whiteMainColor,
-                borderRadius: BorderRadii.borderRadius10,
+                color: productModel.status.toString().toLowerCase() == 'true' ? Colors.grey.shade200 : ColorConstants.whiteMainColor,
+                borderRadius: BorderRadii.borderRadius25,
               ),
             ),
           ),
@@ -50,7 +48,7 @@ class MyProductCard extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadii.borderRadius10,
+                    borderRadius: BorderRadii.borderRadius25,
                     border: Border.all(
                       color: ColorConstants.kSecondaryColor,
                       width: 0.5,
@@ -58,7 +56,7 @@ class MyProductCard extends StatelessWidget {
                   ),
                   margin: EdgeInsets.only(right: 20),
                   child: ClipRRect(
-                    borderRadius: BorderRadii.borderRadius10,
+                    borderRadius: BorderRadii.borderRadius25,
                     child: productModel.img.toString() == 'null'
                         ? Icon(
                             IconlyLight.image_2,
@@ -99,7 +97,6 @@ class MyProductCard extends StatelessWidget {
                           ],
                         ),
                       ),
-               
                 IconButton(
                   onPressed: onTap,
                   icon: Icon(IconlyLight.edit_square),

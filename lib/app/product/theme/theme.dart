@@ -3,7 +3,7 @@
 import 'package:atelyam/app/modules/auth_view/views/auth_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/about_us_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_business_accounts_view.dart';
-import 'package:atelyam/app/modules/settings_view/views/all_product_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/all_added_products_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

@@ -35,44 +35,48 @@ class CreateBusinessAccountView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
             child: Obx(
-              () => DropdownButtonFormField<BusinessCategoryModel>(
-                decoration: InputDecoration(
-                  labelText: 'select_types_of_business'.tr,
-                  labelStyle: TextStyle(
-                    fontSize: AppFontSizes.getFontSize(4),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade400,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadii.borderRadius20,
-                    borderSide: BorderSide(
-                      color: ColorConstants.kSecondaryColor,
-                      width: 2,
+              () => ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButtonFormField<BusinessCategoryModel>(
+                  decoration: InputDecoration(
+                    labelText: 'select_types_of_business'.tr,
+                    labelStyle: TextStyle(
+                      fontSize: AppFontSizes.getFontSize(4),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade400,
                     ),
-                  ),
-                ),
-                value: controller.selectedCategory.value,
-                items: controller.categories.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Text(
-                      category.name,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.getFontSize(4),
-                        fontWeight: FontWeight.bold,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadii.borderRadius20,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadii.borderRadius20,
+                      borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadii.borderRadius20,
+                      borderSide: BorderSide(
+                        color: ColorConstants.kSecondaryColor,
+                        width: 2,
                       ),
                     ),
-                  );
-                }).toList(),
-                onChanged: (value) => controller.selectedCategory.value = value,
-                validator: (value) => value == null ? 'fill_all_fields'.tr : null,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  ),
+                  value: controller.selectedCategory.value,
+                  items: controller.categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(
+                        category.name,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.getFontSize(4),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) => controller.selectedCategory.value = value,
+                  validator: (value) => value == null ? 'fill_all_fields'.tr : null,
+                ),
               ),
             ),
           ),

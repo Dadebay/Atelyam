@@ -37,44 +37,47 @@ class AuthView extends StatelessWidget {
   }
 
   Widget _buildLogoSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 30),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 62,
+    return Container(
+      color: ColorConstants.kPrimaryColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 30),
             child: CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(Assets.logoBlack),
+              backgroundColor: Colors.white,
+              radius: 62,
+              child: CircleAvatar(
+                radius: 60,
+                backgroundImage: AssetImage(Assets.logoBlack),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            Assets.appName.tr,
-            style: TextStyle(
-              color: ColorConstants.whiteMainColor,
-              fontWeight: FontWeight.bold,
-              fontSize: AppFontSizes.getFontSize(7),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              Assets.appName.tr,
+              style: TextStyle(
+                color: ColorConstants.whiteMainColor,
+                fontWeight: FontWeight.bold,
+                fontSize: AppFontSizes.getFontSize(7),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'brandingTitle1'.tr,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.w500,
-              fontSize: AppFontSizes.getFontSize(5),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'brandingTitle1'.tr,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w500,
+                fontSize: AppFontSizes.getFontSize(5),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

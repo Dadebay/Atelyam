@@ -14,10 +14,14 @@ class AllProductView extends StatefulWidget {
 class _AllProductViewState extends State<AllProductView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      appBar: _appBar(),
-      body: getMyProducts(), // TabBarView kaldırıldı, direkt liste
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
+        backgroundColor: ColorConstants.whiteMainColor,
+        appBar: _appBar(),
+        body: getMyProducts(), // TabBarView kaldırıldı, direkt liste
+      ),
     );
   }
 

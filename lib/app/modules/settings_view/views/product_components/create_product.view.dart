@@ -6,8 +6,7 @@ class CreateProductView extends StatelessWidget {
   final ProductController controller = Get.put(ProductController());
 
   List<FocusNode> focusNodes = List.generate(3, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers =
-      List.generate(3, (_) => TextEditingController());
+  List<TextEditingController> textEditingControllers = List.generate(3, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +27,7 @@ class CreateProductView extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         color: ColorConstants.whiteMainColor,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -52,17 +50,14 @@ class CreateProductView extends StatelessWidget {
                                 final category = controller.categories[index];
                                 return ListTile(
                                   title: Text(category.name),
-                                  trailing: controller
-                                              .selectedCategory.value?.id ==
-                                          category.id
+                                  trailing: controller.selectedCategory.value?.id == category.id
                                       ? Icon(
                                           Icons.check,
                                           color: ColorConstants.kPrimaryColor,
                                         )
                                       : null,
                                   onTap: () {
-                                    controller.selectedCategory.value =
-                                        category;
+                                    controller.selectedCategory.value = category;
                                     Get.back();
                                   },
                                 );
@@ -92,8 +87,7 @@ class CreateProductView extends StatelessWidget {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadii.borderRadius20,
-                        borderSide:
-                            BorderSide(color: Colors.grey.shade300, width: 2),
+                        borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadii.borderRadius20,
@@ -108,10 +102,7 @@ class CreateProductView extends StatelessWidget {
                         size: 30,
                       ),
                     ),
-                    validator: (value) =>
-                        controller.selectedCategory.value == null
-                            ? 'fill_all_fields'.tr
-                            : null,
+                    validator: (value) => controller.selectedCategory.value == null ? 'fill_all_fields'.tr : null,
                   ),
                 ),
               ),
@@ -126,8 +117,7 @@ class CreateProductView extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         color: ColorConstants.whiteMainColor,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -150,9 +140,7 @@ class CreateProductView extends StatelessWidget {
                                 final hashtag = controller.hashtags[index];
                                 return ListTile(
                                   title: Text(hashtag.name),
-                                  trailing: controller
-                                              .selectedHashtag.value?.id ==
-                                          hashtag.id
+                                  trailing: controller.selectedHashtag.value?.id == hashtag.id
                                       ? Icon(
                                           Icons.check,
                                           color: ColorConstants.kPrimaryColor,
@@ -189,8 +177,7 @@ class CreateProductView extends StatelessWidget {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadii.borderRadius20,
-                        borderSide:
-                            BorderSide(color: Colors.grey.shade300, width: 2),
+                        borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadii.borderRadius20,
@@ -205,10 +192,7 @@ class CreateProductView extends StatelessWidget {
                         size: 30,
                       ),
                     ),
-                    validator: (value) =>
-                        controller.selectedHashtag.value == null
-                            ? 'fill_all_fields'.tr
-                            : null,
+                    validator: (value) => controller.selectedHashtag.value == null ? 'fill_all_fields'.tr : null,
                   ),
                 ),
               ),
@@ -319,9 +303,7 @@ class CreateProductView extends StatelessWidget {
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.8,
                     ),
-                    itemCount: controller.selectedImages.length < 4
-                        ? controller.selectedImages.length + 1
-                        : controller.selectedImages.length,
+                    itemCount: controller.selectedImages.length < 4 ? controller.selectedImages.length + 1 : controller.selectedImages.length,
                     itemBuilder: (context, index) {
                       if (index < controller.selectedImages.length) {
                         return WidgetsMine().buildImageItem(
@@ -331,8 +313,7 @@ class CreateProductView extends StatelessWidget {
                           },
                         );
                       } else {
-                        return controller.selectedImages.length <
-                                controller.maxImageCount
+                        return controller.selectedImages.length < controller.maxImageCount
                             ? WidgetsMine().buildUploadButton(
                                 onTap: () {
                                   controller.pickImages();

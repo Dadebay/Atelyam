@@ -17,7 +17,12 @@ class _DiscoveryViewState extends State<DiscoveryView> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(DiscoveryController(), tag: 'discovery_${DateTime.now().millisecondsSinceEpoch}');
+    // Controller zaten varsa kullan, yoksa oluştur ve permanent yap
+    if (Get.isRegistered<DiscoveryController>()) {
+      controller = Get.find<DiscoveryController>();
+    } else {
+      controller = Get.put(DiscoveryController(), permanent: true);
+    }
     controller.textEditingController.addListener(() {
       setState(() {});
     });
@@ -25,7 +30,8 @@ class _DiscoveryViewState extends State<DiscoveryView> {
 
   @override
   void dispose() {
-    Get.delete<DiscoveryController>(tag: 'discovery_${controller.hashCode}');
+    // IndexedStack kullanıldığı için controller'ı burada silmemeliyiz
+    // Controller, BottomNavBar dispose edildiğinde otomatik temizlenecek
     super.dispose();
   }
 

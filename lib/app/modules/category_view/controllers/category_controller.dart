@@ -57,8 +57,10 @@ class CategoryController extends GetxController {
   }
 
   Future<void> loadMoreProducts(int hashtagId) async {
+    print('🟢 loadMoreProducts called - Current page: ${currentPage.value}, Total products: ${allProducts.length}');
     currentPage.value++;
     await loadProducts(hashtagId);
+    print('🟡 After loading - New page: ${currentPage.value}, Total products: ${allProducts.length}');
     refreshController.loadComplete();
   }
 }

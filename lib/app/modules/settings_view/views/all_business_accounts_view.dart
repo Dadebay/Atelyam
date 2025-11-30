@@ -13,10 +13,14 @@ class AllBusinessAccountsView extends StatefulWidget {
 class _AllBusinessAccountsViewState extends State<AllBusinessAccountsView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.whiteMainColor,
-      appBar: _appBar(),
-      body: getBusinessAccounts(),
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
+        backgroundColor: ColorConstants.whiteMainColor,
+        appBar: _appBar(),
+        body: getBusinessAccounts(),
+      ),
     );
   }
 

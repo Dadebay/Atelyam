@@ -48,22 +48,22 @@ class ProductController extends GetxController {
     final double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
     final double fileSizeInKB = fileSizeInBytes / 1024;
 
-    int quality = 70;
+    int quality = 60;
 
     if (fileSizeInMB < 5) {
-      quality = 70; // Around 1 MB
+      quality = 60; // Reduced from 70 for faster loading
     } else if (fileSizeInMB >= 5 && fileSizeInMB < 10) {
-      quality = 50; // Around 2 MB
+      quality = 40; // Reduced from 50 for faster loading
     } else {
-      quality = 30; // Around 3 MB
+      quality = 25; // Reduced from 30 for faster loading
     }
 
     final compressedImage = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       file.absolute.path + '_compressed.jpg',
       quality: quality,
-      minWidth: 1000,
-      minHeight: 1000,
+      minWidth: 800, // Reduced from 1000 for faster loading
+      minHeight: 800, // Reduced from 1000 for faster loading
     );
 
     final int compressedFileSizeInBytes = await compressedImage!.length();

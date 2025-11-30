@@ -195,6 +195,7 @@ class MyTranslations extends Translations {
           "enterBusiness": "BIZNESE GIR"
         },
         'tr': {
+          'image_deleted': 'Resim silindi',
           'product_upload_success': 'Ürün başarıyla yüklendi',
           'image_upload_failed': 'Resim yüklenemedi, lütfen tekrar deneyiniz',
           'max_4_images': 'En fazla 4 resim yükleyebilirsiniz',
@@ -206,7 +207,7 @@ class MyTranslations extends Translations {
           'login': 'Giriş Yap',
           'register': 'Kayıt Ol',
           'logout': 'Çıkış Yap',
-          'log_out_title': 'Uygulamadan çıkmak istediğinize emin misiniz?',
+          'delete_account': 'Hesabı Sil',
           'yes': 'Evet',
           'no': 'Hayır',
           'business_accounts_profil': 'İşletme Hesabım',
@@ -383,6 +384,7 @@ class MyTranslations extends Translations {
           "enterBusiness": "İşletmeye Gir",
         },
         'ru': {
+          'image_deleted': 'Изображение удалено',
           'product_upload_success': 'Товар успешно загружен',
           'image_upload_failed': 'Не удалось загрузить изображение, попробуйте еще раз',
           'max_4_images': 'Вы можете загрузить не более 4 изображений',
@@ -393,6 +395,7 @@ class MyTranslations extends Translations {
           'aboutUs': 'О нас',
           'login': 'Войти',
           'register': 'Зарегистрироваться',
+          'logout': 'Выйти',
           'delete_account': 'Удалить аккаунт',
           'are_you_sure': 'Вы уверены, что хотите удалить этот аккаунт?',
           'yes': 'Да',
@@ -571,6 +574,7 @@ class MyTranslations extends Translations {
           "enterBusiness": "Войти в бизнес",
         },
         'en': {
+          'image_deleted': 'Image deleted',
           'product_upload_success': 'Product uploaded successfully',
           'image_upload_failed': 'Image upload failed, please try again',
           'max_4_images': 'You can upload a maximum of 4 images',
@@ -581,6 +585,7 @@ class MyTranslations extends Translations {
           'aboutUs': 'About Us',
           'login': 'Login',
           'register': 'Register',
+          'logout': 'Logout',
           'delete_account': 'Delete Account',
           'are_you_sure': 'Are you sure you want to delete this account?',
           'yes': 'Yes',
@@ -759,6 +764,7 @@ class MyTranslations extends Translations {
           "enterBusiness": "Enter Business",
         },
         'ch': {
+          'image_deleted': '图片已删除',
           'product_upload_success': '商品上传成功',
           'image_upload_failed': '图片上传失败，请重试',
           'max_4_images': '您最多可以上传 4 张图片',
@@ -769,6 +775,7 @@ class MyTranslations extends Translations {
           'aboutUs': '关于我们',
           'login': '登录',
           'register': '注册',
+          'logout': '登出',
           'delete_account': '删除帐户',
           'are_you_sure': '您确定要删除此帐户吗？',
           'yes': '是',
