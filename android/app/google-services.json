@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "162601253205",
-    "project_id": "atelyam",
-    "storage_bucket": "atelyam.appspot.com"
+    "project_number": "652241142181",
+    "project_id": "atelyam-f9c14",
+    "storage_bucket": "atelyam-f9c14.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:162601253205:android:ac39c41af5af5e7d69d7dc",
+        "mobilesdk_app_id": "1:652241142181:android:8b62a733a30db850c0284c",
         "android_client_info": {
           "package_name": "com.gurbanov.atelyam"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKtW_dpXPZt7zzHpqADKlcKrS6bgECE0g"
+          "current_key": "AIzaSyAPaY7Mui76RRrelwkwIfshPHcT8dR1oE0"
         }
       ],
       "services": {

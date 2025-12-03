@@ -28,6 +28,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "com.gurbanov.atelyam"
     compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
+    ndkVersion = "29.0.14206865"
     compileOptions {
         // ADD THIS LINE
         coreLibraryDesugaringEnabled true

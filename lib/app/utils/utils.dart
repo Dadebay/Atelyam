@@ -192,6 +192,7 @@ class MyTranslations extends Translations {
           'product_status': 'Haryt ýagdaýy',
           'upload_images': 'Harydyň suratlaryny ýükle',
           'add_image': 'Surat goş',
+          'offline_mode': 'Uygulama çevrimdışı çalışıyor',
           "enterBusiness": "BIZNESE GIR"
         },
         'tr': {
@@ -381,6 +382,7 @@ class MyTranslations extends Translations {
           'product_status': 'Ürün durumu',
           'upload_images': 'Ürünün resimlerini yükle',
           'add_image': 'Resim ekle',
+          'offline_mode': 'Uygulama çevrimdışı çalışıyor',
           "enterBusiness": "İşletmeye Gir",
         },
         'ru': {
@@ -571,6 +573,7 @@ class MyTranslations extends Translations {
           'product_status': 'Статус товара',
           'upload_images': 'Загрузите изображения товара',
           'add_image': 'Добавить изображение',
+          'offline_mode': 'Приложение работает в автономном режиме',
           "enterBusiness": "Войти в бизнес",
         },
         'en': {
@@ -761,6 +764,7 @@ class MyTranslations extends Translations {
           'product_status': 'Product Status',
           'upload_images': 'Upload product images',
           'add_image': 'Add image',
+          'offline_mode': 'App is working offline',
           "enterBusiness": "Enter Business",
         },
         'ch': {
@@ -951,6 +955,7 @@ class MyTranslations extends Translations {
           'product_status': '产品状态',
           'upload_images': '上传产品图片',
           'add_image': '添加图片',
+          'offline_mode': '应用程序离线工作',
           "enterBusiness": "进入业务",
         },
       };

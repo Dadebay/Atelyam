@@ -1,15 +1,19 @@
 import 'package:atelyam/app/modules/auth_view/views/connection_check_view.dart';
+import 'package:atelyam/app/modules/connectivity/connectivity_controller.dart';
 import 'package:atelyam/app/product/initialize/app_start_init.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:atelyam/app/utils/global_safe_area_wrapper.dart';
 import 'package:atelyam/app/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
   await AppStartInit.init();
+  // Initialize ConnectivityController for offline/online detection
+  Get.put(ConnectivityController());
   runApp(MyApp());
 }
 

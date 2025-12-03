@@ -5,8 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
   factory FirebaseMessagingService.instance() => _instance;
-  static final FirebaseMessagingService _instance =
-      FirebaseMessagingService._internal();
+  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
   LocalNotificationsService? _localNotificationsService;
 
   Future<void> init({
@@ -25,12 +24,22 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
+    // Get and print current FCM token for testing
+    final token = await FirebaseMessaging.instance.getToken();
+    print('═══════════════════════════════════════════════════════════');
+    print('📱 CURRENT FCM TOKEN:');
+    print('$token');
+    print('═══════════════════════════════════════════════════════════');
+
     await NotificationService().sendDeviceToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       NotificationService().sendDeviceToken();
-      print('FCM token refreshed: $fcmToken');
+      print('═══════════════════════════════════════════════════════════');
+      print('🔄 FCM TOKEN REFRESHED:');
+      print('$fcmToken');
+      print('═══════════════════════════════════════════════════════════');
     }).onError((error) {
-      print('Error refreshing FCM token: $error');
+      print('❌ Error refreshing FCM token: $error');
     });
   }
 

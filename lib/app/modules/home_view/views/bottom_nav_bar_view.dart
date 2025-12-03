@@ -10,6 +10,7 @@ import 'package:atelyam/app/modules/home_view/views/home_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/custom_widgets/offline_indicator.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/utils/upgrade_messages_tm.dart';
 import 'package:flutter/material.dart';
@@ -115,45 +116,51 @@ class _BottomNavBarState extends State<BottomNavBar> {
             index: homeController.selectedIndex.value,
             children: pages,
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: homeController.selectedIndex.value,
-            onTap: (index) {
-              // Klavyeyi kapat ve focus'u temizle
-              FocusScope.of(context).unfocus();
-              homeController.selectedIndex.value = index;
-            },
-            selectedItemColor: ColorConstants.kSecondaryColor,
-            unselectedItemColor: Colors.grey,
-            backgroundColor: ColorConstants.whiteMainColor,
-            showUnselectedLabels: true,
-            type: BottomNavigationBarType.fixed,
-            unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-            selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            items: [
-              BottomNavigationBarItem(
-                icon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: Colors.grey),
-                activeIcon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: ColorConstants.kSecondaryColor),
-                label: pageTitles[0].tr,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.discovery),
-                activeIcon: Icon(IconlyBold.discovery),
-                label: pageTitles[1].tr,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.category),
-                activeIcon: Icon(IconlyBold.category),
-                label: pageTitles[2].tr,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.heart),
-                activeIcon: Icon(IconlyBold.heart),
-                label: pageTitles[3].tr,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.profile),
-                activeIcon: Icon(IconlyBold.profile),
-                label: pageTitles[4].tr,
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              OfflineIndicator(),
+              BottomNavigationBar(
+                currentIndex: homeController.selectedIndex.value,
+                onTap: (index) {
+                  // Klavyeyi kapat ve focus'u temizle
+                  FocusScope.of(context).unfocus();
+                  homeController.selectedIndex.value = index;
+                },
+                selectedItemColor: ColorConstants.kSecondaryColor,
+                unselectedItemColor: Colors.grey,
+                backgroundColor: ColorConstants.whiteMainColor,
+                showUnselectedLabels: true,
+                type: BottomNavigationBarType.fixed,
+                unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+                selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: Colors.grey),
+                    activeIcon: HugeIcon(icon: HugeIcons.strokeRoundedHome09, color: ColorConstants.kSecondaryColor),
+                    label: pageTitles[0].tr,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(IconlyLight.discovery),
+                    activeIcon: Icon(IconlyBold.discovery),
+                    label: pageTitles[1].tr,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(IconlyLight.category),
+                    activeIcon: Icon(IconlyBold.category),
+                    label: pageTitles[2].tr,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(IconlyLight.heart),
+                    activeIcon: Icon(IconlyBold.heart),
+                    label: pageTitles[3].tr,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(IconlyLight.profile),
+                    activeIcon: Icon(IconlyBold.profile),
+                    label: pageTitles[4].tr,
+                  ),
+                ],
               ),
             ],
           ),

@@ -16,9 +16,13 @@ class AppStartInit {
     HttpOverrides.global = MyHttpOverrides();
     await GetStorage.init();
     Get.put(AuthController());
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+
+    // Initialize Firebase only if not already initialized
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
 
     final localNotificationsService = LocalNotificationsService.instance();
     await localNotificationsService.init();

@@ -41,14 +41,14 @@
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This app requires media library usage to download images </string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires media library usage to download images and upload product images </string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires camera library to take images of product and  add it to his or her account</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app requires microphone call business account users  </string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app requires media library usage to download images </string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires media library usage to download images and upload product images </string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:atelyam/app/data/models/product_model.dart';
 import 'package:atelyam/app/data/service/auth_service.dart';
+import 'package:atelyam/app/data/service/local_storage_service.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,8 +16,11 @@ class ProductService {
   final AuthController authController = Get.find();
   final http.Client _client = http.Client();
   final Auth _auth = Auth();
+  final LocalStorageService _localStorage = LocalStorageService();
 
   Future<List<ProductModel>?> fetchProducts(int categoryId, int userId) async {
+    final cacheKey = '${categoryId}_$userId';
+
     try {
       List<ProductModel> allProducts = [];
       int page = 1;
@@ -31,7 +35,7 @@ class ProductService {
         if (response.statusCode == 200) {
           final responseBody = utf8.decode(response.bodyBytes);
           final jsonData = json.decode(responseBody);
-          
+
           // Check if response is a list or has results key
           List<dynamic> data;
           if (jsonData is List) {
@@ -44,13 +48,11 @@ class ProductService {
             hasMore = false;
             break;
           }
-          
+
           if (data.isEmpty) {
             hasMore = false;
           } else {
-            allProducts.addAll(
-              data.map((json) => ProductModel.fromJson(json)).toList()
-            );
+            allProducts.addAll(data.map((json) => ProductModel.fromJson(json)).toList());
             page++;
           }
         } else {
@@ -58,20 +60,28 @@ class ProductService {
           hasMore = false;
         }
       }
-      
+
+      // Cache successful response
+      if (allProducts.isNotEmpty) {
+        await _localStorage.saveProducts(allProducts, cacheKey);
+      }
+
       return allProducts.isNotEmpty ? allProducts : null;
     } on SocketException {
-      return null;
+      // Return cached data when offline
+      print('Offline: Loading products from cache');
+      return _localStorage.getProducts(cacheKey);
     } catch (e) {
       print(e);
-      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
-
-      return null;
+      // Try to return cached data on error
+      return _localStorage.getProducts(cacheKey);
     }
   }
 
   Future<List<ProductModel>?> fetchPopularProductsByUserID(int userId) async {
     print(userId);
+    final cacheKey = 'user_$userId';
+
     try {
       List<ProductModel> allProducts = [];
       int page = 1;
@@ -89,14 +99,12 @@ class ProductService {
           final responseBody = utf8.decode(response.bodyBytes);
           final jsonData = json.decode(responseBody);
           final List<dynamic> data = jsonData['results'];
-          
+
           if (data.isEmpty) {
             hasMore = false;
           } else {
-            allProducts.addAll(
-              data.map((json) => ProductModel.fromJson(json)).toList()
-            );
-            
+            allProducts.addAll(data.map((json) => ProductModel.fromJson(json)).toList());
+
             // Check if there's a next page
             hasMore = jsonData['next'] != null;
             page++;
@@ -105,24 +113,27 @@ class ProductService {
           hasMore = false;
         }
       }
-      
+
+      // Cache successful response
+      if (allProducts.isNotEmpty) {
+        await _localStorage.saveProducts(allProducts, cacheKey);
+      }
+
       return allProducts.isNotEmpty ? allProducts : null;
     } on SocketException catch (e) {
       print(e);
-      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
-      return null;
+      print('Offline: Loading user products from cache');
+      return _localStorage.getProducts(cacheKey);
     } catch (e) {
       print(e);
-      showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
-      return null;
+      return _localStorage.getProducts(cacheKey);
     }
   }
 
   Future<List<ProductModel>?> getMyProducts() async {
     try {
       final token = await _auth.getToken();
-      final uri =
-          Uri.parse('${authController.ipAddress.value}/mobile/GetMyProducts/');
+      final uri = Uri.parse('${authController.ipAddress.value}/mobile/GetMyProducts/');
       final response = await http.get(
         uri,
         headers: {
@@ -133,20 +144,22 @@ class ProductService {
       if (response.statusCode == 200) {
         final responseBody = utf8.decode(response.bodyBytes);
         final List<dynamic> data = json.decode(responseBody);
-        final List<ProductModel> products =
-            data.map((json) => ProductModel.fromJson(json)).toList();
+        final List<ProductModel> products = data.map((json) => ProductModel.fromJson(json)).toList();
+
+        // Cache my products
+        await _localStorage.saveMyProducts(products);
+
         return products;
       } else {
         return [];
       }
     } on SocketException catch (e) {
       print(e);
-      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
-      return null;
+      print('Offline: Loading my products from cache');
+      return _localStorage.getMyProducts();
     } catch (e) {
       print(e);
-      showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
-      return null;
+      return _localStorage.getMyProducts();
     }
   }
 
@@ -164,18 +177,24 @@ class ProductService {
         final responseBody = utf8.decode(response.bodyBytes);
         final Map<String, dynamic> data = json.decode(responseBody);
         final List<dynamic> results = data['results'];
-        return results.map((json) => ProductModel.fromJson(json)).toList();
+        final products = results.map((json) => ProductModel.fromJson(json)).toList();
+
+        // Cache popular products (only first page)
+        if (page == 1) {
+          await _localStorage.savePopularProducts(products);
+        }
+
+        return products;
       } else {
         return null;
       }
     } on SocketException catch (e) {
       print(e);
-      showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
-      return null;
+      print('Offline: Loading popular products from cache');
+      return _localStorage.getPopularProducts();
     } catch (e) {
       print(e);
-      showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
-      return null;
+      return _localStorage.getPopularProducts();
     }
   }
 

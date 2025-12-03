@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyA35DwAJ7R79SIcxefu9ZQsnWzdaFr0BgE</string>
+	<string>AIzaSyCVJvgVyzRF6tDxGiDRlyXyjzSRyTXIhf4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>162601253205</string>
+	<string>652241142181</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.gurbanov.atelyam</string>
+	<string>com.gurbanow.atelyam</string>
 	<key>PROJECT_ID</key>
-	<string>atelyam</string>
+	<string>atelyam-f9c14</string>
 	<key>STORAGE_BUCKET</key>
-	<string>atelyam.appspot.com</string>
+	<string>atelyam-f9c14.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:162601253205:ios:8f4830809e8b4adc69d7dc</string>
+	<string>1:652241142181:ios:33e7718f18c31defc0284c</string>
 </dict>
 </plist>
