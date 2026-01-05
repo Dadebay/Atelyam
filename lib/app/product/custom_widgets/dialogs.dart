@@ -361,6 +361,7 @@ class Dialogs {
   Widget deleteAccount({required Function() onYestapped}) {
     return Container(
       decoration: const BoxDecoration(color: Colors.white),
+      padding: const EdgeInsets.only(bottom: 30),
       child: Wrap(
         children: [
           Padding(

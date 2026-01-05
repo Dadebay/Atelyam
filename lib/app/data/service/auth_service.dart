@@ -103,7 +103,7 @@ class SignInService {
 
   Future<int?> login({required String phone}) async {
     print(phone);
-    print('LOGIN-------------------');
+    print('LOGIN-------------------------------------------------------------');
 
     return _handleApiRequest(
       '/mobile/login/',
@@ -170,17 +170,33 @@ class SignInService {
   }
 
   Future<void> checkConnection() async {
+    final storage = GetStorage();
+    final hasLaunchedBefore = storage.read('hasLaunchedBefore') ?? false;
+
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
+        // Online - mark as launched and proceed
+        await storage.write('hasLaunchedBefore', true);
         await Future.delayed(const Duration(seconds: 3), () {
           Get.offAll(() => BottomNavBar());
         });
       }
     } on SocketException catch (_) {
-      Dialogs().showNoConnectionDialog(() {
-        checkConnection();
-      });
+      // Offline - check if app has been launched before
+      if (hasLaunchedBefore) {
+        // App has cached data, proceed offline
+        print('App launched before - proceeding offline with cached data');
+        await Future.delayed(const Duration(seconds: 3), () {
+          Get.offAll(() => BottomNavBar());
+        });
+      } else {
+        // First launch - need internet to load initial data
+        print('First launch - internet required');
+        Dialogs().showNoConnectionDialog(() {
+          checkConnection();
+        });
+      }
     }
   }
 

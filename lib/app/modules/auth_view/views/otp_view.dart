@@ -82,6 +82,7 @@ class OTPView extends StatelessWidget {
             focusNode: _otpFocusNodes[index],
             textAlign: TextAlign.center,
             maxLength: 1,
+            keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
               FilteringTextInputFormatter.digitsOnly,

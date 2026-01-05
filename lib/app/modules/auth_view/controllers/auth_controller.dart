@@ -1,4 +1,5 @@
 import 'package:atelyam/app/data/service/auth_service.dart';
+import 'package:atelyam/app/data/service/notification_service.dart';
 import 'package:atelyam/app/modules/auth_view/views/otp_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
@@ -11,9 +12,10 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   final RxString ipAddress = 'http://216.250.11.255:7000'.obs;
 
-  Future<void> handleAuthAction(
-      {required String phoneController,
-      required String usernameController,}) async {
+  Future<void> handleAuthAction({
+    required String phoneController,
+    required String usernameController,
+  }) async {
     final HomeController homeController = Get.find();
     print(phoneController);
     print(usernameController);
@@ -23,18 +25,25 @@ class AuthController extends GetxController {
     final userName = usernameController;
     try {
       final registerResponse = await signInService.register(
-          phoneNumber: phoneNumber, name: userName,);
+        phoneNumber: phoneNumber,
+        name: userName,
+      );
       if (registerResponse == 200) {
         homeController.agreeButton.toggle();
         await Get.to(
-            () => OTPView(phoneNumber: phoneNumber, userName: userName),);
+          () => OTPView(phoneNumber: phoneNumber, userName: userName),
+        );
       } else {
         final loginResponse = await signInService.login(phone: phoneNumber);
 
         if (loginResponse == 200) {
           homeController.agreeButton.toggle();
           await Get.to(
-              () => OTPView(phoneNumber: phoneNumber, userName: userName,),);
+            () => OTPView(
+              phoneNumber: phoneNumber,
+              userName: userName,
+            ),
+          );
         } else {
           homeController.agreeButton.toggle();
           showSnackBar('error', 'errorLogin', ColorConstants.redColor);
@@ -46,15 +55,16 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> verifyOTP(
-      {required String phoneNumber,
-      required List<TextEditingController> otpControllers,
-      required String username,}) async {
-    final String otp =
-        otpControllers.map((controller) => controller.text).join();
+  Future<void> verifyOTP({
+    required String phoneNumber,
+    required List<TextEditingController> otpControllers,
+    required String username,
+  }) async {
+    final String otp = otpControllers.map((controller) => controller.text).join();
     if (otp.length == 4) {
-      final response =
-          await SignInService().otpCheck(phoneNumber: phoneNumber, otp: otp);
+      final response = await SignInService().otpCheck(phoneNumber: phoneNumber, otp: otp);
+      print(response);
+      print(response);
       if (response == 200) {
         final homeController = Get.find<HomeController>();
         final settingsController = Get.find<NewSettingsPageController>();
@@ -62,6 +72,8 @@ class AuthController extends GetxController {
         settingsController.isLoginView.value = true;
         await settingsController.saveUserData(username, phoneNumber);
         showSnackBar('success', 'successOTP', ColorConstants.kSecondaryColor);
+        await NotificationService().sendDeviceToken();
+
         await Get.offAll(() => BottomNavBar());
       } else {
         showSnackBar('error', 'errorOTP', Colors.red);

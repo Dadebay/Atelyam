@@ -8,7 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class DiscoveryController extends GetxController {
   final RefreshController refreshController = RefreshController(initialRefresh: false);
   final TextEditingController textEditingController = TextEditingController();
-  final List<ProductModel> products = <ProductModel>[].obs;
+  final RxList<ProductModel> products = <ProductModel>[].obs;
   int page = 1;
   final int size = 15;
   bool hasMore = true;

@@ -192,7 +192,7 @@ class MyTranslations extends Translations {
           'product_status': 'Haryt ýagdaýy',
           'upload_images': 'Harydyň suratlaryny ýükle',
           'add_image': 'Surat goş',
-          'offline_mode': 'Uygulama çevrimdışı çalışıyor',
+          'offline_mode': 'Programma offline tertipde işleýär',
           "enterBusiness": "BIZNESE GIR"
         },
         'tr': {

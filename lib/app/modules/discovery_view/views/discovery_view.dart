@@ -80,30 +80,30 @@ class _DiscoveryViewState extends State<DiscoveryView> {
   }
 
   Widget _buildGridView() {
-    return Obx(() {
-      if (controller.products.isEmpty && controller.hasMore) {
-        return EmptyStates().loadingData();
-      } else if (controller.products.isEmpty && !controller.hasMore) {
-        return EmptyStates().noDataAvailable();
-      }
+    // Kıyafet reklamları için optimize edilmiş tile düzeni
+    // Daha dengeli ve çekici görünüm
+    final List<Map<String, int>> tileSizes = [
+      {'cross': 2, 'main': 3}, // Büyük dikey - öne çıkan ürün
+      {'cross': 2, 'main': 2}, // Orta kare
+      {'cross': 2, 'main': 2}, // Orta kare
+      {'cross': 2, 'main': 3}, // Büyük dikey
+      {'cross': 2, 'main': 2}, // Orta kare
+      {'cross': 2, 'main': 2}, // Orta kare
+    ];
 
-      // Kıyafet reklamları için optimize edilmiş tile düzeni
-      // Daha dengeli ve çekici görünüm
-      final List<Map<String, int>> tileSizes = [
-        {'cross': 2, 'main': 3}, // Büyük dikey - öne çıkan ürün
-        {'cross': 2, 'main': 2}, // Orta kare
-        {'cross': 2, 'main': 2}, // Orta kare
-        {'cross': 2, 'main': 3}, // Büyük dikey
-        {'cross': 2, 'main': 2}, // Orta kare
-        {'cross': 2, 'main': 2}, // Orta kare
-      ];
+    return SmartRefresher(
+      controller: controller.refreshController,
+      enablePullUp: true,
+      onRefresh: controller.onRefresh,
+      onLoading: controller.onLoading,
+      child: Obx(() {
+        if (controller.products.isEmpty && controller.hasMore) {
+          return EmptyStates().loadingData();
+        } else if (controller.products.isEmpty && !controller.hasMore) {
+          return EmptyStates().noDataAvailable();
+        }
 
-      return SmartRefresher(
-        controller: controller.refreshController,
-        enablePullUp: true,
-        onRefresh: controller.onRefresh,
-        onLoading: controller.onLoading,
-        child: StaggeredGrid.count(
+        return StaggeredGrid.count(
           crossAxisCount: 4,
           mainAxisSpacing: 8, // Daha geniş boşluk
           crossAxisSpacing: 8, // Daha geniş boşluk
@@ -122,8 +122,8 @@ class _DiscoveryViewState extends State<DiscoveryView> {
               ),
             );
           }),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 }

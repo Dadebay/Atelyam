@@ -21,7 +21,12 @@ enum FilterOption {
 
 SnackbarController showSnackBar(String title, String subtitle, Color color) {
   if (SnackbarController.isSnackbarBeingShown) {
-    SnackbarController.cancelAllSnackbars();
+    try {
+      SnackbarController.cancelAllSnackbars();
+    } catch (e) {
+      // Ignore disposal errors
+      print('Snackbar already disposed: $e');
+    }
   }
   return Get.snackbar(
     title,
