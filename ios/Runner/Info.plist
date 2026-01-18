@@ -39,6 +39,10 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Kıyafetleri üzerinizde görmek için kameranıza erişmemiz gerekiyor</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Fotoğraf seçmek için galeri erişimi gerekiyor</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This app requires media library usage to download images </string>
 	<key>NSCameraUsageDescription</key>

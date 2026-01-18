@@ -3,6 +3,7 @@ import 'package:atelyam/app/modules/product_profil_view/views/components/busines
 import 'package:atelyam/app/modules/product_profil_view/views/components/product_description_section.dart';
 import 'package:atelyam/app/modules/product_profil_view/views/components/product_image_page_view.dart';
 import 'package:atelyam/app/modules/product_profil_view/views/components/product_thumbnail_list.dart';
+import 'package:atelyam/app/modules/virtual_tryon/views/virtual_tryon_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -90,6 +91,8 @@ class _ProductProfilViewState extends State<ProductProfilView> {
           ),
         ],
       ),
+      // Virtual Try-On butonu ekle
+      bottomNavigationBar: _buildTryOnButton(),
     );
   }
 
@@ -126,6 +129,61 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                 )),
             Positioned(top: kToolbarHeight - 20, right: 10, child: AppBarActionsWidget(productModel: widget.productModel, phoneNumber: outSideBusinessuserModel?.businessPhone ?? '')),
             Positioned(top: 0, bottom: 0, left: 12, child: Center(child: ProductThumbnailList(controller: controller, outSideBusinessuserModel: outSideBusinessuserModel))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Virtual Try-On Butonu
+  Widget _buildTryOnButton() {
+    final authController = Get.find<AuthController>();
+    final garmentImageUrl = authController.ipAddress.value + widget.productModel.img;
+
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorConstants.whiteMainColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Get.to(
+                    () => VirtualTryOnView(
+                      productModel: widget.productModel,
+                      garmentImageUrl: garmentImageUrl,
+                    ),
+                  );
+                },
+                icon: Icon(Icons.checkroom_rounded, size: 24),
+                label: Text(
+                  'Üzerimde Dene (AI)',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.fontSize18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorConstants.kPrimaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadii.borderRadius20,
+                  ),
+                  elevation: 2,
+                ),
+              ),
+            ),
           ],
         ),
       ),
