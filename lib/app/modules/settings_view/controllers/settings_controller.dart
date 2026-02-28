@@ -20,6 +20,7 @@ class NewSettingsPageController extends GetxController {
     {'name': 'English', 'code': 'en', 'icon': Assets.englishLangIcon},
     {'name': 'Türkçe', 'code': 'tr', 'icon': Assets.turkLangIcon},
     {'name': '中文', 'code': 'ch', 'icon': Assets.chinaLangIcon},
+    {'name': 'O\'zbek', 'code': 'uz', 'icon': Assets.uzbekLangIcon},
   ];
 
   @override
@@ -43,6 +44,10 @@ class NewSettingsPageController extends GetxController {
     if (index != null) {
       selectedAvatarIndex.value = index;
     }
+  }
+
+  Future<void> saveLanguage(String langCode) async {
+    await _box.write('langCode', langCode);
   }
 
   void showLanguageDialog(BuildContext context) {

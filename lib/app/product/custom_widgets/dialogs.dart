@@ -345,7 +345,9 @@ class Dialogs {
                 return _buildLanguageItem(
                   index: index,
                   onLanguageSelected: () {
-                    final locale = Locale(settingsController.appLanguages[index]['code'].toString());
+                    final langCode = settingsController.appLanguages[index]['code'].toString();
+                    final locale = Locale(langCode);
+                    settingsController.saveLanguage(langCode);
                     Get.updateLocale(locale);
                     Get.back();
                   },

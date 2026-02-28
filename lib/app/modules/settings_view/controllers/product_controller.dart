@@ -30,6 +30,9 @@ class ProductController extends GetxController {
   RxList<File?> selectedImages = RxList<File?>([]); // 1. Değişiklik: Liste yapısı
   RxList<String?> selectedImagesEditProduct = RxList<String?>([]); // 1. Değişiklik: Liste yapısı
   RxList<String?> deleteImageNames = RxList<String?>([]); // 1. Değişiklik: Liste yapısı
+  // Harita konum seçimi için
+  Rx<double?> selectedLat = Rx<double?>(null);
+  Rx<double?> selectedLong = Rx<double?>(null); // 1. Değişiklik: Liste yapısı
 
   final BusinessCategoryService _categoryService = BusinessCategoryService();
   final dio.Dio _dio = dio.Dio(); // Dio örneğini oluştur
@@ -65,17 +68,6 @@ class ProductController extends GetxController {
       minWidth: 800, // Reduced from 1000 for faster loading
       minHeight: 800, // Reduced from 1000 for faster loading
     );
-
-    final int compressedFileSizeInBytes = await compressedImage!.length();
-    final double compressedFileSizeInKB = compressedFileSizeInBytes / 1024;
-    final double compressedFileSizeInMB = compressedFileSizeInBytes / (1024 * 1024);
-
-    print('Original File Size: ${fileSizeInBytes} B');
-    print('Original File Size: ${fileSizeInKB.toStringAsFixed(2)} KB');
-    print('Original File Size: ${fileSizeInMB.toStringAsFixed(2)} MB');
-    print('Compressed File Size: ${compressedFileSizeInBytes} B');
-    print('Compressed File Size: ${compressedFileSizeInKB.toStringAsFixed(2)} KB');
-    print('Compressed File Size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
     return compressedImage;
   }
 
@@ -100,25 +92,8 @@ class ProductController extends GetxController {
 
       for (var image in images) {
         final File file = File(image.path);
-
-        // Print the original image size
-        final int originalFileSizeInBytes = await file.length();
-        final double originalFileSizeInKB = originalFileSizeInBytes / 1024;
-        final double originalFileSizeInMB = originalFileSizeInBytes / (1024 * 1024);
-        print('Original Image Size: ${originalFileSizeInBytes} B');
-        print('Original Image Size: ${originalFileSizeInKB.toStringAsFixed(2)} KB');
-        print('Original Image Size: ${originalFileSizeInMB.toStringAsFixed(2)} MB');
-
         final compressedImage = await compressImage(file);
         if (compressedImage != null) {
-          // Print the compressed image size
-          final int compressedFileSizeInBytes = await compressedImage.length();
-          final double compressedFileSizeInKB = compressedFileSizeInBytes / 1024;
-          final double compressedFileSizeInMB = compressedFileSizeInBytes / (1024 * 1024);
-          print('Compressed Image Size: ${compressedFileSizeInBytes} B');
-          print('Compressed Image Size: ${compressedFileSizeInKB.toStringAsFixed(2)} KB');
-          print('Compressed Image Size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
-
           if (isEditProduct) {
             selectedImagesEditProduct.add(compressedImage.path);
           } else {
@@ -165,15 +140,10 @@ class ProductController extends GetxController {
         );
       }
       final response = await request.send();
-
-      print('Response Status Code: ${response.statusCode}');
       final responseBytes = await response.stream.toBytes(); // Byte olarak oku
       final responseBody = utf8.decode(responseBytes); // UTF-8 formatına çevir
-      print('Response Body: $responseBody');
-
       if (response.statusCode == 201) {
         final responseData = jsonDecode(responseBody);
-        print(int.parse(responseData['id'].toString()));
         if (selectedImages.isNotEmpty) {
           await uploadProductImages(int.parse(responseData['id'].toString())); // Resimleri yükle
         } else {
@@ -192,9 +162,6 @@ class ProductController extends GetxController {
 
   Future<void> uploadProductImages(int productId) async {
     final token = await Auth().getToken();
-    print('Selected Images Length: ${selectedImages.length}');
-    print('Selected Images Length: ${selectedImagesEditProduct.length}');
-
     try {
       final request = http.MultipartRequest(
         'PUT',
@@ -219,9 +186,7 @@ class ProductController extends GetxController {
                 ),
               );
             }
-          } else {
-            print('Image at index $i is null.');
-          }
+          } else {}
         }
       } else {
         for (int i = 0; i < selectedImages.length; i++) {
@@ -232,21 +197,11 @@ class ProductController extends GetxController {
                 selectedImages[i]!.path,
               ),
             );
-          } else {
-            print('Image at index $i is null.');
-          }
+          } else {}
         }
       }
-      request.fields.forEach((key, value) {
-        print('Field: $key, Value: $value');
-      });
       if (selectedImagesEditProduct.isNotEmpty || selectedImages.isNotEmpty) {
         final response = await request.send();
-        print('Response Status Code: ${response.statusCode}');
-        final responseBytes = await response.stream.toBytes(); // Byte olarak oku
-        final responseBody = utf8.decode(responseBytes); // UTF-8 formatına çevir
-        print('Response Body: $responseBody');
-
         if (response.statusCode == 200) {
           Get.back(result: true);
           showSnackBar('success', 'product_upload_success'.tr, ColorConstants.greenColor);
@@ -255,7 +210,6 @@ class ProductController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error occurred: $e');
       showSnackBar('error', 'error_occured'.tr, ColorConstants.redColor);
     }
   }
@@ -274,15 +228,7 @@ class ProductController extends GetxController {
 
       request.fields['img${imageIndex}'] = '1'; // Sadece index numarasını gönderiyoruz
 
-      request.fields.forEach((key, value) {
-        print('Field: $key, Value: $value');
-      });
       final response = await request.send();
-      print('Response Status Code: ${response.statusCode}');
-      final responseBytes = await response.stream.toBytes(); // Byte olarak oku
-      final responseBody = utf8.decode(responseBytes); // UTF-8 formatına çevir
-      print('Response Body: $responseBody');
-
       if (response.statusCode == 200) {
         showSnackBar('success', 'image_deleted'.tr, ColorConstants.greenColor);
       } else {
@@ -396,6 +342,8 @@ class ProductController extends GetxController {
       'instagram': businessUser.instagram!,
       'youtube': businessUser.youtube!,
       'website': businessUser.website!,
+      if (selectedLat.value != null) 'lat': selectedLat.value.toString(),
+      if (selectedLong.value != null) 'long': selectedLong.value.toString(),
     });
     request.files.add(
       await http.MultipartFile.fromPath('file', selectedImage.value!.path),
@@ -434,6 +382,8 @@ class ProductController extends GetxController {
       'instagram': businessUser.instagram!,
       'youtube': businessUser.youtube!,
       'website': businessUser.website!,
+      if (selectedLat.value != null) 'lat': selectedLat.value.toString(),
+      if (selectedLong.value != null) 'long': selectedLong.value.toString(),
     });
     if (selectedImage.value != null) {
       formData.files.add(

@@ -13,10 +13,12 @@ class DiscoveryView extends StatefulWidget {
 
 class _DiscoveryViewState extends State<DiscoveryView> {
   late final DiscoveryController controller;
+  late final RefreshController _refreshController;
 
   @override
   void initState() {
     super.initState();
+    _refreshController = RefreshController(initialRefresh: false);
     // Controller zaten varsa kullan, yoksa oluştur ve permanent yap
     if (Get.isRegistered<DiscoveryController>()) {
       controller = Get.find<DiscoveryController>();
@@ -30,8 +32,7 @@ class _DiscoveryViewState extends State<DiscoveryView> {
 
   @override
   void dispose() {
-    // IndexedStack kullanıldığı için controller'ı burada silmemeliyiz
-    // Controller, BottomNavBar dispose edildiğinde otomatik temizlenecek
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -92,10 +93,16 @@ class _DiscoveryViewState extends State<DiscoveryView> {
     ];
 
     return SmartRefresher(
-      controller: controller.refreshController,
+      controller: _refreshController,
       enablePullUp: true,
-      onRefresh: controller.onRefresh,
-      onLoading: controller.onLoading,
+      onRefresh: () async {
+        await controller.fetchProducts(isRefresh: true);
+        _refreshController.refreshCompleted();
+      },
+      onLoading: () async {
+        await controller.fetchProducts();
+        _refreshController.loadComplete();
+      },
       child: Obx(() {
         if (controller.products.isEmpty && controller.hasMore) {
           return EmptyStates().loadingData();

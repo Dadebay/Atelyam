@@ -1,3 +1,10 @@
+double? _parseDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
+}
+
 class BusinessUserModel {
   final int id;
   final String businessName;
@@ -13,6 +20,8 @@ class BusinessUserModel {
   final String? popular;
   final String? created;
   final List<String>? images;
+  final double? lat;
+  final double? long;
 
   final int title;
   final int user;
@@ -38,6 +47,8 @@ class BusinessUserModel {
     this.instagram,
     this.youtube,
     this.website,
+    this.lat,
+    this.long,
   });
 
   factory BusinessUserModel.fromJson(Map<String, dynamic> json) {
@@ -59,7 +70,9 @@ class BusinessUserModel {
       user: json['user'] ?? 0,
       productCount: json['productCount'] ?? 0,
       title: json['title'] ?? json['title_id'] ?? 0,
-      images: (json['images'] as List<dynamic>?)?.map((image) => image['image'] as String).toList() ?? [], // Empty list if null
+      images: (json['images'] as List<dynamic>?)?.map((image) => image['image'] as String).toList() ?? [],
+      lat: _parseDouble(json['lat']),
+      long: _parseDouble(json['long']),
     );
   }
 }
@@ -79,6 +92,8 @@ class GetMyStatusModel {
   bool? popular;
   String? status;
   int? user;
+  double? lat;
+  double? long;
 
   GetMyStatusModel({
     this.id,
@@ -95,6 +110,8 @@ class GetMyStatusModel {
     this.popular,
     this.status,
     this.user,
+    this.lat,
+    this.long,
   });
 
   factory GetMyStatusModel.fromJson(Map<String, dynamic> json) {
@@ -113,6 +130,8 @@ class GetMyStatusModel {
       popular: json['popular'],
       status: json['status'],
       user: json['user'],
+      lat: (json['lat'] as num?)?.toDouble(),
+      long: (json['long'] as num?)?.toDouble(),
     );
   }
 }

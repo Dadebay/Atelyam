@@ -20,30 +20,20 @@ class NotificationService {
         final String? storedToken = _storage.read('fcm_token');
         if (storedToken != token) {
           try {
-            print('FCM Token: $token');
             final response = await http.post(
               Uri.parse('${authController.ipAddress.value}${deviceIdEndpoint}'),
               headers: {
-                HttpHeaders.contentTypeHeader:
-                    'application/json; charset=UTF-8',
+                HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
               },
               body: jsonEncode(<String, String>{'device_id': token}),
             );
             if (response.statusCode == 201 || response.statusCode == 200) {
               await _storage.write('fcm_token', token);
-              print('FCM token sent successfully');
-            } else {
-              print(
-                'Failed to send FCM token. Status code: ${response.statusCode}',
-              );
-            }
-          } catch (e) {
-            print('Error sending FCM token: $e');
-          }
+            } else {}
+          } catch (e) {}
         }
       }
     } catch (e) {
-      print('Error getting FCM token: $e');
       // Release modda emulator baglanyşygy ýok bolsa, app crash etmez
     }
   }

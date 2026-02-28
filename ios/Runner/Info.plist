@@ -53,6 +53,10 @@
 	<string>This app requires media library usage to download images </string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires media library usage to download images and upload product images </string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Yakınındaki terzileri haritada görmek için konumunuza erişmemiz gerekiyor</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Yakınındaki terzileri haritada görmek için konumunuza erişmemiz gerekiyor</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

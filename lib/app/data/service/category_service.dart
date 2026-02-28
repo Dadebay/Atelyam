@@ -16,7 +16,6 @@ class CategoryService {
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
         final responseBody = utf8.decode(response.bodyBytes); // Force UTF-8 decoding
 
@@ -26,6 +25,9 @@ class CategoryService {
         await _localStorage.saveCategories(jsonData.cast<Map<String, dynamic>>());
 
         final List<CategoryModel> categories = jsonData.map((item) => CategoryModel.fromJson(item)).toList();
+
+        // 🌍 Dil alanlarını logluyoruz
+
         return categories;
       } else {
         // Try to return cached data
@@ -33,11 +35,9 @@ class CategoryService {
         return cached ?? [];
       }
     } on SocketException {
-      print('Offline: Loading categories from cache');
       final cached = _localStorage.getCategories();
       return cached ?? [];
     } catch (e) {
-      print('Error fetching categories: $e');
       final cached = _localStorage.getCategories();
       return cached ?? [];
     }

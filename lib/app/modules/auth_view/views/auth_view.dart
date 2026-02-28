@@ -115,8 +115,9 @@ class AuthView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: AgreeButton(
             onTap: () {
+              final fullPhone = '${phoneController.text}';
               authController.handleAuthAction(
-                phoneController: phoneController.text,
+                phoneController: fullPhone,
                 usernameController: usernameController.text,
               );
             },

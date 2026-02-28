@@ -3,10 +3,8 @@ import 'package:atelyam/app/data/service/product_service.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DiscoveryController extends GetxController {
-  final RefreshController refreshController = RefreshController(initialRefresh: false);
   final TextEditingController textEditingController = TextEditingController();
   final RxList<ProductModel> products = <ProductModel>[].obs;
   int page = 1;
@@ -30,13 +28,9 @@ class DiscoveryController extends GetxController {
       page = 1;
       hasMore = true;
       products.clear();
-      refreshController.resetNoData();
     }
 
-    if (!hasMore) {
-      refreshController.loadNoData();
-      return;
-    }
+    if (!hasMore) return;
 
     try {
       final newProducts = await ProductService().fetchPopularProducts(page: page, size: size);
@@ -45,17 +39,10 @@ class DiscoveryController extends GetxController {
         page++;
       } else {
         hasMore = false;
-        refreshController.loadNoData();
       }
     } catch (e) {
       print(e);
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
-    } finally {
-      if (isRefresh) {
-        refreshController.refreshCompleted();
-      } else {
-        refreshController.loadComplete();
-      }
     }
   }
 
@@ -83,7 +70,4 @@ class DiscoveryController extends GetxController {
     textEditingController.clear();
     fetchProducts(isRefresh: true);
   }
-
-  void onRefresh() => fetchProducts(isRefresh: true);
-  void onLoading() => fetchProducts();
 }

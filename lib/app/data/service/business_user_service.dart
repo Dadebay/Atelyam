@@ -36,7 +36,6 @@ class BusinessUserService {
 
   Future<BusinessUserModel?> fetchBusinessAccountByID(int id) async {
     final url = Uri.parse('${authController.ipAddress.value}/mobile/GetUserId/$id/');
-    print(url);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -56,11 +55,13 @@ class BusinessUserService {
 
   Future<BusinessUserModel?> fetchBusinessAccountKICI(int id) async {
     final url = Uri.parse('${authController.ipAddress.value}/mobile/getUserById/$id/');
-    print(url);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        print(json.decode(response.body)[0]);
+        print('${authController.ipAddress.value}/mobile/getUserById/$id/');
+        print(response.statusCode);
+        print(json.decode(response.body));
+
         return BusinessUserModel.fromJson(json.decode(response.body)[0]);
       } else {
         _handleApiError(response.statusCode);
@@ -69,7 +70,9 @@ class BusinessUserService {
     } on SocketException {
       showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
       return null;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('fetchBusinessAccountKICI ERROR: $e');
+      print('STACK: $stackTrace');
       showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
       return null;
     }

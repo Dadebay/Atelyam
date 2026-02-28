@@ -1,11 +1,25 @@
-// ignore_for_file: must_be_immutable
 import 'package:atelyam/app/data/models/business_category_model.dart';
+import 'package:atelyam/app/modules/map_view/views/location_picker_page.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:latlong2/latlong.dart';
 
-class CreateBusinessAccountView extends StatelessWidget {
+class CreateBusinessAccountView extends StatefulWidget {
+  const CreateBusinessAccountView({super.key});
+
+  @override
+  State<CreateBusinessAccountView> createState() => _CreateBusinessAccountViewState();
+}
+
+class _CreateBusinessAccountViewState extends State<CreateBusinessAccountView> {
   final ProductController controller = Get.put<ProductController>(ProductController());
-  AppBar _appBar(BuildContext context) {
+  final List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
+  final List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
+
+  LatLng? _selectedLocation;
+  String? _selectedAddress;
+
+  AppBar _appBar() {
     return AppBar(
       backgroundColor: ColorConstants.kSecondaryColor,
       title: Text(
@@ -16,22 +30,18 @@ class CreateBusinessAccountView extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      leading: BackButtonMine(
-        miniButton: true,
-      ),
+      leading: BackButtonMine(miniButton: true),
     );
   }
-
-  List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,
-      appBar: _appBar(context),
+      appBar: _appBar(),
       body: ListView(
         children: [
+          // Kategori seçici
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
             child: Obx(
@@ -45,21 +55,16 @@ class CreateBusinessAccountView extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: Colors.grey.shade400,
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadii.borderRadius20,
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadii.borderRadius20),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadii.borderRadius20,
                       borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadii.borderRadius20,
-                      borderSide: BorderSide(
-                        color: ColorConstants.kSecondaryColor,
-                        width: 2,
-                      ),
+                      borderSide: BorderSide(color: ColorConstants.kSecondaryColor, width: 2),
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   ),
                   value: controller.selectedCategory.value,
                   items: controller.categories.map((category) {
@@ -67,10 +72,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                       value: category,
                       child: Text(
                         category.name,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.getFontSize(4),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: AppFontSizes.getFontSize(4), fontWeight: FontWeight.bold),
                       ),
                     );
                   }).toList(),
@@ -80,6 +82,7 @@ class CreateBusinessAccountView extends StatelessWidget {
               ),
             ),
           ),
+          // Form alanları
           CustomTextField(
             labelName: 'business_name'.tr,
             controller: textEditingControllers[0],
@@ -162,20 +165,93 @@ class CreateBusinessAccountView extends StatelessWidget {
               requestfocusNode: focusNodes[0],
             ),
           ),
+
+          // ─── Harita konum seçici ────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            child: GestureDetector(
+              onTap: () async {
+                final result = await Get.to(
+                  () => LocationPickerPage(initialLocation: _selectedLocation),
+                );
+                if (result != null && result is Map<String, dynamic>) {
+                  setState(() {
+                    _selectedLocation = result['location'] as LatLng;
+                    _selectedAddress = result['address'] as String?;
+                  });
+                  controller.selectedLat.value = _selectedLocation!.latitude;
+                  controller.selectedLong.value = _selectedLocation!.longitude;
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: ColorConstants.kPrimaryColor.withOpacity(0.07),
+                  borderRadius: BorderRadii.borderRadius20,
+                  border: Border.all(
+                    color: _selectedLocation != null ? ColorConstants.kSecondaryColor : Colors.grey.shade400,
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: _selectedLocation != null ? ColorConstants.kSecondaryColor : Colors.grey,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'select_location'.tr,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppFontSizes.fontSize16,
+                              color: ColorConstants.darkMainColor,
+                            ),
+                          ),
+                          if (_selectedAddress != null)
+                            Text(
+                              '📍 $_selectedAddress',
+                              style: TextStyle(fontSize: 12, color: ColorConstants.kSecondaryColor),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          else if (_selectedLocation != null)
+                            Text(
+                              '📍 ${_selectedLocation!.latitude.toStringAsFixed(5)}, ${_selectedLocation!.longitude.toStringAsFixed(5)}',
+                              style: TextStyle(fontSize: 12, color: ColorConstants.kSecondaryColor),
+                            )
+                          else
+                            Text(
+                              'tap_map_to_select'.tr,
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right, color: Colors.grey),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ─── Logo yükleme ─────────────────────────────────────
           GestureDetector(
             onTap: controller.pickImage,
             child: Center(
               child: Container(
                 height: 150,
                 width: 150,
-                margin: EdgeInsets.symmetric(vertical: 20),
+                margin: const EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadii.borderRadius25,
-                  border: Border.all(
-                    color: ColorConstants.kSecondaryColor,
-                    width: 2,
-                  ),
+                  border: Border.all(color: ColorConstants.kSecondaryColor, width: 2),
                 ),
                 child: Obx(
                   () => controller.selectedImage.value != null
@@ -196,10 +272,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'logo_upload'.tr,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -208,6 +281,8 @@ class CreateBusinessAccountView extends StatelessWidget {
               ),
             ),
           ),
+
+          // ─── Kaydet butonu ────────────────────────────────────
           Center(
             child: Padding(
               padding: const EdgeInsets.all(13.0),
@@ -230,11 +305,7 @@ class CreateBusinessAccountView extends StatelessWidget {
                       ),
                     );
                   } else {
-                    showSnackBar(
-                      'error',
-                      'fill_all_fields',
-                      ColorConstants.redColor,
-                    );
+                    showSnackBar('error', 'fill_all_fields', ColorConstants.redColor);
                   }
                 },
                 text: 'add_account'.tr,

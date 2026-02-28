@@ -20,14 +20,28 @@ class BrandsController extends GetxController {
   }) async {
     isLoadingBrandsProfile.value = true;
     try {
-      businessUser.value = await _businessUserService.fetchBusinessAccountByID(businessUserModelFromOutside.id);
+      // Tam profil detayları için getUserById endpointini kullan (instagram, tiktok, website vb.)
+      // Endpoint user ID beklediği için .user kullanılıyor, .id değil
+      // Tam profil verileri için getUserById endpointini kullanıyoruz
+      // .user = User ID, .id = Business Account ID — endpoint User ID bekliyor
+      final fetched = await _businessUserService.fetchBusinessAccountKICI(businessUserModelFromOutside.userID!);
+      // API null döndürürse dışarıdan gelen model ile devam et
+      businessUser.value = fetched ?? businessUserModelFromOutside;
       print(whichPage);
-      if (whichPage == 'popular') {
-        productsFuture.value = _productService.fetchPopularProductsByUserID(categoryID);
+      print(businessUser.value?.instagram);
+      print(businessUser.value?.tiktok);
+      print(businessUser.value?.youtube);
+      print(businessUser.value?.address);
+      print(businessUser.value?.businessPhone);
+      if (whichPage == 'popular' || whichPage == 'map') {
+        final uid = (businessUser.value?.userID ?? 0) != 0 ? businessUser.value!.userID! : (businessUser.value?.user ?? 0);
+        productsFuture.value = _productService.fetchPopularProductsByUserID(uid);
       } else {
-        productsFuture.value = _productService.fetchProducts(categoryID, businessUser.value!.user);
+        productsFuture.value = _productService.fetchProducts(categoryID, businessUser.value?.user ?? 0);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('fetchBusinessUserData ERROR: $e');
+      print('STACK: $stackTrace');
       showSnackBar('error', 'anErrorOccurred' + '$e', ColorConstants.redColor);
     } finally {
       isLoadingBrandsProfile.value = false;

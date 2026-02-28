@@ -12,6 +12,15 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   final RxString ipAddress = 'http://216.250.11.255:7000'.obs;
 
+  // Country code selection: TM = +993 (8 digits), UZ = +998 (9 digits)
+  final RxString selectedCountryCode = '+993'.obs;
+  final RxInt phoneMaxLength = 8.obs;
+
+  void setCountry({required String code, required int maxLength}) {
+    selectedCountryCode.value = code;
+    phoneMaxLength.value = maxLength;
+  }
+
   Future<void> handleAuthAction({
     required String phoneController,
     required String usernameController,
@@ -28,6 +37,7 @@ class AuthController extends GetxController {
         phoneNumber: phoneNumber,
         name: userName,
       );
+      print('registerResponse: $registerResponse');
       if (registerResponse == 200) {
         homeController.agreeButton.toggle();
         await Get.to(

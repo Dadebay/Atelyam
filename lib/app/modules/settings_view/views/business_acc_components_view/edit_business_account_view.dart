@@ -1,10 +1,12 @@
+import 'package:atelyam/app/modules/map_view/views/location_picker_page.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/product_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:latlong2/latlong.dart';
 
 class EditBusinessAccountView extends StatefulWidget {
   final GetMyStatusModel businessUser;
 
-  EditBusinessAccountView({required this.businessUser, super.key});
+  const EditBusinessAccountView({required this.businessUser, super.key});
 
   @override
   State<EditBusinessAccountView> createState() => _EditBusinessAccountViewState();
@@ -13,6 +15,14 @@ class EditBusinessAccountView extends StatefulWidget {
 class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
   final _formKey = GlobalKey<FormState>();
   final ProductController controller = Get.put(ProductController());
+  final AuthController authController = Get.find();
+
+  final List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
+  final List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
+
+  LatLng? _selectedLocation;
+  String? _selectedAddress;
+
   @override
   void initState() {
     super.initState();
@@ -24,12 +34,15 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
     textEditingControllers[5].text = widget.businessUser.tiktok ?? '';
     textEditingControllers[6].text = widget.businessUser.youtube ?? '';
     textEditingControllers[7].text = widget.businessUser.website ?? '';
+
+    // Mevcut konum varsa yükle
+    if (widget.businessUser.lat != null && widget.businessUser.long != null) {
+      _selectedLocation = LatLng(widget.businessUser.lat!, widget.businessUser.long!);
+      controller.selectedLat.value = widget.businessUser.lat;
+      controller.selectedLong.value = widget.businessUser.long;
+    }
   }
 
-  final AuthController authController = Get.find();
-
-  List<FocusNode> focusNodes = List.generate(8, (_) => FocusNode());
-  List<TextEditingController> textEditingControllers = List.generate(8, (_) => TextEditingController());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,7 +57,6 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Form Alanları
                 CustomTextField(
                   labelName: 'business_name'.tr,
                   controller: textEditingControllers[0],
@@ -127,13 +139,89 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                     requestfocusNode: focusNodes[0],
                   ),
                 ),
+
+                // ─── Harita konum seçici ──────────────────────────
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  child: GestureDetector(
+                    onTap: () async {
+                      final result = await Get.to(
+                        () => LocationPickerPage(initialLocation: _selectedLocation),
+                      );
+                      if (result != null && result is Map<String, dynamic>) {
+                        setState(() {
+                          _selectedLocation = result['location'] as LatLng;
+                          _selectedAddress = result['address'] as String?;
+                        });
+                        controller.selectedLat.value = _selectedLocation!.latitude;
+                        controller.selectedLong.value = _selectedLocation!.longitude;
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.kPrimaryColor.withOpacity(0.07),
+                        borderRadius: BorderRadii.borderRadius20,
+                        border: Border.all(
+                          color: _selectedLocation != null ? ColorConstants.kSecondaryColor : Colors.grey.shade400,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: _selectedLocation != null ? ColorConstants.kSecondaryColor : Colors.grey,
+                            size: 28,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'select_location'.tr,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: AppFontSizes.fontSize16,
+                                    color: ColorConstants.darkMainColor,
+                                  ),
+                                ),
+                                if (_selectedAddress != null)
+                                  Text(
+                                    '📍 $_selectedAddress',
+                                    style: TextStyle(fontSize: 12, color: ColorConstants.kSecondaryColor),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                else if (_selectedLocation != null)
+                                  Text(
+                                    '📍 ${_selectedLocation!.latitude.toStringAsFixed(5)}, ${_selectedLocation!.longitude.toStringAsFixed(5)}',
+                                    style: TextStyle(fontSize: 12, color: ColorConstants.kSecondaryColor),
+                                  )
+                                else
+                                  Text(
+                                    'tap_map_to_select'.tr,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.chevron_right, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ─── Logo yükleme ──────────────────────────────────
                 GestureDetector(
                   onTap: controller.pickImage,
                   child: Center(
                     child: Container(
                       height: 150,
                       width: 150,
-                      margin: EdgeInsets.symmetric(vertical: 20),
+                      margin: const EdgeInsets.symmetric(vertical: 20),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadii.borderRadius25,
@@ -143,16 +231,17 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                         () => controller.selectedImage.value != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(23),
-                                child: Image.file(controller.selectedImage.value!, height: Get.size.height, width: Get.size.width, fit: BoxFit.cover),
+                                child: Image.file(
+                                  controller.selectedImage.value!,
+                                  height: Get.size.height,
+                                  width: Get.size.width,
+                                  fit: BoxFit.cover,
+                                ),
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(23),
                                 child: widget.businessUser.backPhoto == null
-                                    ? WidgetsMine().buildUploadButton(
-                                        onTap: () {
-                                          controller.pickImage();
-                                        },
-                                      )
+                                    ? WidgetsMine().buildUploadButton(onTap: () => controller.pickImage())
                                     : CachedNetworkImage(
                                         imageUrl: authController.ipAddress.value + (widget.businessUser.backPhoto ?? ''),
                                         fit: BoxFit.cover,
@@ -167,11 +256,13 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                     ),
                   ),
                 ),
+
+                // ─── Güncelle butonu ───────────────────────────────
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: AgreeButton(
                     onTap: () {
-                      final String photo = controller.selectedImage.value == null ? widget.businessUser.backPhoto! : controller.selectedImage.value!.path;
+                      final String photo = controller.selectedImage.value == null ? (widget.businessUser.backPhoto ?? '') : controller.selectedImage.value!.path;
                       controller.updateBusinessAccount(
                         GetMyStatusModel(
                           id: widget.businessUser.id,
@@ -202,7 +293,7 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
     return AppBar(
       backgroundColor: ColorConstants.kSecondaryColor,
       title: Text(
-        'update_business_account'.tr, // Başlık metni
+        'update_business_account'.tr,
         style: TextStyle(
           color: ColorConstants.whiteMainColor,
           fontSize: AppFontSizes.fontSize16 + 2,
@@ -212,15 +303,11 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
       actions: [
         IconButton(
           icon: const Icon(IconlyLight.delete, color: Colors.white),
-          onPressed: () {
-            Dialogs().deleteBusinessAccount();
-          },
+          onPressed: () => Dialogs().deleteBusinessAccount(),
         ),
       ],
       leading: GestureDetector(
-        onTap: () {
-          Get.back();
-        },
+        onTap: () => Get.back(),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Icon(

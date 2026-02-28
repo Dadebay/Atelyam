@@ -25,22 +25,11 @@ class FirebaseMessagingService {
 
   Future<void> _handlePushNotificationsToken() async {
     // Get and print current FCM token for testing
-    final token = await FirebaseMessaging.instance.getToken();
-    print('═══════════════════════════════════════════════════════════');
-    print('📱 CURRENT FCM TOKEN:');
-    print('$token');
-    print('═══════════════════════════════════════════════════════════');
 
     await NotificationService().sendDeviceToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       NotificationService().sendDeviceToken();
-      print('═══════════════════════════════════════════════════════════');
-      print('🔄 FCM TOKEN REFRESHED:');
-      print('$fcmToken');
-      print('═══════════════════════════════════════════════════════════');
-    }).onError((error) {
-      print('❌ Error refreshing FCM token: $error');
-    });
+    }).onError((error) {});
   }
 
   Future<void> _requestPermission() async {

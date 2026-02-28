@@ -42,7 +42,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
               child: _imagePart(),
             ),
             TransparentAppBar(
-              title: widget.categoryModel.name,
+              title: widget.categoryModel.localizedName,
               removeLeading: false,
               color: ColorConstants.whiteMainColor,
               actions: [
@@ -119,7 +119,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     return SizedBox(
       height: Get.size.height * 0.60,
       child: Hero(
-        tag: widget.categoryModel.name,
+        tag: widget.categoryModel.name, // Hero tag her zaman sabit name olmalı
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius30,
           child: CachedNetworkImage(

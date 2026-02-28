@@ -26,7 +26,7 @@ class CategoryCard extends StatelessWidget {
       child: Hero(
         tag: categoryModel.name,
         child: Container(
-          margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+          margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
           height: Get.size.width >= 800 ? 350 : 200,
           decoration: BoxDecoration(borderRadius: BorderRadii.borderRadius30, color: ColorConstants.kPrimaryColor, boxShadow: [
             BoxShadow(
@@ -82,7 +82,7 @@ class CategoryCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          categoryModel.name,
+                          categoryModel.localizedName,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: AppFontSizes.fontSize24,

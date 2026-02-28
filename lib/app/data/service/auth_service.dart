@@ -1,5 +1,3 @@
-// ignore_for_file: file_names, require_trailing_commas, avoid_void_async, avoid_bool_literals_in_conditional_expressions, depend_on_referenced_packages
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -20,7 +18,6 @@ class Auth {
     return storage.read('AccessToken') == null ? true : false;
   }
 
-  /////////////////////////////////////////User Token///////////////////////////////////
   Future<bool> setToken(String token) async {
     await storage.write('AccessToken', token);
     return storage.read('AccessToken') == null ? false : true;
@@ -34,8 +31,6 @@ class Auth {
     await storage.remove('AccessToken');
     return storage.read('AccessToken') == null ? true : false;
   }
-
-/////////////////////////////////////////User Refresh Token///////////////////////////////////
 
   Future<bool> setRefreshToken(String token) async {
     await storage.write('RefreshToken', token);
@@ -58,8 +53,6 @@ class SignInService {
   final Auth _auth = Auth();
 
   Future<int?> otpCheck({required String phoneNumber, String? otp}) async {
-    print(phoneNumber);
-    print(otp);
     return _handleApiRequest(
       '/mobile/auth/',
       body: <String, dynamic>{
@@ -70,7 +63,6 @@ class SignInService {
       requiresToken: true,
       isForm: true,
       handleSuccess: (responseJson) async {
-        print(responseJson);
         _auth.login(responseJson['data']);
         await _auth.setToken(responseJson['access_token']);
         await _auth.setRefreshToken(responseJson['refresh']);
@@ -80,8 +72,6 @@ class SignInService {
   }
 
   Future<int?> register({required String phoneNumber, required String name}) async {
-    print(phoneNumber);
-    print('REGISTER');
     final result = await _handleApiRequest(
       '/mobile/signup/',
       body: <String, dynamic>{
@@ -91,8 +81,6 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
-        print(responseJson);
-
         return responseJson;
       },
       isForm: true,
@@ -102,9 +90,6 @@ class SignInService {
   }
 
   Future<int?> login({required String phone}) async {
-    print(phone);
-    print('LOGIN-------------------------------------------------------------');
-
     return _handleApiRequest(
       '/mobile/login/',
       body: <String, dynamic>{
@@ -113,8 +98,6 @@ class SignInService {
       method: 'POST',
       requiresToken: false,
       handleSuccess: (responseJson) async {
-        print(responseJson);
-
         return responseJson;
       },
       isForm: true,
@@ -176,23 +159,17 @@ class SignInService {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
-        // Online - mark as launched and proceed
         await storage.write('hasLaunchedBefore', true);
         await Future.delayed(const Duration(seconds: 3), () {
           Get.offAll(() => BottomNavBar());
         });
       }
     } on SocketException catch (_) {
-      // Offline - check if app has been launched before
       if (hasLaunchedBefore) {
-        // App has cached data, proceed offline
-        print('App launched before - proceeding offline with cached data');
         await Future.delayed(const Duration(seconds: 3), () {
           Get.offAll(() => BottomNavBar());
         });
       } else {
-        // First launch - need internet to load initial data
-        print('First launch - internet required');
         Dialogs().showNoConnectionDialog(() {
           checkConnection();
         });

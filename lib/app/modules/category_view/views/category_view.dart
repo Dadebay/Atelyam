@@ -27,7 +27,7 @@ class _CategoryViewState extends State<CategoryView> {
         } else if (snapshot.hasData) {
           final categories = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(8),
+            // padding: const EdgeInsets.only(top: 25),
             itemCount: categories.length,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {

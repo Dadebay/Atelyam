@@ -74,6 +74,9 @@ class SettingsButton extends StatelessWidget {
       case 'ch':
         iconPath = Assets.chinaLangIcon;
         break;
+      case 'uz':
+        iconPath = Assets.uzbekLangIcon;
+        break;
       default:
         iconPath = Assets.englishLangIcon; // Varsayılan olarak İngilizce
     }

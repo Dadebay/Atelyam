@@ -18,7 +18,6 @@ class ImageService {
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        print(data);
         if (data.isNotEmpty) {
           return ImageModel.fromJson(data[0]);
         }
@@ -45,7 +44,6 @@ class ImageService {
     } else {}
 
     if (deviceToken == null || deviceToken.isEmpty) {
-      debugPrint('Failed to get device token.');
       deviceToken = 'unknown_device'; // Or provide a default value.
     }
     try {

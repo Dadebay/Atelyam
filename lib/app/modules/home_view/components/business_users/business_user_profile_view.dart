@@ -22,7 +22,8 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
   @override
   void initState() {
     super.initState();
-
+    print(widget.businessUserModelFromOutside.id);
+    print(widget.businessUserModelFromOutside.userID);
     _homeController.fetchBusinessUserData(
       businessUserModelFromOutside: widget.businessUserModelFromOutside,
       categoryID: widget.categoryID,
@@ -39,8 +40,9 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: AgreeButton(
             onTap: () {
-              final String phoneNumberText =
-                  _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
+              final String rawPhone = _homeController.businessUser.value?.businessPhone ?? '';
+              if (rawPhone.isEmpty) return;
+              final String phoneNumberText = rawPhone.contains('+993') ? rawPhone : '+993$rawPhone';
               _homeController.makePhoneCall(phoneNumberText);
             },
             text: 'call'.tr,
@@ -70,63 +72,64 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
   }
 
   Widget _buildInfoTab() {
-    final String phoneNumberText =
-        _homeController.businessUser.value!.businessPhone.contains('+993') ? _homeController.businessUser.value!.businessPhone : '+993${_homeController.businessUser.value!.businessPhone}';
     return Obx(
-      () => Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 25),
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          children: [
-            _homeController.businessUser.value!.instagram!.isEmpty
-                ? SizedBox.shrink()
-                : SocialMediaIcon(
-                    name: 'instagram',
-                    userName: _homeController.businessUser.value!.instagram.toString(),
-                    icon: Assets.instagram,
-                    maxline: 1,
-                    index: 3,
-                  ),
-            _homeController.businessUser.value!.youtube!.isEmpty
-                ? SizedBox.shrink()
-                : SocialMediaIcon(
-                    name: 'youtube',
-                    userName: _homeController.businessUser.value!.youtube.toString(),
-                    icon: Assets.youtube,
-                    index: 4,
-                    maxline: 1,
-                  ),
-            _homeController.businessUser.value!.tiktok!.isEmpty
-                ? SizedBox.shrink()
-                : SocialMediaIcon(
-                    name: 'tiktok',
-                    userName: _homeController.businessUser.value!.tiktok.toString(),
-                    icon: Assets.tiktok,
-                    index: 5,
-                    maxline: 1,
-                  ),
-            phoneNumberText.isEmpty
-                ? SizedBox.shrink()
-                : SocialMediaIcon(
-                    name: 'phone_number',
-                    userName: phoneNumberText,
-                    icon: Assets.phone,
-                    index: 6,
-                    maxline: 1,
-                  ),
-            _homeController.businessUser.value!.address!.isEmpty
-                ? SizedBox.shrink()
-                : SocialMediaIcon(
-                    name: 'location',
-                    userName: _homeController.businessUser.value!.address.toString(),
-                    icon: Assets.address,
-                    index: 6,
-                    maxline: 4,
-                  ),
-          ],
-        ),
-      ),
+      () {
+        final user = _homeController.businessUser.value;
+        if (user == null) return const SizedBox.shrink();
+
+        final rawPhone = user.businessPhone;
+        final phoneNumberText = rawPhone.contains('+993') ? rawPhone : '+993$rawPhone';
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15, top: 25),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            children: [
+              if (user.instagram?.isNotEmpty == true)
+                SocialMediaIcon(
+                  name: 'instagram',
+                  userName: user.instagram!,
+                  icon: Assets.instagram,
+                  maxline: 1,
+                  index: 3,
+                ),
+              if (user.youtube?.isNotEmpty == true)
+                SocialMediaIcon(
+                  name: 'youtube',
+                  userName: user.youtube!,
+                  icon: Assets.youtube,
+                  index: 4,
+                  maxline: 1,
+                ),
+              if (user.tiktok?.isNotEmpty == true)
+                SocialMediaIcon(
+                  name: 'tiktok',
+                  userName: user.tiktok!,
+                  icon: Assets.tiktok,
+                  index: 5,
+                  maxline: 1,
+                ),
+              if (phoneNumberText.isNotEmpty)
+                SocialMediaIcon(
+                  name: 'phone_number',
+                  userName: phoneNumberText,
+                  icon: Assets.phone,
+                  index: 6,
+                  maxline: 1,
+                ),
+              if (user.address?.isNotEmpty == true)
+                SocialMediaIcon(
+                  name: 'location',
+                  userName: user.address!,
+                  icon: Assets.address,
+                  index: 6,
+                  maxline: 4,
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -321,7 +324,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    _homeController.businessUser.value!.businessName.toString(),
+                    _homeController.businessUser.value?.businessName.toString() ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -334,7 +337,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
                   child: Text(
-                    _homeController.businessUser.value!.description,
+                    _homeController.businessUser.value?.description ?? '',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,

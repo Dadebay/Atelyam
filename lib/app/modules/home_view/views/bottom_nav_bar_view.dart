@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:io';
 import 'package:atelyam/app/data/service/banner_service.dart';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
@@ -7,7 +5,7 @@ import 'package:atelyam/app/modules/discovery_view/controllers/discovery_control
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
-import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
+import 'package:atelyam/app/modules/map_view/views/map_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/custom_widgets/offline_indicator.dart';
@@ -35,9 +33,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
     setState(() {});
   }
 
-  final List<Widget> pages = [HomeView(), DiscoveryView(), CategoryView(), FavoritesView(), SettingsView()];
+  final List<Widget> pages = [HomeView(), DiscoveryView(), CategoryView(), const MapView(), SettingsView()];
 
-  final List<String> pageTitles = ['home', 'discovery', 'categories', 'favorites', 'settings'];
+  final List<String> pageTitles = ['home', 'discovery', 'categories', 'map', 'settings'];
 
   @override
   void initState() {
@@ -54,6 +52,126 @@ class _BottomNavBarState extends State<BottomNavBar> {
     } else {
       showSnackBar('error', 'phone_call_error'.tr, ColorConstants.redColor);
     }
+  }
+
+  void _showPhoneBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(
+          top: 16,
+          left: 16,
+          right: 16,
+          bottom: MediaQuery.of(context).padding.bottom + 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Başlık
+            Row(
+              children: [
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedCall02,
+                  size: 20,
+                  color: ColorConstants.kPrimaryColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Telefon Numaraları',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: ColorConstants.kPrimaryColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            // Numara listesi
+            ...phoneNumbers.map((phone) {
+              final String phoneStr = phone.toString();
+              String flag;
+              String label;
+              if (phoneStr.startsWith('+998')) {
+                flag = '🇺🇿';
+                label = 'Özbekistan';
+              } else if (phoneStr.startsWith('+993')) {
+                flag = '🇹🇲';
+                label = 'Türkmenistan';
+              } else {
+                flag = '📞';
+                label = '';
+              }
+
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                      makePhoneCall(phoneStr);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      child: Row(
+                        children: [
+                          Text(flag, style: const TextStyle(fontSize: 28)),
+                          const SizedBox(width: 14),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (label.isNotEmpty)
+                                Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                              Text(
+                                phoneStr,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: ColorConstants.kPrimaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.call_rounded,
+                            color: ColorConstants.kSecondaryColor,
+                            size: 22,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                ],
+              );
+            }),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
+    );
   }
 
   @override
@@ -74,7 +192,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             leading: IconButton(
                 onPressed: () {
                   if (phoneNumbers.isNotEmpty) {
-                    makePhoneCall(phoneNumbers[0]);
+                    _showPhoneBottomSheet(context);
                   } else {
                     print("No phone numbers loaded!");
                   }
@@ -88,21 +206,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         color: ColorConstants.kPrimaryColor,
                       ),
                       onPressed: () {
-                        print('🔵 Refresh button pressed');
-                        // DiscoveryController'ın kayıtlı olup olmadığını kontrol et
                         if (Get.isRegistered<DiscoveryController>()) {
                           final discoveryController = Get.find<DiscoveryController>();
-                          print('🟢 DiscoveryController found, calling onRefresh()');
-                          discoveryController.onRefresh();
+                          discoveryController.fetchProducts(isRefresh: true);
                         } else {
-                          print('🟡 DiscoveryController not registered yet, switching to DiscoveryView first');
-                          // Controller henüz oluşturulmamış, önce sayfaya geç
                           homeController.selectedIndex.value = 1;
-                          // Bir frame sonra refresh yap
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (Get.isRegistered<DiscoveryController>()) {
-                              Get.find<DiscoveryController>().onRefresh();
-                              print('� DiscoveryController created and refreshed');
+                              Get.find<DiscoveryController>().fetchProducts(isRefresh: true);
                             }
                           });
                         }
@@ -123,7 +234,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
               BottomNavigationBar(
                 currentIndex: homeController.selectedIndex.value,
                 onTap: (index) {
-                  // Klavyeyi kapat ve focus'u temizle
                   FocusScope.of(context).unfocus();
                   homeController.selectedIndex.value = index;
                 },
@@ -151,8 +261,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     label: pageTitles[2].tr,
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(IconlyLight.heart),
-                    activeIcon: Icon(IconlyBold.heart),
+                    icon: Icon(IconlyLight.location),
+                    activeIcon: Icon(IconlyBold.location),
                     label: pageTitles[3].tr,
                   ),
                   BottomNavigationBarItem(

@@ -30,11 +30,9 @@ class BannerService {
         return cached ?? [];
       }
     } on SocketException {
-      print('Offline: Loading banners from cache');
       final cached = _localStorage.getBanners();
       return cached ?? [];
     } catch (e) {
-      print('Error fetching banners: $e');
       final cached = _localStorage.getBanners();
       return cached ?? [];
     }
@@ -45,9 +43,6 @@ class BannerService {
 
     try {
       final response = await http.get(Uri.parse(authController.ipAddress.value + '/mobile/getphones/'));
-
-      print(authController.ipAddress.value + '/mobile/getphones/');
-      print("response: ${response.body}");
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonMap = json.decode(response.body);
@@ -67,10 +62,8 @@ class BannerService {
         return _loadPhonesFromCache(cacheKey);
       }
     } on SocketException {
-      print('Offline: Loading phone numbers from cache');
       return _loadPhonesFromCache(cacheKey);
     } catch (e) {
-      print('Error fetching phone numbers: $e');
       return _loadPhonesFromCache(cacheKey);
     }
   }
@@ -81,12 +74,9 @@ class BannerService {
       final cachedData = storage.read(cacheKey);
       if (cachedData != null) {
         final List<dynamic> jsonList = jsonDecode(cachedData);
-        print('Loaded ${jsonList.length} phone numbers from cache');
         return jsonList.cast<String>();
       }
-    } catch (e) {
-      print('Error loading phone numbers from cache: $e');
-    }
+    } catch (e) {}
     return [];
   }
 }

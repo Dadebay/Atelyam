@@ -24,13 +24,25 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def flutterCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion')
+if (flutterCompileSdkVersion == null) {
+    flutterCompileSdkVersion = '35'
+}
+
+def flutterMinSdkVersion = localProperties.getProperty('flutter.minSdkVersion')
+if (flutterMinSdkVersion == null) {
+    flutterMinSdkVersion = '21'
+}
+
+def flutterTargetSdkVersion = localProperties.getProperty('flutter.targetSdkVersion')
+if (flutterTargetSdkVersion == null) {
+    flutterTargetSdkVersion = '35'
+}
 
 android {
     namespace = "com.gurbanov.atelyam"
-    compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
-    ndkVersion = "29.0.14206865"
+    compileSdkVersion 36
     compileOptions {
-        // ADD THIS LINE
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -52,10 +64,10 @@ android {
 
     defaultConfig {
         applicationId = "com.gurbanov.atelyam"
-        minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
-        targetSdkVersion localProperties.getProperty('flutter.targetSdkVersion').toInteger()
-        versionCode localProperties.getProperty('flutter.versionCode').toInteger()
-        versionName localProperties.getProperty('flutter.versionName')
+        minSdkVersion 23
+        targetSdkVersion 36
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
         multiDexEnabled true
     }
 

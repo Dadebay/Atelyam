@@ -35,10 +35,8 @@ class HashtagService {
       }
     } on SocketException {
       // Offline - try to load from cache
-      print('Offline mode - loading hashtags from cache');
       return _loadHashtagsFromCache(cacheKey);
     } catch (e) {
-      print('Error fetching hashtags: $e');
       return _loadHashtagsFromCache(cacheKey);
     }
   }
@@ -49,12 +47,9 @@ class HashtagService {
       final cachedData = storage.read(cacheKey);
       if (cachedData != null) {
         final List<dynamic> jsonList = jsonDecode(cachedData);
-        print('Loaded ${jsonList.length} hashtags from cache');
         return jsonList.map((item) => HashtagModel.fromJson(item)).toList();
       }
-    } catch (e) {
-      print('Error loading hashtags from cache: $e');
-    }
+    } catch (e) {}
     return [];
   }
 
@@ -91,10 +86,8 @@ class HashtagService {
       }
     } on SocketException {
       // Offline - try to load from cache
-      print('Offline mode - loading hashtag products from cache');
       return _loadFromCache(cacheKey);
     } catch (e) {
-      print('Error fetching hashtag products: $e');
       return _loadFromCache(cacheKey);
     }
   }
@@ -105,12 +98,9 @@ class HashtagService {
       final cachedData = storage.read(cacheKey);
       if (cachedData != null) {
         final List<dynamic> jsonList = jsonDecode(cachedData);
-        print('Loaded ${jsonList.length} products from cache for key: $cacheKey');
         return jsonList.map((item) => ProductModel.fromJson(item)).toList();
       }
-    } catch (e) {
-      print('Error loading from cache: $e');
-    }
+    } catch (e) {}
     return [];
   }
 

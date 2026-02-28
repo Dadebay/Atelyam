@@ -1,3 +1,4 @@
+import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
-class PhoneNumberTextField extends StatelessWidget {
+class PhoneNumberTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final FocusNode requestfocusNode;
@@ -121,7 +122,94 @@ class PhoneNumberTextField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<PhoneNumberTextField> createState() => _PhoneNumberTextFieldState();
+}
+
+class _PhoneNumberTextFieldState extends State<PhoneNumberTextField> {
+  // Available countries: flag emoji, dial code, max digits, hint
+  static const List<Map<String, dynamic>> _countries = [
+    {'flag': '🇹🇲', 'code': '+993', 'maxLength': 8, 'hint': '65 656565'},
+    {'flag': '🇺🇿', 'code': '+998', 'maxLength': 9, 'hint': '90 1234567'},
+  ];
+
+  int _selectedIndex = 0;
+
+  Map<String, dynamic> get _selected => _countries[_selectedIndex];
+
+  void _showCountryPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ..._countries.asMap().entries.map((entry) {
+                final i = entry.key;
+                final country = entry.value;
+                final isSelected = i == _selectedIndex;
+                return ListTile(
+                  leading: Text(
+                    country['flag'] as String,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  title: Text(
+                    '${country['code']}',
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? ColorConstants.kPrimaryColor : Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                  trailing: isSelected ? Icon(Icons.check_circle, color: ColorConstants.kPrimaryColor) : null,
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _selectedIndex = i;
+                      widget.controller.clear();
+                    });
+                    // Sync with AuthController
+                    try {
+                      Get.find<AuthController>().setCountry(
+                        code: country['code'] as String,
+                        maxLength: country['maxLength'] as int,
+                      );
+                    } catch (_) {}
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  OutlineInputBorder _buildOutlineInputBorder({Color? borderColor}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadii.borderRadius20,
+      borderSide: BorderSide(color: borderColor ?? Colors.grey, width: 2),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final int maxLen = _selected['maxLength'] as int;
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
       child: TextFormField(
@@ -131,49 +219,63 @@ class PhoneNumberTextField extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
         cursorColor: Colors.black,
-        controller: controller,
+        controller: widget.controller,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'errorEmpty'.tr;
           }
-          if (value.length != 8) {
+          if (value.length != maxLen) {
             return 'errorPhoneCount'.tr;
           }
           return null;
         },
         onEditingComplete: () {
-          requestfocusNode.requestFocus();
+          widget.requestfocusNode.requestFocus();
         },
         keyboardType: TextInputType.number,
         inputFormatters: [
-          LengthLimitingTextInputFormatter(8),
+          LengthLimitingTextInputFormatter(maxLen),
           FilteringTextInputFormatter.digitsOnly,
         ],
         maxLines: 1,
-        focusNode: focusNode,
+        focusNode: widget.focusNode,
         textInputAction: TextInputAction.next,
         enableSuggestions: false,
         autocorrect: false,
         decoration: InputDecoration(
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(
-              '+ 993',
-              style: TextStyle(
-                color: ColorConstants.kPrimaryColor.withOpacity(.2),
-                fontSize: AppFontSizes.getFontSize(4.8),
-                fontWeight: FontWeight.w600,
+          prefixIcon: GestureDetector(
+            onTap: _showCountryPicker,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _selected['flag'] as String,
+                    style: const TextStyle(fontSize: 22),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _selected['code'] as String,
+                    style: TextStyle(
+                      color: ColorConstants.kPrimaryColor,
+                      fontSize: AppFontSizes.getFontSize(4.5),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Icon(Icons.arrow_drop_down, size: 18, color: Colors.grey),
+                ],
               ),
             ),
           ),
-          hintText: '65 656565',
+          hintText: _selected['hint'] as String,
           hintStyle: TextStyle(
             color: Colors.grey.shade300,
             fontWeight: FontWeight.w600,
             fontSize: AppFontSizes.getFontSize(4.5),
           ),
-          prefixIconConstraints: BoxConstraints(minWidth: 80),
-          contentPadding: const EdgeInsets.only(left: 30, top: 18, bottom: 15, right: 10),
+          prefixIconConstraints: const BoxConstraints(minWidth: 110),
+          contentPadding: const EdgeInsets.only(left: 10, top: 18, bottom: 15, right: 10),
           isDense: true,
           border: _buildOutlineInputBorder(
             borderColor: ColorConstants.kPrimaryColor.withOpacity(.2),
@@ -188,13 +290,6 @@ class PhoneNumberTextField extends StatelessWidget {
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),
       ),
-    );
-  }
-
-  OutlineInputBorder _buildOutlineInputBorder({Color? borderColor}) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadii.borderRadius20,
-      borderSide: BorderSide(color: borderColor ?? Colors.grey, width: 2),
     );
   }
 }

@@ -31,13 +31,13 @@ class SocialMediaIcon extends StatelessWidget {
       // @ ile başlıyorsa, platform URL'i oluştur
       String platformUrl = '';
       switch (name) {
-        case 'Instagram':
+        case 'instagram':
           platformUrl = 'https://www.instagram.com/${userName.substring(1)}';
           break;
-        case 'TikTok':
-          platformUrl = 'https://www.tiktok.com/@${userName.substring(1)}';
+        case 'tiktok':
+          platformUrl = 'https://www.tiktok.com/${userName}';
           break;
-        case 'Youtube':
+        case 'youtube':
           platformUrl = 'https://youtube.com/${userName.substring(1)}';
           break;
         default:
@@ -46,7 +46,7 @@ class SocialMediaIcon extends StatelessWidget {
       urlToLaunch = platformUrl;
       displayedUserName = userName; // @username olarak göster
     } else if (userName.startsWith('http://') || userName.startsWith('https://')) {
-      // URL ise, username'i çıkar
+      // URL ise, username'çıkar
       urlToLaunch = userName;
 
       // Instagram, TikTok, YouTube URL'lerinden username çıkar
@@ -71,8 +71,18 @@ class SocialMediaIcon extends StatelessWidget {
       // Telefon numarası
       urlToLaunch = 'tel:$userName';
       displayedUserName = userName;
+    } else if (name == 'instagram') {
+      // @ olmadan düz username geldi
+      urlToLaunch = 'https://www.instagram.com/$userName';
+      displayedUserName = '@$userName';
+    } else if (name == 'tiktok') {
+      urlToLaunch = 'https://www.tiktok.com/@$userName';
+      displayedUserName = '@$userName';
+    } else if (name == 'youtube') {
+      urlToLaunch = 'https://www.youtube.com/@$userName';
+      displayedUserName = '@$userName';
     } else {
-      // Düz metin
+      // Düz metin (adres vb.)
       urlToLaunch = userName;
       displayedUserName = userName;
     }

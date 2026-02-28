@@ -48,7 +48,7 @@ class OTPView extends StatelessWidget {
             width: 200,
           ),
           Text(
-            'code_has_been_sent_to'.tr + ': +993$phoneNumber',
+            'code_has_been_sent_to'.tr + ': ${authController.selectedCountryCode.value}$phoneNumber',
             maxLines: 2,
             textAlign: TextAlign.center,
             style: const TextStyle(

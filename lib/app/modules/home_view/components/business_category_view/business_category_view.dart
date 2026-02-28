@@ -107,7 +107,7 @@ class BusinessCategoryView extends GetView<BusinessCategoryController> {
                                 ),
                               ),
                               Text(
-                                category.name,
+                                category.localizedName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

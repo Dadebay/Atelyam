@@ -4,6 +4,7 @@ import 'package:atelyam/app/modules/auth_view/views/auth_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/about_us_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_business_accounts_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_added_products_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/favorites_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -29,12 +30,18 @@ class Assets {
   static const String frenchLangIcon = 'assets/image/flags/lang_fr.svg';
   static const String turkLangIcon = 'assets/image/flags/lang_tr.svg';
   static const String turkmenLangIcon = 'assets/image/flags/lang_tm.svg';
+  static const String uzbekLangIcon = 'assets/image/flags/lang_uz.svg';
   static const String backgorundPattern1 = 'assets/image/patterns/pattern_1.png';
   static const String backgroundPattern2 = 'assets/image/patterns/pattern_2.png';
   static const String backgorundPattern3 = 'assets/image/patterns/pattern_3.png';
 }
 
 final List<Map<String, dynamic>> settingsViews = [
+  {
+    'name': 'favorites',
+    'icon': IconlyLight.heart,
+    'page': () => FavoritesView(),
+  },
   {
     'name': 'lang',
     'icon': IconlyLight.setting,
@@ -61,6 +68,11 @@ final List<Map<String, dynamic>> loggedInSettingsViews = [
     'name': 'add_product',
     'icon': IconlyLight.add_user,
     'page': () => AllProductView(),
+  },
+  {
+    'name': 'favorites',
+    'icon': IconlyLight.heart,
+    'page': () => FavoritesView(),
   },
   {
     'name': 'lang',

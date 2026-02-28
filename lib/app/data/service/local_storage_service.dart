@@ -21,9 +21,7 @@ class LocalStorageService {
       final jsonList = products.map((p) => p.toJson()).toList();
       await _storage.write(_productsPrefix + key, jsonEncode(jsonList));
       await _updateLastSyncTime();
-    } catch (e) {
-      print('Error saving products: $e');
-    }
+    } catch (e) {}
   }
 
   List<ProductModel>? getProducts(String key) {
@@ -34,7 +32,6 @@ class LocalStorageService {
       final List<dynamic> jsonList = jsonDecode(data);
       return jsonList.map((json) => ProductModel.fromJson(json)).toList();
     } catch (e) {
-      print('Error reading products: $e');
       return null;
     }
   }
@@ -62,9 +59,7 @@ class LocalStorageService {
     try {
       await _storage.write(_categoriesKey, jsonEncode(categoriesJson));
       await _updateLastSyncTime();
-    } catch (e) {
-      print('Error saving categories: $e');
-    }
+    } catch (e) {}
   }
 
   List<CategoryModel>? getCategories() {
@@ -75,7 +70,6 @@ class LocalStorageService {
       final List<dynamic> jsonList = jsonDecode(data);
       return jsonList.map((json) => CategoryModel.fromJson(json)).toList();
     } catch (e) {
-      print('Error reading categories: $e');
       return null;
     }
   }
@@ -85,9 +79,7 @@ class LocalStorageService {
     try {
       await _storage.write(_bannersKey, jsonEncode(bannersJson));
       await _updateLastSyncTime();
-    } catch (e) {
-      print('Error saving banners: $e');
-    }
+    } catch (e) {}
   }
 
   List<BannerModel>? getBanners() {
@@ -98,7 +90,6 @@ class LocalStorageService {
       final List<dynamic> jsonList = jsonDecode(data);
       return jsonList.map((json) => BannerModel.fromJson(json)).toList();
     } catch (e) {
-      print('Error reading banners: $e');
       return null;
     }
   }
