@@ -1,6 +1,7 @@
 import 'package:atelyam/app/data/models/banner_model.dart';
 import 'package:atelyam/app/modules/home_view/components/banners_view/banner_card.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
+import 'package:atelyam/app/modules/home_view/views/widgets/home_shimmer.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
@@ -27,7 +28,7 @@ class _BannersState extends State<Banners> {
       future: controller.bannersFuture.value,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return EmptyStates().loadingData();
+          return const BannerShimmer();
         } else if (snapshot.hasError) {
           return EmptyStates().errorData(snapshot.hasError.toString());
         } else if (snapshot.hasData) {
@@ -120,4 +121,3 @@ class _BannersState extends State<Banners> {
     );
   }
 }
-

@@ -38,14 +38,14 @@ class Assets {
 
 final List<Map<String, dynamic>> settingsViews = [
   {
-    'name': 'favorites',
-    'icon': IconlyLight.heart,
-    'page': () => FavoritesView(),
-  },
-  {
     'name': 'lang',
     'icon': IconlyLight.setting,
     'page': '',
+  },
+  {
+    'name': 'favorites',
+    'icon': IconlyLight.heart,
+    'page': () => FavoritesView(),
   },
   {
     'name': 'aboutUs',
@@ -59,11 +59,11 @@ final List<Map<String, dynamic>> settingsViews = [
   },
 ];
 final List<Map<String, dynamic>> loggedInSettingsViews = [
-  {
-    'name': 'business_accounts_profil',
-    'icon': IconlyLight.user,
-    'page': () => AllBusinessAccountsView(),
-  },
+  // {
+  //   'name': 'business_accounts_profil',
+  //   'icon': IconlyLight.user,
+  //   'page': () => AllBusinessAccountsView(),
+  // },
   {
     'name': 'add_product',
     'icon': IconlyLight.add_user,

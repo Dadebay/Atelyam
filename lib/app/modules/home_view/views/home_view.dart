@@ -1,3 +1,4 @@
+import 'package:atelyam/app/modules/home_view/views/widgets/home_shimmer.dart';
 import 'package:atelyam/app/modules/home_view/views/widgets/products_view.dart';
 import '../../../product/custom_widgets/index.dart';
 
@@ -27,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
             ]),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: EmptyStates().loadingData());
+                return const HomeShimmer();
               }
 
               if (snapshot.hasError) {

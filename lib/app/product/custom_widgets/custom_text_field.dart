@@ -114,10 +114,14 @@ class PhoneNumberTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final FocusNode requestfocusNode;
+
+  /// 0 = Turkmenistan (+993), 1 = Uzbekistan (+998)
+  final int initialCountryIndex;
   const PhoneNumberTextField({
     required this.controller,
     required this.focusNode,
     required this.requestfocusNode,
+    this.initialCountryIndex = 0,
     Key? key,
   }) : super(key: key);
 
@@ -135,6 +139,12 @@ class _PhoneNumberTextFieldState extends State<PhoneNumberTextField> {
   int _selectedIndex = 0;
 
   Map<String, dynamic> get _selected => _countries[_selectedIndex];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialCountryIndex.clamp(0, _countries.length - 1);
+  }
 
   void _showCountryPicker() {
     showModalBottomSheet(

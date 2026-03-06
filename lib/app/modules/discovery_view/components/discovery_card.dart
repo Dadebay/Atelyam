@@ -30,10 +30,6 @@ class DiscoveryCard extends StatelessWidget {
   final AuthController authController = Get.find();
 
   // Static decorations to avoid recreating on every build
-  static final _alternativeCardDecoration = BoxDecoration(
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.white, width: 2.5),
-  );
 
   static final _standardCardShadow = [
     BoxShadow(
@@ -62,7 +58,13 @@ class DiscoveryCard extends StatelessWidget {
       onTap: _navigateToProductDetail,
       child: Container(
         margin: const EdgeInsets.all(10),
-        decoration: _alternativeCardDecoration,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), border: Border.all(color: Colors.white, width: 2.5), boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 15,
+          ),
+        ]),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Stack(

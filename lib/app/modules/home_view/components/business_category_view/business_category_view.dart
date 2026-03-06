@@ -1,6 +1,7 @@
 import 'package:atelyam/app/data/models/business_category_model.dart';
 import 'package:atelyam/app/modules/home_view/components/business_category_view/all_business_users_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/business_category_controller.dart';
+import 'package:atelyam/app/modules/home_view/views/widgets/home_shimmer.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 
 class BusinessCategoryView extends GetView<BusinessCategoryController> {
@@ -36,7 +37,7 @@ class BusinessCategoryView extends GetView<BusinessCategoryController> {
             future: categoriesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return EmptyStates().loadingData();
+                return const CategoryShimmer();
               } else if (snapshot.hasError || snapshot.data == null) {
                 return EmptyStates().errorData(snapshot.error.toString());
               } else {

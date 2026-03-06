@@ -1,6 +1,7 @@
 import 'package:atelyam/app/data/models/business_user_model.dart';
 import 'package:atelyam/app/data/service/business_user_service.dart';
 import 'package:atelyam/app/modules/home_view/components/business_users/brend_card.dart';
+import 'package:atelyam/app/modules/home_view/views/widgets/home_shimmer.dart';
 import 'package:atelyam/app/product/custom_widgets/listview_top_name_and_icon.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
@@ -23,7 +24,7 @@ class _BusinessUsersHomeViewState extends State<BusinessUsersHomeView> {
       future: BusinessUserService().fetchPopularBusinessAccounts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return EmptyStates().loadingData();
+          return const BusinessUsersShimmer();
         } else if (snapshot.hasError) {
           return EmptyStates().errorData(snapshot.error.toString());
         } else if (snapshot.hasData) {

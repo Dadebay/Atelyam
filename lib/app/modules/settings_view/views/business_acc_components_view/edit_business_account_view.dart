@@ -22,12 +22,24 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
 
   LatLng? _selectedLocation;
   String? _selectedAddress;
+  int _phoneCountryIndex = 0; // 0 = +993 TM, 1 = +998 UZ
+
+  /// Strips a known country code prefix and returns (stripped digits, countryIndex).
+  (String, int) _parsePhone(String raw) {
+    final s = raw.trim();
+    if (s.startsWith('+993')) return (s.substring(4), 0);
+    if (s.startsWith('+998')) return (s.substring(4), 1);
+    // No country code: 8 digits → Turkmenistan, otherwise → Uzbekistan
+    return (s, s.length == 8 ? 0 : 1);
+  }
 
   @override
   void initState() {
     super.initState();
     textEditingControllers[0].text = widget.businessUser.businessName ?? '';
-    textEditingControllers[1].text = widget.businessUser.businessPhone ?? '';
+    final (String digits, int countryIdx) = _parsePhone(widget.businessUser.businessPhone ?? '');
+    textEditingControllers[1].text = digits;
+    _phoneCountryIndex = countryIdx;
     textEditingControllers[2].text = widget.businessUser.address ?? '';
     textEditingControllers[3].text = widget.businessUser.description ?? '';
     textEditingControllers[4].text = widget.businessUser.instagram ?? '';
@@ -72,6 +84,7 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                     controller: textEditingControllers[1],
                     focusNode: focusNodes[1],
                     requestfocusNode: focusNodes[2],
+                    initialCountryIndex: _phoneCountryIndex,
                   ),
                 ),
                 CustomTextField(

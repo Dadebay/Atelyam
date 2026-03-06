@@ -185,44 +185,46 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: Obx(() {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Text(pageTitles[homeController.selectedIndex.value].tr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-            backgroundColor: ColorConstants.whiteMainColor,
-            scrolledUnderElevation: 0.0,
-            leading: IconButton(
-                onPressed: () {
-                  if (phoneNumbers.isNotEmpty) {
-                    _showPhoneBottomSheet(context);
-                  } else {
-                    print("No phone numbers loaded!");
-                  }
-                },
-                icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
-            actions: homeController.selectedIndex.value == 1
-                ? [
-                    IconButton(
-                      icon: HugeIcon(
-                        icon: HugeIcons.strokeRoundedRefresh,
-                        color: ColorConstants.kPrimaryColor,
-                      ),
+          appBar: homeController.selectedIndex.value == 4
+              ? null
+              : AppBar(
+                  title: Text(pageTitles[homeController.selectedIndex.value].tr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+                  backgroundColor: ColorConstants.whiteMainColor,
+                  scrolledUnderElevation: 0.0,
+                  leading: IconButton(
                       onPressed: () {
-                        if (Get.isRegistered<DiscoveryController>()) {
-                          final discoveryController = Get.find<DiscoveryController>();
-                          discoveryController.fetchProducts(isRefresh: true);
+                        if (phoneNumbers.isNotEmpty) {
+                          _showPhoneBottomSheet(context);
                         } else {
-                          homeController.selectedIndex.value = 1;
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (Get.isRegistered<DiscoveryController>()) {
-                              Get.find<DiscoveryController>().fetchProducts(isRefresh: true);
-                            }
-                          });
+                          print("No phone numbers loaded!");
                         }
                       },
-                      tooltip: 'refresh'.tr,
-                    ),
-                  ]
-                : null,
-          ),
+                      icon: HugeIcon(icon: HugeIcons.strokeRoundedCall02, size: 22, color: ColorConstants.kPrimaryColor)),
+                  actions: homeController.selectedIndex.value == 1
+                      ? [
+                          IconButton(
+                            icon: HugeIcon(
+                              icon: HugeIcons.strokeRoundedRefresh,
+                              color: ColorConstants.kPrimaryColor,
+                            ),
+                            onPressed: () {
+                              if (Get.isRegistered<DiscoveryController>()) {
+                                final discoveryController = Get.find<DiscoveryController>();
+                                discoveryController.fetchProducts(isRefresh: true);
+                              } else {
+                                homeController.selectedIndex.value = 1;
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  if (Get.isRegistered<DiscoveryController>()) {
+                                    Get.find<DiscoveryController>().fetchProducts(isRefresh: true);
+                                  }
+                                });
+                              }
+                            },
+                            tooltip: 'refresh'.tr,
+                          ),
+                        ]
+                      : null,
+                ),
           body: IndexedStack(
             index: homeController.selectedIndex.value,
             children: pages,
