@@ -59,11 +59,11 @@ final List<Map<String, dynamic>> settingsViews = [
   },
 ];
 final List<Map<String, dynamic>> loggedInSettingsViews = [
-  // {
-  //   'name': 'business_accounts_profil',
-  //   'icon': IconlyLight.user,
-  //   'page': () => AllBusinessAccountsView(),
-  // },
+  {
+    'name': 'business_accounts_profil',
+    'icon': IconlyLight.user,
+    'page': () => AllBusinessAccountsView(),
+  },
   {
     'name': 'add_product',
     'icon': IconlyLight.add_user,
@@ -74,6 +74,38 @@ final List<Map<String, dynamic>> loggedInSettingsViews = [
     'icon': IconlyLight.heart,
     'page': () => FavoritesView(),
   },
+  {
+    'name': 'lang',
+    'icon': IconlyLight.setting,
+    'page': '',
+  },
+  {
+    'name': 'aboutUs',
+    'icon': IconlyLight.info_square,
+    'page': () => AboutUsView(),
+  },
+  {
+    'name': 'login',
+    'icon': IconlyLight.login,
+    'page': () => AuthView(),
+  },
+];
+final List<Map<String, dynamic>> loggedInSettingsViewsBusinessaccountHave = [
+  // {
+  //   'name': 'business_accounts_profil',
+  //   'icon': IconlyLight.user,
+  //   'page': () => AllBusinessAccountsView(),
+  // },
+  // {
+  //   'name': 'add_product',
+  //   'icon': IconlyLight.add_user,
+  //   'page': () => AllProductView(),
+  // },
+  // {
+  //   'name': 'favorites',
+  //   'icon': IconlyLight.heart,
+  //   'page': () => FavoritesView(),
+  // },
   {
     'name': 'lang',
     'icon': IconlyLight.setting,

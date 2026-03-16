@@ -46,8 +46,8 @@ class _AllProductViewState extends State<AllProductView> {
     );
   }
 
-  FutureBuilder<List<ProductModel>?> getMyProducts() {
-    return FutureBuilder<List<ProductModel>?>(
+  FutureBuilder<Map<String, dynamic>?> getMyProducts() {
+    return FutureBuilder<Map<String, dynamic>?>(
       future: ProductService().getMyProducts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -55,7 +55,8 @@ class _AllProductViewState extends State<AllProductView> {
         } else if (snapshot.hasError) {
           return EmptyStates().errorData(snapshot.error.toString());
         } else if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
+          final products = snapshot.data!['products'] as List<ProductModel>? ?? [];
+          if (products.isEmpty) {
             return Column(
               children: [
                 Expanded(
@@ -82,17 +83,17 @@ class _AllProductViewState extends State<AllProductView> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.data!.length,
+                  itemCount: products.length,
                   itemExtent: 120,
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   itemBuilder: (BuildContext context, int index) {
                     return MyProductCard(
-                      productModel: snapshot.data![index],
+                      productModel: products[index],
                       onTap: () async {
                         final result = await Get.to(
-                          () => UpdateProductView(product: snapshot.data![index]),
+                          () => UpdateProductView(product: products[index]),
                         );
                         if (result == true) {
                           setState(() {});

@@ -20,6 +20,22 @@ class _UpdateProductViewState extends State<UpdateProductView> {
   final List<FocusNode> focusNodes = List.generate(3, (_) => FocusNode());
 
   final List<TextEditingController> textControllers = List.generate(3, (_) => TextEditingController());
+
+  final Map<String, TextEditingController> descLangControllers = {
+    'en': TextEditingController(),
+    'ru': TextEditingController(),
+    'ch': TextEditingController(),
+    'uz': TextEditingController(),
+    'tr': TextEditingController(),
+  };
+
+  final Map<String, TextEditingController> priceLangControllers = {
+    'en': TextEditingController(),
+    'ru': TextEditingController(),
+    'ch': TextEditingController(),
+    'uz': TextEditingController(),
+    'tr': TextEditingController(),
+  };
   @override
   void initState() {
     super.initState();
@@ -32,6 +48,16 @@ class _UpdateProductViewState extends State<UpdateProductView> {
     textControllers[0].text = widget.product.name;
     textControllers[1].text = widget.product.price.toString();
     textControllers[2].text = widget.product.description;
+    descLangControllers['en']!.text = widget.product.descriptionEn ?? '';
+    descLangControllers['ru']!.text = widget.product.descriptionRu ?? '';
+    descLangControllers['ch']!.text = widget.product.descriptionCh ?? '';
+    descLangControllers['uz']!.text = widget.product.descriptionUz ?? '';
+    descLangControllers['tr']!.text = widget.product.descriptionTr ?? '';
+    priceLangControllers['en']!.text = widget.product.priceEn ?? '';
+    priceLangControllers['ru']!.text = widget.product.priceRu ?? '';
+    priceLangControllers['ch']!.text = widget.product.priceCh ?? '';
+    priceLangControllers['uz']!.text = widget.product.priceUz ?? '';
+    priceLangControllers['tr']!.text = widget.product.priceTr ?? '';
     await controller.loadCategories().then((a) {
       controller.selectedCategory.value = controller.categories.firstWhereOrNull((e) => e.id == widget.product.category);
     });
@@ -145,7 +171,7 @@ class _UpdateProductViewState extends State<UpdateProductView> {
               children: controller.categories.map((category) {
                 return ListTile(
                   title: Text(
-                    category.name,
+                    category.localizedName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
@@ -191,7 +217,7 @@ class _UpdateProductViewState extends State<UpdateProductView> {
               children: controller.hashtags.map((category) {
                 return ListTile(
                   title: Text(
-                    category.name,
+                    category.localizedName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
@@ -289,6 +315,7 @@ class _UpdateProductViewState extends State<UpdateProductView> {
                     focusNode: focusNodes[2],
                     requestfocusNode: focusNodes[0],
                   ),
+                  _buildTranslationsSection(),
                   _buildImageSection(),
                   Padding(
                     padding: const EdgeInsets.all(15),
@@ -368,6 +395,16 @@ class _UpdateProductViewState extends State<UpdateProductView> {
                           nameController: textControllers[0].text,
                           descriptionController: textControllers[2].text,
                           priceController: textControllers[1].text,
+                          descriptionEn: descLangControllers['en']!.text,
+                          descriptionRu: descLangControllers['ru']!.text,
+                          descriptionCh: descLangControllers['ch']!.text,
+                          descriptionUz: descLangControllers['uz']!.text,
+                          descriptionTr: descLangControllers['tr']!.text,
+                          priceEn: priceLangControllers['en']!.text,
+                          priceRu: priceLangControllers['ru']!.text,
+                          priceCh: priceLangControllers['ch']!.text,
+                          priceUz: priceLangControllers['uz']!.text,
+                          priceTr: priceLangControllers['tr']!.text,
                         )
                             .then((a) {
                           controller.uploadProductImages(widget.product.id);
@@ -409,6 +446,83 @@ class _UpdateProductViewState extends State<UpdateProductView> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTranslationsSection() {
+    final langs = [
+      {'code': 'en', 'label': '🇬🇧 English'},
+      {'code': 'ru', 'label': '🇷🇺 Русский'},
+      {'code': 'ch', 'label': '🇨🇳 中文'},
+      {'code': 'uz', 'label': '🇺🇿 Uzbek'},
+      {'code': 'tr', 'label': '🇹🇷 Türkçe'},
+    ];
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        leading: Icon(Icons.translate, color: ColorConstants.kPrimaryColor),
+        title: Text(
+          'other_languages'.tr,
+          style: TextStyle(
+            color: ColorConstants.kPrimaryColor,
+            fontWeight: FontWeight.w600,
+            fontSize: AppFontSizes.getFontSize(4.5),
+          ),
+        ),
+        children: langs.map((lang) => _buildLangFields(lang['code']!, lang['label']!)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildLangFields(String code, String label) {
+    final borderDecoration = OutlineInputBorder(
+      borderRadius: BorderRadii.borderRadius15,
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+    );
+    final focusBorderDecoration = OutlineInputBorder(
+      borderRadius: BorderRadii.borderRadius15,
+      borderSide: BorderSide(color: ColorConstants.kPrimaryColor, width: 1.5),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.getFontSize(4),
+              color: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: descLangControllers[code],
+            maxLines: 3,
+            decoration: InputDecoration(
+              labelText: 'description'.tr,
+              border: borderDecoration,
+              enabledBorder: borderDecoration,
+              focusedBorder: focusBorderDecoration,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: priceLangControllers[code],
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'price'.tr,
+              border: borderDecoration,
+              enabledBorder: borderDecoration,
+              focusedBorder: focusBorderDecoration,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            ),
+          ),
+          const SizedBox(height: 6),
         ],
       ),
     );

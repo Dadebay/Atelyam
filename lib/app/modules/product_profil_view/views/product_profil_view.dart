@@ -92,7 +92,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
         ],
       ),
       // Virtual Try-On butonu ekle
-      bottomNavigationBar: _buildTryOnButton(),
+      // bottomNavigationBar: _buildTryOnButton(),
     );
   }
 

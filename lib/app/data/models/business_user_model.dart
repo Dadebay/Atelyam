@@ -130,8 +130,8 @@ class GetMyStatusModel {
       popular: json['popular'],
       status: json['status'],
       user: json['user'],
-      lat: (json['lat'] as num?)?.toDouble(),
-      long: (json['long'] as num?)?.toDouble(),
+      lat: _parseDouble(json['lat']),
+      long: _parseDouble(json['long']),
     );
   }
 }

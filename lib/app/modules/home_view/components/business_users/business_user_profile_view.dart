@@ -1,6 +1,7 @@
 import 'package:atelyam/app/modules/home_view/components/business_users/social_media_button.dart';
 import 'package:atelyam/app/modules/home_view/controllers/brands_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class BusinessUserProfileView extends StatefulWidget {
@@ -24,6 +25,15 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
     super.initState();
     print(widget.businessUserModelFromOutside.id);
     print(widget.businessUserModelFromOutside.userID);
+    // Analytics: mağaza sayfası açıldı
+    FirebaseAnalyticsService.instance().logViewStore(
+      storeId: widget.businessUserModelFromOutside.id.toString(),
+      storeName: widget.businessUserModelFromOutside.businessName,
+    );
+    FirebaseAnalyticsService.instance().logScreenView(
+      screenName: 'store_profile',
+      screenClass: 'BusinessUserProfileView',
+    );
     _homeController.fetchBusinessUserData(
       businessUserModelFromOutside: widget.businessUserModelFromOutside,
       categoryID: widget.categoryID,

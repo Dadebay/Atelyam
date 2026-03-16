@@ -2,6 +2,7 @@
 
 import 'package:atelyam/app/data/models/product_model.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,7 @@ class FavButton extends StatefulWidget {
 }
 
 class _FavButtonState extends State<FavButton> {
-  final NewSettingsPageController settingsController =
-      Get.find<NewSettingsPageController>();
+  final NewSettingsPageController settingsController = Get.find<NewSettingsPageController>();
 
   bool isFavorited = false;
 
@@ -34,6 +34,19 @@ class _FavButtonState extends State<FavButton> {
       isFavorited = settingsController.isProductFavorite(widget.product);
       return GestureDetector(
         onTap: () {
+          final analytics = FirebaseAnalyticsService.instance();
+          if (isFavorited) {
+            analytics.logRemoveFromFavorites(
+              productId: widget.product.id.toString(),
+              productName: widget.product.name,
+            );
+          } else {
+            analytics.logAddToFavorites(
+              productId: widget.product.id.toString(),
+              productName: widget.product.name,
+              price: widget.product.price,
+            );
+          }
           settingsController.toggleFavoriteProduct(widget.product);
           isFavorited = !isFavorited;
           setState(() {});

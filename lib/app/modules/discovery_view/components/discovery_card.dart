@@ -3,6 +3,7 @@ import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/modules/product_profil_view/views/product_profil_view.dart';
 import 'package:atelyam/app/modules/settings_view/components/fav_button.dart';
 import 'package:atelyam/app/product/empty_states/empty_states.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -57,16 +58,19 @@ class DiscoveryCard extends StatelessWidget {
     return GestureDetector(
       onTap: _navigateToProductDetail,
       child: Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), border: Border.all(color: Colors.white, width: 2.5), boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 15,
-          ),
-        ]),
+        margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            //  border: Border.all(color: Colors.white, width: 2.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                spreadRadius: 2,
+                blurRadius: 15,
+              ),
+            ]),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
           child: Stack(
             children: [
               // Arka plan resmi
@@ -104,11 +108,11 @@ class DiscoveryCard extends StatelessWidget {
     return GestureDetector(
       onTap: _navigateToProductDetail,
       child: Container(
-        margin: homePageStyle ? const EdgeInsets.only(left: 20, top: 10, bottom: 10) : EdgeInsets.zero,
+        margin: homePageStyle ? const EdgeInsets.only(left: 15, top: 10, bottom: 10) : EdgeInsets.zero,
         decoration: BoxDecoration(
-          boxShadow: homePageStyle ? _standardCardShadow : const [],
-          borderRadius: BorderRadii.borderRadius20,
-        ),
+            // boxShadow: homePageStyle ? _standardCardShadow : const [],
+            // borderRadius: BorderRadii.borderRadius20,
+            ),
         child: ClipRRect(
           borderRadius: BorderRadii.borderRadius20,
           child: Stack(
@@ -123,7 +127,7 @@ class DiscoveryCard extends StatelessWidget {
               _buildViewCountSection(),
 
               // Alt bilgi paneli (ana sayfa için)
-              if (homePageStyle) _buildBottomInfoPanel(),
+              // if (homePageStyle) _buildBottomInfoPanel(),
             ],
           ),
         ),
@@ -295,7 +299,7 @@ class DiscoveryCard extends StatelessWidget {
             ),
             // Ürün açıklaması
             Text(
-              productModel.description,
+              productModel.localizedDescription,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -312,6 +316,21 @@ class DiscoveryCard extends StatelessWidget {
 
   /// Ürün detay sayfasına yönlendirme
   void _navigateToProductDetail() {
+    // Analytics: ürün tıklanması + detay görüntülemesi
+    final analytics = FirebaseAnalyticsService.instance();
+    analytics.logProductClick(
+      productId: productModel.id.toString(),
+      productName: productModel.name,
+      price: productModel.price,
+      categoryId: productModel.category.toString(),
+      businessUserId: businessUserID,
+    );
+    analytics.logViewItem(
+      itemId: productModel.id.toString(),
+      itemName: productModel.name,
+      price: double.tryParse(productModel.price) ?? 0.0,
+      category: productModel.category.toString(),
+    );
     Get.to(
       () => ProductProfilView(productModel: productModel, businessUserID: businessUserID),
     );

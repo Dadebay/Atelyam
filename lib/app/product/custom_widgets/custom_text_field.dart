@@ -15,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   final Color? customColor;
   final int? maxLine;
   final bool? showLabel;
+  final bool isRequired;
+  final bool isOptional;
   const CustomTextField({
     required this.labelName,
     required this.controller,
@@ -25,6 +27,8 @@ class CustomTextField extends StatelessWidget {
     this.prefixIcon,
     this.showLabel,
     this.customColor,
+    this.isRequired = false,
+    this.isOptional = false,
     Key? key,
   }) : super(key: key);
 
@@ -41,7 +45,9 @@ class CustomTextField extends StatelessWidget {
         ),
         cursorColor: defaultColor,
         controller: controller,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (value) {
+          if (isOptional) return null;
           if (value == null || value.isEmpty) {
             return 'errorEmpty'.tr;
           }
@@ -68,13 +74,27 @@ class CustomTextField extends StatelessWidget {
                 )
               : null,
           hintText: labelName.tr,
-          labelText: showLabel == true ? labelName.tr : null,
-          labelStyle: TextStyle(
-            color: defaultColor,
-            fontFamily: Fonts.gilroy,
-            fontSize: AppFontSizes.getFontSize(4.5),
-            fontWeight: FontWeight.w600,
-          ),
+          label: showLabel == true
+              ? RichText(
+                  text: TextSpan(
+                    text: labelName.tr,
+                    style: TextStyle(
+                      color: defaultColor,
+                      fontFamily: Fonts.gilroy,
+                      fontSize: AppFontSizes.getFontSize(4.5),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    children: isRequired
+                        ? [
+                            const TextSpan(
+                              text: ' *',
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                            ),
+                          ]
+                        : [],
+                  ),
+                )
+              : null,
           hintStyle: TextStyle(
             color: defaultColor,
             fontFamily: Fonts.gilroy,
@@ -90,7 +110,7 @@ class CustomTextField extends StatelessWidget {
           focusedBorder: _buildOutlineInputBorder(
             borderColor: ColorConstants.kSecondaryColor,
           ),
-          focusedErrorBorder: _buildOutlineInputBorder(borderColor: defaultColor),
+          focusedErrorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),
       ),
@@ -114,6 +134,7 @@ class PhoneNumberTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final FocusNode requestfocusNode;
+  final ValueChanged<int>? onCountryChanged;
 
   /// 0 = Turkmenistan (+993), 1 = Uzbekistan (+998)
   final int initialCountryIndex;
@@ -122,6 +143,7 @@ class PhoneNumberTextField extends StatefulWidget {
     required this.focusNode,
     required this.requestfocusNode,
     this.initialCountryIndex = 0,
+    this.onCountryChanged,
     Key? key,
   }) : super(key: key);
 
@@ -192,6 +214,8 @@ class _PhoneNumberTextFieldState extends State<PhoneNumberTextField> {
                       _selectedIndex = i;
                       widget.controller.clear();
                     });
+                    // Notify parent widget about country change
+                    widget.onCountryChanged?.call(i);
                     // Sync with AuthController
                     try {
                       Get.find<AuthController>().setCountry(

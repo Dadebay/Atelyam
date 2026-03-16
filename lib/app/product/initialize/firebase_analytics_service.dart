@@ -145,4 +145,202 @@ class FirebaseAnalyticsService {
     await _analytics.logSearch(searchTerm: searchTerm);
     print('[FirebaseAnalytics] Search logged: $searchTerm');
   }
+
+  // ─── Custom events ──────────────────────────────────────────────────────────
+
+  /// Kullanıcı bir ürün kartına tıkladığında (product_click)
+  Future<void> logProductClick({
+    required String productId,
+    required String productName,
+    required String price,
+    String? categoryId,
+    String? businessUserId,
+  }) async {
+    await _analytics.logEvent(
+      name: 'product_click',
+      parameters: {
+        'product_id': productId,
+        'product_name': productName,
+        'price': price,
+        if (categoryId != null) 'category_id': categoryId,
+        if (businessUserId != null) 'business_user_id': businessUserId,
+      },
+    );
+    print('[FirebaseAnalytics] product_click: $productName');
+  }
+
+  /// Kullanıcı bir mağaza profiline girdiğinde (view_store)
+  Future<void> logViewStore({
+    required String storeId,
+    required String storeName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'view_store',
+      parameters: {
+        'store_id': storeId,
+        'store_name': storeName,
+      },
+    );
+    print('[FirebaseAnalytics] view_store: $storeName');
+  }
+
+  /// Kullanıcı bir kategoriye tıkladığında (view_category)
+  Future<void> logViewCategory({
+    required String categoryId,
+    required String categoryName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'view_category',
+      parameters: {
+        'category_id': categoryId,
+        'category_name': categoryName,
+      },
+    );
+    print('[FirebaseAnalytics] view_category: $categoryName');
+  }
+
+  /// Kullanıcı favorilere eklediğinde (add_to_favorites)
+  Future<void> logAddToFavorites({
+    required String productId,
+    required String productName,
+    required String price,
+  }) async {
+    await _analytics.logEvent(
+      name: 'add_to_favorites',
+      parameters: {
+        'product_id': productId,
+        'product_name': productName,
+        'price': price,
+      },
+    );
+    print('[FirebaseAnalytics] add_to_favorites: $productName');
+  }
+
+  /// Kullanıcı favorilerden çıkardığında (remove_from_favorites)
+  Future<void> logRemoveFromFavorites({
+    required String productId,
+    required String productName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'remove_from_favorites',
+      parameters: {
+        'product_id': productId,
+        'product_name': productName,
+      },
+    );
+    print('[FirebaseAnalytics] remove_from_favorites: $productName');
+  }
+
+  /// Alt nav bar'da sekme değiştirildiğinde (tab_switched)
+  Future<void> logTabSwitch({
+    required int tabIndex,
+    required String tabName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'tab_switched',
+      parameters: {
+        'tab_index': tabIndex,
+        'tab_name': tabName,
+      },
+    );
+    print('[FirebaseAnalytics] tab_switched: $tabName');
+  }
+
+  /// Atelyam Business bölümü açıldığında (open_business_section)
+  Future<void> logOpenBusinessSection({required String businessName}) async {
+    await _analytics.logEvent(
+      name: 'open_business_section',
+      parameters: {'business_name': businessName},
+    );
+    print('[FirebaseAnalytics] open_business_section: $businessName');
+  }
+
+  /// Atelyam Business b\u00f6l\u00fcm\u00fc i\u00e7indeki ekran ge\u00e7i\u015fleri (business_screen_view)
+  Future<void> logBusinessScreenView({
+    required String screenName,
+    String? businessName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'business_screen_view',
+      parameters: {
+        'screen': screenName,
+        if (businessName != null) 'business_name': businessName,
+      },
+    );
+    // Ayn\u0131 zamanda standart screen_view olay\u0131n\u0131 da g\u00f6nder
+    await _analytics.logScreenView(
+      screenName: 'business_$screenName',
+      screenClass: 'BusinessNavView',
+    );
+    print('[FirebaseAnalytics] business_screen_view: $screenName');
+  }
+
+  /// Business sekme de\u011fi\u015ftirme (business_tab_switched)
+  Future<void> logBusinessTabSwitch({
+    required int tabIndex,
+    required String tabName,
+    String? businessName,
+  }) async {
+    await _analytics.logEvent(
+      name: 'business_tab_switched',
+      parameters: {
+        'tab_index': tabIndex,
+        'tab_name': tabName,
+        if (businessName != null) 'business_name': businessName,
+      },
+    );
+    print('[FirebaseAnalytics] business_tab_switched: $tabName');
+  }
+
+  /// M\u00fc\u015fteri arama (business_customer_search)
+  Future<void> logBusinessCustomerSearch({required String query}) async {
+    await _analytics.logEvent(
+      name: 'business_customer_search',
+      parameters: {'query': query},
+    );
+    print('[FirebaseAnalytics] business_customer_search: $query');
+  }
+
+  /// M\u00fc\u015fteri profiline t\u0131klama (business_customer_tapped)
+  Future<void> logBusinessCustomerTapped({
+    required String customerName,
+    required int orderCount,
+    required double totalSpent,
+  }) async {
+    await _analytics.logEvent(
+      name: 'business_customer_tapped',
+      parameters: {
+        'customer_name': customerName,
+        'order_count': orderCount,
+        'total_spent': totalSpent,
+      },
+    );
+    print('[FirebaseAnalytics] business_customer_tapped: $customerName');
+  }
+
+  /// Sipari\u015f sat\u0131r\u0131na t\u0131klama (business_order_tapped)
+  Future<void> logBusinessOrderTapped({
+    required String customerName,
+    required String status,
+    required String amount,
+  }) async {
+    await _analytics.logEvent(
+      name: 'business_order_tapped',
+      parameters: {
+        'customer_name': customerName,
+        'status': status,
+        'amount': amount,
+      },
+    );
+    print('[FirebaseAnalytics] business_order_tapped: $customerName - $status');
+  }
+
+  /// Business splash a\u00e7\u0131ld\u0131 (business_splash_opened)
+  Future<void> logBusinessSplashOpened({required String businessName}) async {
+    await _analytics.logEvent(
+      name: 'business_splash_opened',
+      parameters: {'business_name': businessName},
+    );
+    print('[FirebaseAnalytics] business_splash_opened: $businessName');
+  }
 }

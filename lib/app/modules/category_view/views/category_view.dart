@@ -1,4 +1,5 @@
 import '../../../product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
@@ -34,6 +35,11 @@ class _CategoryViewState extends State<CategoryView> {
               return CategoryCard(
                 categoryModel: categories[index],
                 onTap: () {
+                  // Analytics: kategori açıldı
+                  FirebaseAnalyticsService.instance().logViewCategory(
+                    categoryId: categories[index].id.toString(),
+                    categoryName: categories[index].name,
+                  );
                   Get.to(() => CategoryProductView(categoryModel: categories[index]));
                 },
                 scrollableState: Scrollable.of(context),

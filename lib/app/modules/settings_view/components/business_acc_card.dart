@@ -148,7 +148,7 @@ class BusinessAccCard extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '+993' + businessUser.businessPhone!, // İşletme telefonu
+                                    businessUser.businessPhone!, // İşletme telefonu
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(

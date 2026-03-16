@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:atelyam/app/data/models/hashtag_model.dart';
 import 'package:atelyam/app/data/models/product_model.dart';
+import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,13 @@ class HashtagService {
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
+        print("-------- Hashtag API Response ----------------------------------------------------------------");
+        final token = await Auth().getToken();
+        print(token);
+        print(response.body);
         final List<dynamic> jsonData = json.decode(response.body);
         final List<HashtagModel> hashtags = jsonData.map((item) => HashtagModel.fromJson(item)).toList();
-
+        print(hashtags);
         // Cache the results
         final storage = GetStorage();
         await storage.write(cacheKey, jsonEncode(jsonData));

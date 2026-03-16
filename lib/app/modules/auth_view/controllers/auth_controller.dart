@@ -5,6 +5,7 @@ import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/widgets.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,6 +41,8 @@ class AuthController extends GetxController {
       print('registerResponse: $registerResponse');
       if (registerResponse == 200) {
         homeController.agreeButton.toggle();
+        // Analytics: yeni kayıt (OTP onayından önce)
+        await FirebaseAnalyticsService.instance().logSignUp(method: 'phone');
         await Get.to(
           () => OTPView(phoneNumber: phoneNumber, userName: userName),
         );
@@ -83,6 +86,9 @@ class AuthController extends GetxController {
         await settingsController.saveUserData(username, phoneNumber);
         showSnackBar('success', 'successOTP', ColorConstants.kSecondaryColor);
         await NotificationService().sendDeviceToken();
+        // Analytics: OTP doğrulandı = giriş tamamlandı
+        await FirebaseAnalyticsService.instance().logLogin(method: 'phone_otp');
+        await FirebaseAnalyticsService.instance().setUserId(phoneNumber);
 
         await Get.offAll(() => BottomNavBar());
       } else {

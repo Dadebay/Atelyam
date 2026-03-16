@@ -85,6 +85,12 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                     focusNode: focusNodes[1],
                     requestfocusNode: focusNodes[2],
                     initialCountryIndex: _phoneCountryIndex,
+                    onCountryChanged: (int newIndex) {
+                      setState(() {
+                        _phoneCountryIndex = newIndex;
+                      });
+                      print('🔵 Country changed to index: $newIndex (${newIndex == 0 ? "+993" : "+998"})');
+                    },
                   ),
                 ),
                 CustomTextField(
@@ -275,12 +281,30 @@ class _EditBusinessAccountViewState extends State<EditBusinessAccountView> {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: AgreeButton(
                     onTap: () {
+                      // Telefon numarasını ülke kodu ile birleştir
+                      final String countryCode = _phoneCountryIndex == 0 ? '+993' : '+998';
+                      final String phoneNumber = countryCode + textEditingControllers[1].text.trim();
+
+                      print('🔵 EditBusinessAccountView - Update Button Tapped');
+                      print('🔵 Business Name: ${textEditingControllers[0].text}');
+                      print('🔵 Phone Country Index: $_phoneCountryIndex');
+                      print('🔵 Phone Number (raw): ${textEditingControllers[1].text}');
+                      print('🔵 Phone Number (formatted): $phoneNumber');
+                      print('🔵 Address: ${textEditingControllers[2].text}');
+                      print('🔵 Description: ${textEditingControllers[3].text}');
+                      print('🔵 TikTok: ${textEditingControllers[4].text}');
+                      print('🔵 Instagram: ${textEditingControllers[5].text}');
+                      print('🔵 YouTube: ${textEditingControllers[6].text}');
+                      print('🔵 Website: ${textEditingControllers[7].text}');
+                      print('🔵 Selected Lat: ${controller.selectedLat.value}');
+                      print('🔵 Selected Long: ${controller.selectedLong.value}');
+
                       final String photo = controller.selectedImage.value == null ? (widget.businessUser.backPhoto ?? '') : controller.selectedImage.value!.path;
                       controller.updateBusinessAccount(
                         GetMyStatusModel(
                           id: widget.businessUser.id,
                           businessName: textEditingControllers[0].text,
-                          businessPhone: textEditingControllers[1].text,
+                          businessPhone: phoneNumber,
                           address: textEditingControllers[2].text,
                           description: textEditingControllers[3].text,
                           tiktok: textEditingControllers[4].text,

@@ -9,6 +9,7 @@ import 'package:atelyam/app/modules/map_view/views/map_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/custom_widgets/offline_indicator.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/utils/upgrade_messages_tm.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> pages = [HomeView(), DiscoveryView(), CategoryView(), const MapView(), SettingsView()];
 
-  final List<String> pageTitles = ['home', 'discovery', 'categories', 'map', 'settings'];
+  final List<String> pageTitles = ['home', 'discovery', 'categories', 'map', 'profil'];
 
   @override
   void initState() {
@@ -238,6 +239,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 onTap: (index) {
                   FocusScope.of(context).unfocus();
                   homeController.selectedIndex.value = index;
+                  // Analytics: hangi sekmeye geçildi
+                  FirebaseAnalyticsService.instance().logTabSwitch(
+                    tabIndex: index,
+                    tabName: pageTitles[index],
+                  );
+                  FirebaseAnalyticsService.instance().logScreenView(
+                    screenName: pageTitles[index],
+                  );
                 },
                 selectedItemColor: ColorConstants.kSecondaryColor,
                 unselectedItemColor: Colors.grey,

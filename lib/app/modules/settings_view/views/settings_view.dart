@@ -1,6 +1,8 @@
 import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/modules/settings_view/components/settings_button.dart';
+import 'package:atelyam/app/modules/settings_view/views/all_added_products_view.dart';
+import 'package:atelyam/app/modules/settings_view/views/all_business_accounts_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/business_acc_components_view/edit_business_account_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/business_profile_settings_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
@@ -43,7 +45,7 @@ class _SettingsViewState extends State<SettingsView> {
       actions: [
         IconButton(
           onPressed: () async {
-            Get.to(() => CreateProductView());
+            Get.to(() => AllProductView());
           },
           icon: Icon(HugeIcons.strokeRoundedAddCircle, color: ColorConstants.kPrimaryColor, size: 23),
           padding: EdgeInsets.zero,
@@ -51,7 +53,7 @@ class _SettingsViewState extends State<SettingsView> {
         ),
         IconButton(
           onPressed: () async {
-            final result = await Get.to(() => EditBusinessAccountView(businessUser: bu));
+            final result = await Get.to(() => AllBusinessAccountsView());
             if (result == true) _refreshBiz();
           },
           icon: const Icon(HugeIcons.strokeRoundedUserEdit01, color: Colors.black, size: 22),
@@ -59,7 +61,7 @@ class _SettingsViewState extends State<SettingsView> {
           constraints: const BoxConstraints(),
         ),
         IconButton(
-          onPressed: () => Get.to(() => _SettingsListPage(settingsController: settingsController)),
+          onPressed: () => Get.to(() => _SettingsListPage(settingsController: settingsController, showBackButton: true)),
           icon: const Icon(IconlyLight.setting, color: Colors.black, size: 24),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
@@ -84,7 +86,7 @@ class _SettingsViewState extends State<SettingsView> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'settings'.tr,
+          'profil'.tr,
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
@@ -120,7 +122,7 @@ class _SettingsViewState extends State<SettingsView> {
             if (bu != null) return _businessScaffold(bu);
 
             // Logged in, no business account → settings list
-            return _SettingsListPage(settingsController: settingsController);
+            return _SettingsListPage(settingsController: settingsController, showBackButton: false);
           },
         );
       },
@@ -131,7 +133,8 @@ class _SettingsViewState extends State<SettingsView> {
 // ── Logged-in settings page (used by both non-business and business settings icon) ──
 class _SettingsListPage extends StatelessWidget {
   final NewSettingsPageController settingsController;
-  const _SettingsListPage({required this.settingsController});
+  final bool showBackButton;
+  const _SettingsListPage({required this.settingsController, this.showBackButton = false});
 
   void _showDeleteAccountSheet() {
     Get.bottomSheet(
@@ -153,21 +156,23 @@ class _SettingsListPage extends StatelessWidget {
         backgroundColor: ColorConstants.kSecondaryColor,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(IconlyLight.arrow_left_circle, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
+        leading: showBackButton
+            ? IconButton(
+                icon: const Icon(IconlyLight.arrow_left_circle, color: Colors.white),
+                onPressed: () => Get.back(),
+              )
+            : null,
         title: Text(
           'settings'.tr,
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       body: ListView.builder(
-        itemCount: loggedInSettingsViews.length,
+        itemCount: showBackButton ? loggedInSettingsViewsBusinessaccountHave.length : loggedInSettingsViews.length,
         padding: EdgeInsets.zero,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          final item = loggedInSettingsViews[index];
+          final item = showBackButton ? loggedInSettingsViewsBusinessaccountHave[index] : loggedInSettingsViews[index];
           final bool isDeleteRow = item['name'] == 'login';
 
           if (isDeleteRow) {

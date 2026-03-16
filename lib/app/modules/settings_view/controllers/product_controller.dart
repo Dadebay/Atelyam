@@ -15,6 +15,7 @@ import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
@@ -33,6 +34,7 @@ class ProductController extends GetxController {
   // Harita konum seçimi için
   Rx<double?> selectedLat = Rx<double?>(null);
   Rx<double?> selectedLong = Rx<double?>(null); // 1. Değişiklik: Liste yapısı
+  RxString selectedCurrency = 'TMT'.obs;
 
   final BusinessCategoryService _categoryService = BusinessCategoryService();
   final dio.Dio _dio = dio.Dio(); // Dio örneğini oluştur
@@ -44,6 +46,18 @@ class ProductController extends GetxController {
     super.onInit();
     loadCategories();
     loadHashtags();
+    _initCurrency();
+  }
+
+  void _initCurrency() {
+    final String langCode = GetStorage().read('langCode') ?? Get.locale?.languageCode ?? 'tm';
+    if (langCode == 'tm') {
+      selectedCurrency.value = 'TMT';
+    } else if (langCode == 'uz') {
+      selectedCurrency.value = 'UZS';
+    } else {
+      selectedCurrency.value = 'USD';
+    }
   }
 
   Future<XFile?> compressImage(File file) async {
@@ -104,7 +118,21 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<void> addProductToBackend({required String nameController, required String descriptionController, required String priceController}) async {
+  Future<void> addProductToBackend({
+    required String nameController,
+    required String descriptionController,
+    required String priceController,
+    String descriptionEn = '',
+    String descriptionRu = '',
+    String descriptionCh = '',
+    String descriptionUz = '',
+    String descriptionTr = '',
+    String priceEn = '',
+    String priceRu = '',
+    String priceCh = '',
+    String priceUz = '',
+    String priceTr = '',
+  }) async {
     if (selectedCategory.value == null || selectedHashtag.value == null) {
       showSnackBar('error', 'fill_all_fields'.tr, ColorConstants.redColor);
       return;
@@ -129,6 +157,16 @@ class ProductController extends GetxController {
         'name': nameController,
         'description': descriptionController,
         'price': priceController,
+        if (descriptionEn.isNotEmpty) 'description_en': descriptionEn,
+        if (descriptionRu.isNotEmpty) 'description_ru': descriptionRu,
+        if (descriptionCh.isNotEmpty) 'description_ch': descriptionCh,
+        if (descriptionUz.isNotEmpty) 'description_uz': descriptionUz,
+        if (descriptionTr.isNotEmpty) 'description_tr': descriptionTr,
+        if (priceEn.isNotEmpty) 'price_en': priceEn,
+        if (priceRu.isNotEmpty) 'price_ru': priceRu,
+        if (priceCh.isNotEmpty) 'price_ch': priceCh,
+        if (priceUz.isNotEmpty) 'price_uz': priceUz,
+        if (priceTr.isNotEmpty) 'price_tr': priceTr,
       });
 
       if (selectedImage.value != null) {
@@ -240,7 +278,22 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<void> updateProduct({required int productId, required String nameController, required String descriptionController, required String priceController}) async {
+  Future<void> updateProduct({
+    required int productId,
+    required String nameController,
+    required String descriptionController,
+    required String priceController,
+    String descriptionEn = '',
+    String descriptionRu = '',
+    String descriptionCh = '',
+    String descriptionUz = '',
+    String descriptionTr = '',
+    String priceEn = '',
+    String priceRu = '',
+    String priceCh = '',
+    String priceUz = '',
+    String priceTr = '',
+  }) async {
     if (selectedCategory.value == null || selectedHashtag.value == null) {
       showSnackBar('error', 'fill_all_fields'.tr, ColorConstants.redColor);
       return;
@@ -262,7 +315,21 @@ class ProductController extends GetxController {
         'name': nameController,
         'description': descriptionController,
         'price': priceController,
+        if (descriptionEn.isNotEmpty) 'description_en': descriptionEn,
+        if (descriptionRu.isNotEmpty) 'description_ru': descriptionRu,
+        if (descriptionCh.isNotEmpty) 'description_ch': descriptionCh,
+        if (descriptionUz.isNotEmpty) 'description_uz': descriptionUz,
+        if (descriptionTr.isNotEmpty) 'description_tr': descriptionTr,
+        if (priceEn.isNotEmpty) 'price_en': priceEn,
+        if (priceRu.isNotEmpty) 'price_ru': priceRu,
+        if (priceCh.isNotEmpty) 'price_ch': priceCh,
+        if (priceUz.isNotEmpty) 'price_uz': priceUz,
+        if (priceTr.isNotEmpty) 'price_tr': priceTr,
       });
+      print('🔵 [updateProduct] URL: ${authController.ipAddress.value}/mobile/productUpdate/$productId/');
+      print('🔵 [updateProduct] Fields: ${request.fields}');
+      print('🔵 [updateProduct] Has image: ${selectedImage.value != null}');
+
       if (selectedImage.value != null) {
         request.files.add(
           await http.MultipartFile.fromPath(
@@ -367,25 +434,47 @@ class ProductController extends GetxController {
   }
 
   Future<void> updateBusinessAccount(GetMyStatusModel businessUser, String backPhoto) async {
+    print('🔵 ===== UPDATE BUSINESS ACCOUNT START =====');
+    print('🔵 Business Name: ${businessUser.businessName}');
+    print('🔵 Business Phone: ${businessUser.businessPhone}');
+    print('🔵 Address: ${businessUser.address}');
+    print('🔵 Description: ${businessUser.description}');
+    print('🔵 TikTok: ${businessUser.tiktok}');
+    print('🔵 Instagram: ${businessUser.instagram}');
+    print('🔵 YouTube: ${businessUser.youtube}');
+    print('🔵 Website: ${businessUser.website}');
+    print('🔵 Lat: ${selectedLat.value}');
+    print('🔵 Long: ${selectedLong.value}');
+    print('🔵 Has Image: ${selectedImage.value != null}');
+
     homeController.agreeButton.toggle();
     final token = await Auth().getToken();
+    print('🔵 Token: ${token?.substring(0, 20)}...');
+
     final headers = {
       'Authorization': 'Bearer $token',
       'Content-Type': 'multipart/form-data',
     };
     final dio.FormData formData = dio.FormData.fromMap({
-      'businessName': businessUser.businessName!,
-      'businessPhone': businessUser.businessPhone!,
-      'description': businessUser.description!,
-      'address': businessUser.address!,
-      'tiktok': businessUser.tiktok!,
-      'instagram': businessUser.instagram!,
-      'youtube': businessUser.youtube!,
-      'website': businessUser.website!,
-      if (selectedLat.value != null) 'lat': selectedLat.value.toString(),
-      if (selectedLong.value != null) 'long': selectedLong.value.toString(),
+      'businessName': businessUser.businessName ?? '',
+      'businessPhone': businessUser.businessPhone ?? '',
+      'description': businessUser.description ?? '',
+      'address': businessUser.address ?? '',
+      'tiktok': businessUser.tiktok ?? '',
+      'instagram': businessUser.instagram ?? '',
+      'youtube': businessUser.youtube ?? '',
+      'website': businessUser.website ?? '',
+      'lat': selectedLat.value?.toString() ?? '',
+      'long': selectedLong.value?.toString() ?? '',
     });
+
+    print('🔵 FormData fields:');
+    formData.fields.forEach((field) {
+      print('  ${field.key}: ${field.value}');
+    });
+
     if (selectedImage.value != null) {
+      print('🔵 Adding image to formData: ${selectedImage.value!.path}');
       formData.files.add(
         MapEntry(
           'img',
@@ -395,23 +484,48 @@ class ProductController extends GetxController {
         ),
       );
     }
+
+    print('🔵 Sending POST request to: ${authController.ipAddress.value}/mobile/updateBusiness/');
+
     try {
       final response = await _dio.post(
         '${authController.ipAddress.value}/mobile/updateBusiness/',
         data: formData,
         options: dio.Options(headers: headers),
       );
+
+      print('✅ Response Status Code: ${response.statusCode}');
+      print('✅ Response Data: ${response.data}');
+
       if (response.statusCode == 200) {
         Get.back(result: true);
         showSnackBar('success', 'business_account_updated', ColorConstants.greenColor);
       } else {
+        print('⚠️ Non-200 status: ${response.statusCode}');
+        print('⚠️ Response message: ${response.statusMessage}');
         showSnackBar('error', '${'business_account_not_updated'} ${response.statusMessage}', ColorConstants.redColor);
       }
-    } on dio.DioError catch (e) {
+    } on dio.DioException catch (e) {
+      print('❌ DioException occurred!');
+      print('❌ Error Type: ${e.type}');
+      print('❌ Error Message: ${e.message}');
+      print('❌ Response Status Code: ${e.response?.statusCode}');
+      print('❌ Response Data: ${e.response?.data}');
+      print('❌ Response Headers: ${e.response?.headers}');
+      print('❌ Request Data: ${e.requestOptions.data}');
+      print('❌ Request Headers: ${e.requestOptions.headers}');
+      print('❌ Stack Trace: ${e.stackTrace}');
+
+      Get.back(result: true);
+      showSnackBar('error', '${'anErrorOccurred'} ${e.response?.statusCode}: ${e.response?.data}', ColorConstants.redColor);
+    } catch (e, stackTrace) {
+      print('❌ Unexpected error: $e');
+      print('❌ Stack trace: $stackTrace');
       Get.back(result: true);
       showSnackBar('error', '${'anErrorOccurred'} $e', ColorConstants.redColor);
     } finally {
       homeController.agreeButton.toggle();
+      print('🔵 ===== UPDATE BUSINESS ACCOUNT END =====');
     }
   }
 

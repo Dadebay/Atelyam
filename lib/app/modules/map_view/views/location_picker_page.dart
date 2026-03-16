@@ -19,8 +19,16 @@ class LocationPickerPage extends StatefulWidget {
 }
 
 class _LocationPickerPageState extends State<LocationPickerPage> {
-  // OpenStreetMap — global kapsam
-  String _osmTileUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
+  static const String _osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  static const String _ayterekMap = 'https://map.ayterek.com/tile/{z}/{x}/{y}.png';
+
+  bool _isInTurkmenistan = true;
+
+  static bool _checkTurkmenistan(double lat, double lon) {
+    return lat >= 35.1 && lat <= 42.8 && lon >= 52.4 && lon <= 66.7;
+  }
+
+  String get _tileUrl => _isInTurkmenistan ? _ayterekMap : _osmTileUrl;
 
   // Türkmenistan / Aşgabat merkezi (varsayılan)
   static const LatLng _defaultCenter = LatLng(37.9601, 58.3261);
@@ -38,6 +46,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
     _mapController = MapController();
     _selectedLocation = widget.initialLocation;
     if (widget.initialLocation != null) {
+      _isInTurkmenistan = _checkTurkmenistan(widget.initialLocation!.latitude, widget.initialLocation!.longitude);
       _fetchAddress(widget.initialLocation!);
     }
   }
@@ -104,7 +113,10 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         ),
       );
       final loc = LatLng(position.latitude, position.longitude);
-      setState(() => _selectedLocation = loc);
+      setState(() {
+        _selectedLocation = loc;
+        _isInTurkmenistan = _checkTurkmenistan(loc.latitude, loc.longitude);
+      });
       _mapController.move(loc, 15.0);
       await _fetchAddress(loc);
     } catch (_) {
@@ -143,13 +155,14 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                 setState(() {
                   _selectedLocation = latLng;
                   _addressText = null;
+                  _isInTurkmenistan = _checkTurkmenistan(latLng.latitude, latLng.longitude);
                 });
                 _fetchAddress(latLng);
               },
             ),
             children: [
               TileLayer(
-                urlTemplate: _osmTileUrl,
+                urlTemplate: _tileUrl,
                 maxZoom: 19,
                 userAgentPackageName: 'com.atelyam.app',
               ),

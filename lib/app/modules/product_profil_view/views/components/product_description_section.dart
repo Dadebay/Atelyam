@@ -14,7 +14,7 @@ class ProductDescriptionSection extends StatelessWidget {
       padding: const EdgeInsets.all(12).copyWith(bottom: 80),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          productModel.description.isEmpty
+          productModel.localizedDescription.isEmpty
               ? const SizedBox.shrink()
               : Text(
                   'info_product'.tr,
@@ -52,7 +52,7 @@ class ProductDescriptionSection extends StatelessWidget {
             ),
           ),
           Text(
-            productModel.description,
+            productModel.localizedDescription,
             style: TextStyle(
               color: Colors.grey,
               fontSize: AppFontSizes.fontSize16,
@@ -67,7 +67,7 @@ class ProductDescriptionSection extends StatelessWidget {
               borderRadius: BorderRadii.borderRadius15,
             ),
             child: Text(
-              '${'sold'.tr} - ${productModel.price.substring(0, productModel.price.length - 3)} TMT',
+              '${'sold'.tr} - ${productModel.localizedPrice.substring(0, productModel.localizedPrice.length - 3)} TMT',
               maxLines: 1,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,

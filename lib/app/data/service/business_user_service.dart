@@ -105,6 +105,7 @@ class BusinessUserService {
   final String getMyStatusEndpoint = '/getMyStatus/';
 
   Future<List<GetMyStatusModel>?> getMyStatus() async {
+    print('Fetching my status from: ${authController.ipAddress.value}$getMyStatusEndpoint------------------');
     final url = Uri.parse('${authController.ipAddress.value}/mobile' + getMyStatusEndpoint);
     final token = await Auth().getToken();
 
@@ -117,6 +118,8 @@ class BusinessUserService {
       );
 
       if (response.statusCode == 200) {
+        print(response.statusCode);
+        print(response.body);
         final List<dynamic> jsonList = json.decode(response.body);
         return jsonList.map((json) => GetMyStatusModel.fromJson(json)).toList();
       } else {

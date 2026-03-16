@@ -130,7 +130,7 @@ class ProductService {
     }
   }
 
-  Future<List<ProductModel>?> getMyProducts() async {
+  Future<Map<String, dynamic>?> getMyProducts() async {
     try {
       final token = await _auth.getToken();
       final uri = Uri.parse('${authController.ipAddress.value}/mobile/GetMyProducts/');
@@ -143,23 +143,39 @@ class ProductService {
       );
       if (response.statusCode == 200) {
         final responseBody = utf8.decode(response.bodyBytes);
-        final List<dynamic> data = json.decode(responseBody);
-        final List<ProductModel> products = data.map((json) => ProductModel.fromJson(json)).toList();
+        final Map<String, dynamic> data = json.decode(responseBody);
+
+        final List<dynamic> productsJson = data['products'] ?? [];
+        final List<ProductModel> products = productsJson.map((json) => ProductModel.fromJson(json)).toList();
 
         // Cache my products
         await _localStorage.saveMyProducts(products);
 
-        return products;
+        return {
+          'products': products,
+          'totalviewcount': data['totalviewcount'] ?? 0,
+          'productcount': data['productcount'] ?? 0,
+        };
       } else {
-        return [];
+        return null;
       }
     } on SocketException catch (e) {
       print(e);
       print('Offline: Loading my products from cache');
-      return _localStorage.getMyProducts();
+      final cachedProducts = _localStorage.getMyProducts();
+      return {
+        'products': cachedProducts ?? [],
+        'totalviewcount': 0,
+        'productcount': cachedProducts?.length ?? 0,
+      };
     } catch (e) {
       print(e);
-      return _localStorage.getMyProducts();
+      final cachedProducts = _localStorage.getMyProducts();
+      return {
+        'products': cachedProducts ?? [],
+        'totalviewcount': 0,
+        'productcount': cachedProducts?.length ?? 0,
+      };
     }
   }
 

@@ -1,12 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:atelyam/app/data/service/product_service.dart';
+import 'package:atelyam/app/modules/business_view/views/business_splash_view.dart';
 import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
 import 'package:atelyam/app/modules/settings_view/views/business_acc_components_view/edit_business_account_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/edit_product_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -25,6 +27,8 @@ class _BusinessProfileSettingsViewState extends State<BusinessProfileSettingsVie
   late final TabController _tabController;
   List<ProductModel>? _products;
   bool _loading = true;
+  int _totalViewCount = 0;
+  int _productCount = 0;
 
   @override
   void initState() {
@@ -40,10 +44,19 @@ class _BusinessProfileSettingsViewState extends State<BusinessProfileSettingsVie
   }
 
   Future<void> _loadProducts() async {
-    final products = await ProductService().getMyProducts();
-    if (mounted) {
+    final result = await ProductService().getMyProducts();
+    if (mounted && result != null) {
       setState(() {
-        _products = products ?? [];
+        _products = result['products'] as List<ProductModel>? ?? [];
+        _totalViewCount = result['totalviewcount'] as int? ?? 0;
+        _productCount = result['productcount'] as int? ?? 0;
+        _loading = false;
+      });
+    } else if (mounted) {
+      setState(() {
+        _products = [];
+        _totalViewCount = 0;
+        _productCount = 0;
         _loading = false;
       });
     }
@@ -118,15 +131,15 @@ class _BusinessProfileSettingsViewState extends State<BusinessProfileSettingsVie
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _StatColumn(
-                          count: _products?.length ?? 0,
+                          count: _productCount,
                           label: 'posts'.tr,
                         ),
+                        // _StatColumn(
+                        //   count: _products?.length ?? 0,
+                        //   label: 'clients'.tr,
+                        // ),
                         _StatColumn(
-                          count: _products?.length ?? 0,
-                          label: 'clients'.tr,
-                        ),
-                        _StatColumn(
-                          count: _products?.length ?? 0,
+                          count: _totalViewCount,
                           label: 'view_count'.tr,
                         ),
                       ],
@@ -181,10 +194,15 @@ class _BusinessProfileSettingsViewState extends State<BusinessProfileSettingsVie
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: _ActionButton(
-                label: 'business'.tr,
-                onTap: () async {
-                  final result = await Get.to(() => EditBusinessAccountView(businessUser: bu));
-                  if (result == true) setState(() {});
+                label: 'atelyam_business'.tr,
+                icon: HugeIcons.strokeRoundedDashboardSquare02,
+                isPrimary: true,
+                onTap: () {
+                  // Analytics: business bölümü açıldı
+                  FirebaseAnalyticsService.instance().logOpenBusinessSection(
+                    businessName: bu.businessName ?? '',
+                  );
+                  Get.to(() => BusinessSplashView(businessUser: bu), transition: Transition.fadeIn, duration: const Duration(milliseconds: 400));
                 },
               ),
             ),
@@ -330,25 +348,43 @@ class _StatColumn extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
-  const _ActionButton({required this.label, required this.onTap});
+  final IconData? icon;
+  final bool isPrimary;
+
+  const _ActionButton({
+    required this.label,
+    required this.onTap,
+    this.icon,
+    this.isPrimary = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = isPrimary ? ColorConstants.kSecondaryColor : Colors.grey.shade200;
+    final textColor = isPrimary ? Colors.white : Colors.black;
+    final iconColor = isPrimary ? Colors.white70 : Colors.black54;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: bgColor,
           borderRadius: BorderRadii.borderRadius10,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black)),
-            const SizedBox(width: 8),
-            const Icon(IconlyLight.arrow_right_circle, size: 16, color: Colors.black54),
+            if (icon != null) ...[
+              Icon(icon, size: 16, color: iconColor),
+              const SizedBox(width: 6),
+            ],
+            Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor)),
+            if (icon == null) ...[
+              const SizedBox(width: 8),
+              Icon(IconlyLight.arrow_right_circle, size: 16, color: iconColor),
+            ],
           ],
         ),
       ),
