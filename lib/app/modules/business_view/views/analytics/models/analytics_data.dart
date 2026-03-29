@@ -1,39 +1,94 @@
-import 'package:flutter/material.dart';
+class ChartPoint {
+  final String month;
+  final double income;
+  final double expenses;
+  final double profit;
 
-class GarmentRow {
-  final int rank;
+  const ChartPoint({
+    required this.month,
+    required this.income,
+    required this.expenses,
+    required this.profit,
+  });
+
+  factory ChartPoint.fromJson(Map<String, dynamic> json) {
+    return ChartPoint(
+      month: json['month'] as String,
+      income: (json['income'] as num).toDouble(),
+      expenses: (json['expenses'] as num).toDouble(),
+      profit: (json['profit'] as num).toDouble(),
+    );
+  }
+}
+
+class TopGarment {
   final String name;
   final int orders;
   final double revenue;
-  const GarmentRow({required this.rank, required this.name, required this.orders, required this.revenue});
+
+  const TopGarment({
+    required this.name,
+    required this.orders,
+    required this.revenue,
+  });
+
+  factory TopGarment.fromJson(Map<String, dynamic> json) {
+    return TopGarment(
+      name: json['name'] as String,
+      orders: (json['orders'] as num).toInt(),
+      revenue: (json['revenue'] as num).toDouble(),
+    );
+  }
 }
 
-class CustomerRow {
+class BestCustomer {
+  final int id;
+  final String initial;
   final String name;
   final int orders;
   final double spent;
-  const CustomerRow({required this.name, required this.orders, required this.spent});
+
+  const BestCustomer({
+    required this.id,
+    required this.initial,
+    required this.name,
+    required this.orders,
+    required this.spent,
+  });
+
+  factory BestCustomer.fromJson(Map<String, dynamic> json) {
+    return BestCustomer(
+      id: (json['id'] as num).toInt(),
+      initial: json['initial'] as String,
+      name: json['name'] as String,
+      orders: (json['orders'] as num).toInt(),
+      spent: (json['spent'] as num).toDouble(),
+    );
+  }
 }
 
-class LineSeries {
-  final List<double> values;
-  final Color color;
-  const LineSeries({required this.values, required this.color});
+class AnalyticsData {
+  final List<ChartPoint> chartData;
+  final List<TopGarment> topGarments;
+  final List<BestCustomer> bestCustomers;
+
+  const AnalyticsData({
+    required this.chartData,
+    required this.topGarments,
+    required this.bestCustomers,
+  });
+
+  factory AnalyticsData.fromJson(Map<String, dynamic> json) {
+    return AnalyticsData(
+      chartData: (json['chart_data'] as List)
+          .map((e) => ChartPoint.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      topGarments: (json['top_garments'] as List)
+          .map((e) => TopGarment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bestCustomers: (json['best_customers'] as List)
+          .map((e) => BestCustomer.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 }
-
-const monthLabels = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-const profitData = [900.0, 1100.0, 1800.0, 1350.0, 1750.0, 750.0];
-const incomeData = [1650.0, 2350.0, 3200.0, 2450.0, 2900.0, 1600.0];
-const expenseData = [850.0, 1000.0, 1550.0, 950.0, 1050.0, 750.0];
-
-const topGarments = [
-  GarmentRow(rank: 1, name: 'Suit', orders: 3, revenue: 830),
-  GarmentRow(rank: 2, name: 'Dress', orders: 3, revenue: 365),
-  GarmentRow(rank: 3, name: 'Pants', orders: 2, revenue: 100),
-];
-
-const bestCustomers = [
-  CustomerRow(name: 'David Ochieng', orders: 4, spent: 950),
-  CustomerRow(name: 'Amina Hassan', orders: 5, spent: 680),
-  CustomerRow(name: 'John Mwangi', orders: 3, spent: 520),
-];

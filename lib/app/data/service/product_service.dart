@@ -20,11 +20,11 @@ class ProductService {
 
   Future<List<ProductModel>?> fetchProducts(int categoryId, int userId) async {
     final cacheKey = '${categoryId}_$userId';
-
     try {
       List<ProductModel> allProducts = [];
       int page = 1;
       bool hasMore = true;
+      print('${authController.ipAddress.value}/mobile/products/$categoryId/$userId/?page=$page');
 
       while (hasMore) {
         final response = await _client.get(
@@ -79,6 +79,20 @@ class ProductService {
   }
 
   Future<List<ProductModel>?> fetchPopularProductsByUserID(int userId) async {
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
+    print(userId);
     print(userId);
     final cacheKey = 'user_$userId';
 

@@ -7,6 +7,7 @@ import 'package:atelyam/app/modules/settings_view/views/business_acc_components_
 import 'package:atelyam/app/modules/settings_view/views/business_profile_settings_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../controllers/settings_controller.dart';
 
@@ -21,15 +22,30 @@ class _SettingsViewState extends State<SettingsView> {
   final NewSettingsPageController settingsController = Get.put<NewSettingsPageController>(NewSettingsPageController());
 
   late Future<List<GetMyStatusModel>?> _bizFuture;
+  late Future<String?> _tokenFuture;
 
   @override
   void initState() {
     super.initState();
     _bizFuture = BusinessUserService().getMyStatus();
+    _tokenFuture = Auth().getToken();
+
+    // After a fresh login the new BottomNavBar is built and then justLoggedIn
+    // is set to true via postFrameCallback – refresh business status at that point.
+    ever(Get.find<AuthController>().justLoggedIn, (bool value) {
+      if (value && mounted) {
+        _refreshBiz();
+        Get.find<AuthController>().justLoggedIn.value = false;
+      }
+    });
   }
 
   // ─── Refresh ──────────────────────────────────────────────────────────────
-  void _refreshBiz() => setState(() => _bizFuture = BusinessUserService().getMyStatus());
+  void _refreshBiz() {
+    setState(() {
+      _bizFuture = BusinessUserService().getMyStatus();
+    });
+  }
 
   // ─── App Bars ─────────────────────────────────────────────────────────────
   AppBar _businessAppBar(GetMyStatusModel bu) {
@@ -53,8 +69,8 @@ class _SettingsViewState extends State<SettingsView> {
         ),
         IconButton(
           onPressed: () async {
-            final result = await Get.to(() => AllBusinessAccountsView());
-            if (result == true) _refreshBiz();
+            await Get.to(() => AllBusinessAccountsView());
+            _refreshBiz();
           },
           icon: const Icon(HugeIcons.strokeRoundedUserEdit01, color: Colors.black, size: 22),
           padding: EdgeInsets.zero,
@@ -106,7 +122,7 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
-      future: Auth().getToken(),
+      future: _tokenFuture,
       builder: (context, tokenSnap) {
         if (tokenSnap.connectionState == ConnectionState.waiting) return _loadingScaffold();
 
@@ -136,18 +152,6 @@ class _SettingsListPage extends StatelessWidget {
   final bool showBackButton;
   const _SettingsListPage({required this.settingsController, this.showBackButton = false});
 
-  void _showDeleteAccountSheet() {
-    Get.bottomSheet(
-      Dialogs().deleteAccount(
-        onYestapped: () async {
-          await Auth().logout();
-          Get.back();
-          await Get.offAll(() => BottomNavBar());
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,16 +177,111 @@ class _SettingsListPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
           final item = showBackButton ? loggedInSettingsViewsBusinessaccountHave[index] : loggedInSettingsViews[index];
-          final bool isDeleteRow = item['name'] == 'login';
+          final bool isLogoutRow = item['name'] == 'logout';
 
-          if (isDeleteRow) {
+          if (isLogoutRow) {
             return SettingsButton(
-              name: 'delete_account'.tr,
+              name: 'logout'.tr,
               lang: false,
-              onTap: _showDeleteAccountSheet,
-              icon: Icon(IconlyLight.delete, color: ColorConstants.kSecondaryColor),
+              onTap: () {
+                Get.dialog(
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadii.borderRadius20,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadii.borderRadius20,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: ColorConstants.kSecondaryColor.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(IconlyLight.logout, color: ColorConstants.kSecondaryColor, size: 28),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'logout'.tr,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstants.darkMainColor,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'logout_confirm'.tr,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => Get.back(),
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: Colors.grey.shade300),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius10),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                    ),
+                                    child: Text(
+                                      'no'.tr,
+                                      style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      Get.back();
+                                      await Auth().logout();
+                                      await Get.offAll(() => BottomNavBar());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: ColorConstants.kSecondaryColor,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadii.borderRadius10),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                    ),
+                                    child: Text(
+                                      'yes'.tr,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(IconlyLight.logout, color: ColorConstants.darkMainColor),
             );
           }
+
 
           return SettingsButton(
             name: '${item['name']}'.tr,

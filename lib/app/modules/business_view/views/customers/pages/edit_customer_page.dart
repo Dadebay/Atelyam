@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/client_measurement.dart';
 import '../models/client_model.dart';
 import '../models/measurement_type.dart';
 import '../services/client_service.dart';
@@ -31,6 +34,7 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
 
   List<MeasurementType> _measurementTypes = <MeasurementType>[];
   final Map<int, TextEditingController> _newMeasurementCtrls = <int, TextEditingController>{};
+
   bool _loadingMeasurements = true;
   bool _saving = false;
   late String _countryCode;
@@ -56,7 +60,7 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
     print('📝 Edit Customer Init - ID: ${widget.client.id}, Name: ${widget.client.name}, Phone: ${widget.client.phone}');
     print('📝 Existing Measurements: ${widget.client.measurements.length}');
     for (final m in widget.client.measurements) {
-      print('   - ${m.label}: ${m.value}');
+      print('   - [typeId=${m.typeId}] ${m.label}: ${m.value}');
     }
     _loadMeasurementTypes();
   }
@@ -67,21 +71,158 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
       if (!mounted) return;
       setState(() {
         _measurementTypes = types;
+        final Set<int> matchedMeasurementTypeIds = <int>{};
+        final Set<int> usedMeasurementTypeIds = <int>{};
         for (final type in types) {
-          // Check if existing measurement matches this type
-          final existingMeasurement = widget.client.measurements.firstWhereOrNull(
-            (m) => m.label.toLowerCase() == type.name.toLowerCase(),
+          // 1. TypeId ile eşleştir (en güvenilir)
+          ClientMeasurement? existingMeasurement = widget.client.measurements.firstWhereOrNull(
+            (m) => m.typeId != null && m.typeId == type.id,
           );
 
-          // Pre-fill with existing value or empty
-          _newMeasurementCtrls[type.id] = TextEditingController(
-            text: existingMeasurement?.value ?? '',
-          );
+          // 2. Exact label eşleşmesi (tüm dil varyantları)
+          existingMeasurement ??= widget.client.measurements.firstWhereOrNull((m) {
+            final mLabel = m.label.toLowerCase().trim();
+            return mLabel == type.name.toLowerCase().trim() ||
+                (type.nameEn?.toLowerCase().trim() == mLabel) ||
+                (type.nameRu?.toLowerCase().trim() == mLabel) ||
+                (type.nameCh?.toLowerCase().trim() == mLabel) ||
+                (type.nameUz?.toLowerCase().trim() == mLabel) ||
+                (type.nameTr?.toLowerCase().trim() == mLabel);
+          });
+
+          // 2.5. Normalize label fallback (apostrophe, accents, translation variants, etc.)
+          // If typeId match is empty, prefer a translated/normalized match that has value.
+          if (existingMeasurement == null || existingMeasurement.value.trim().isEmpty) {
+            String normalize(String s) => s
+                .toLowerCase()
+                .replaceAll(RegExp(r"['‘’`]"), "")
+                .replaceAll('o‘', 'o')
+                .replaceAll('o’', 'o')
+                .replaceAll("ý", "y")
+                .replaceAll("ö", "o")
+                .replaceAll("ä", "a")
+                .replaceAll("ü", "u")
+                .replaceAll("ş", "s")
+                .replaceAll("ç", "c")
+                .replaceAll("ğ", "g")
+                .replaceAll('uzunligi', 'uzynlygy')
+                .replaceAll('kokrak', 'dos');
+            final normTypeNames = [
+              type.name,
+              type.nameEn ?? '',
+              type.nameRu ?? '',
+              type.nameCh ?? '',
+              type.nameUz ?? '',
+              type.nameTr ?? '',
+            ].map(normalize).toSet();
+            final normalizedMatch = widget.client.measurements.firstWhereOrNull((m) {
+              if (m.value.trim().isEmpty) return false;
+              if (m.typeId != null && usedMeasurementTypeIds.contains(m.typeId)) return false;
+              final mLabel = normalize(m.label);
+              return normTypeNames.contains(mLabel);
+            });
+            if (normalizedMatch != null) {
+              existingMeasurement = normalizedMatch;
+            }
+          }
+
+          // 3. Fuzzy contains: "Egin" type isminde geçiyorsa eşleş
+          existingMeasurement ??= widget.client.measurements.firstWhereOrNull((m) {
+            final mLabel = m.label.toLowerCase().trim();
+            if (mLabel.isEmpty) return false;
+            final typeNames = [
+              type.name,
+              type.nameEn ?? '',
+              type.nameRu ?? '',
+              type.nameCh ?? '',
+              type.nameUz ?? '',
+              type.nameTr ?? '',
+            ].map((n) => n.toLowerCase().trim()).where((n) => n.isNotEmpty);
+            return typeNames.any((n) => n.contains(mLabel) || mLabel.contains(n));
+          });
+
+          // 4. Levenshtein similarity matching (>= 65% similarity)
+          if (existingMeasurement == null || existingMeasurement.value.trim().isEmpty) {
+            String norm(String s) => s
+                .toLowerCase()
+                .replaceAll(RegExp(r"['\u2018\u2019\u0060]"), '')
+                .replaceAll('\u00fd', 'y')
+                .replaceAll('\u00f6', 'o')
+                .replaceAll('\u00e4', 'a')
+                .replaceAll('\u00fc', 'u')
+                .replaceAll('\u015f', 's')
+                .replaceAll('\u00e7', 'c')
+                .replaceAll('\u011f', 'g')
+                .replaceAll('uzunligi', 'uzynlygy')
+                .replaceAll('kokrak', 'dos')
+                .trim();
+            final typeNames = [
+              type.name,
+              type.nameEn ?? '',
+              type.nameRu ?? '',
+              type.nameCh ?? '',
+              type.nameUz ?? '',
+              type.nameTr ?? '',
+            ].map(norm).where((n) => n.isNotEmpty).toList();
+            double bestScore = 0.65;
+            ClientMeasurement? bestMatch;
+            for (final m in widget.client.measurements) {
+              if (m.value.trim().isEmpty) continue;
+              if (m.typeId != null && usedMeasurementTypeIds.contains(m.typeId)) continue;
+              final mNorm = norm(m.label);
+              if (mNorm.isEmpty) continue;
+              for (final tn in typeNames) {
+                final maxLen = math.max(mNorm.length, tn.length);
+                if (maxLen == 0) continue;
+                final dist = _levenshtein(mNorm, tn);
+                final score = 1.0 - dist / maxLen;
+                if (score > bestScore) {
+                  bestScore = score;
+                  bestMatch = m;
+                }
+              }
+            }
+            if (bestMatch != null) {
+              existingMeasurement = bestMatch;
+              print('   🔤 FUZZY MATCH (score=${bestScore.toStringAsFixed(2)}): type="${type.name}" ← label="${bestMatch.label}" value="${bestMatch.value}"');
+            }
+          }
+
+          if (existingMeasurement != null && existingMeasurement.typeId != null) {
+            matchedMeasurementTypeIds.add(existingMeasurement.typeId!);
+            if (existingMeasurement.value.trim().isNotEmpty) {
+              usedMeasurementTypeIds.add(existingMeasurement.typeId!);
+            }
+          }
+
+          // Mevcut değeri veya boş string ile doldur
+          final prefillValue = existingMeasurement?.value ?? '';
+          _newMeasurementCtrls[type.id] = TextEditingController(text: prefillValue);
+          if (prefillValue.isNotEmpty) {
+            print('   ✅ MATCH: type="${type.name}" ← label="${existingMeasurement?.label}" value="$prefillValue"');
+          }
         }
+
+        // Eşleşemeyen ama VALUE olan ölçümleri, synthetic type olarak listeye ekle
+        for (final m in widget.client.measurements) {
+          if (m.value.trim().isEmpty) continue;
+          if (m.typeId == null) continue;
+          if (matchedMeasurementTypeIds.contains(m.typeId)) continue;
+          // Bu typeId zaten standart listede var mı?
+          if (_measurementTypes.any((t) => t.id == m.typeId)) continue;
+          // Synthetic MeasurementType olarak ekle
+          final syntheticType = MeasurementType(id: m.typeId!, name: m.label);
+          _measurementTypes = List<MeasurementType>.from(_measurementTypes)..add(syntheticType);
+          _newMeasurementCtrls[m.typeId!] = TextEditingController(text: m.value);
+          matchedMeasurementTypeIds.add(m.typeId!);
+          print('   ➕ SYNTHETIC TYPE ADDED: id=${m.typeId} label="${m.label}" value="${m.value}"');
+        }
+
         _loadingMeasurements = false;
       });
       print('📝 Loaded ${types.length} measurement types for editing');
-      print('📝 Pre-filled ${widget.client.measurements.length} existing measurements');
+      print('📝 UI will show ${_measurementTypes.length} measurement inputs total');
+      print('📝 Pre-filled: ${_newMeasurementCtrls.values.where((c) => c.text.isNotEmpty).length} inputs have values');
     } catch (e) {
       print('❌ Failed to load measurement types: $e');
       if (!mounted) return;
@@ -90,6 +231,22 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
         _loadingMeasurements = false;
       });
     }
+  }
+
+  int _levenshtein(String a, String b) {
+    if (a == b) return 0;
+    if (a.isEmpty) return b.length;
+    if (b.isEmpty) return a.length;
+    final matrix = List.generate(a.length + 1, (i) => List.filled(b.length + 1, 0));
+    for (int i = 0; i <= a.length; i++) matrix[i][0] = i;
+    for (int j = 0; j <= b.length; j++) matrix[0][j] = j;
+    for (int i = 1; i <= a.length; i++) {
+      for (int j = 1; j <= b.length; j++) {
+        final cost = a[i - 1] == b[j - 1] ? 0 : 1;
+        matrix[i][j] = [matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost].reduce(math.min);
+      }
+    }
+    return matrix[a.length][b.length];
   }
 
   @override

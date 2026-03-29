@@ -8,6 +8,7 @@ class OrderItem {
   final double due;
   final String created;
   final String? image;
+  final DateTime? deadline;
 
   const OrderItem({
     required this.id,
@@ -19,6 +20,7 @@ class OrderItem {
     required this.due,
     required this.created,
     this.image,
+    this.deadline,
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class OrderItem {
       due: double.tryParse(json['due']?.toString() ?? '0') ?? 0.0,
       created: json['created'] as String? ?? '',
       image: json['image'] as String?,
+      // deadline is stored locally on device, not from backend
     );
   }
 
@@ -47,6 +50,22 @@ class OrderItem {
       'created': created,
       'image': image,
     };
+  }
+
+  /// Returns a copy of this order with the given deadline applied.
+  OrderItem withDeadline(DateTime? dl) {
+    return OrderItem(
+      id: id,
+      client: client,
+      clientName: clientName,
+      orderName: orderName,
+      status: status,
+      price: price,
+      due: due,
+      created: created,
+      image: image,
+      deadline: dl,
+    );
   }
 }
 

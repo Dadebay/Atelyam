@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'package:atelyam/app/data/service/banner_service.dart';
+import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
+import 'package:atelyam/app/product/custom_widgets/dialogs.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:atelyam/app/modules/category_view/views/category_view.dart';
 import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';
 import 'package:atelyam/app/modules/discovery_view/views/discovery_view.dart';
 import 'package:atelyam/app/modules/home_view/controllers/home_controller.dart';
 import 'package:atelyam/app/modules/home_view/views/home_view.dart';
+import 'package:atelyam/app/modules/map_view/controllers/map_view_controller.dart';
 import 'package:atelyam/app/modules/map_view/views/map_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/settings_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
@@ -42,6 +46,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     getPhoneNumber();
+    _showLanguageDialogIfFirstLaunch();
+  }
+
+  void _showLanguageDialogIfFirstLaunch() {
+    final storage = GetStorage();
+    if (storage.read('hasShownLanguageDialog') != true) {
+      storage.write('hasShownLanguageDialog', true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!Get.isRegistered<NewSettingsPageController>()) {
+          Get.put(NewSettingsPageController());
+        }
+        Dialogs().showLanguageDialog();
+      });
+    }
   }
 
   Future<void> makePhoneCall(String phoneNumber) async {
@@ -239,6 +257,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 onTap: (index) {
                   FocusScope.of(context).unfocus();
                   homeController.selectedIndex.value = index;
+                  if (index == 3 && Get.isRegistered<MapViewController>()) {
+                    Get.find<MapViewController>().checkAndPromptLocation();
+                  }
                   // Analytics: hangi sekmeye geçildi
                   FirebaseAnalyticsService.instance().logTabSwitch(
                     tabIndex: index,

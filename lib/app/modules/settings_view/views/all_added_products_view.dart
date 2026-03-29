@@ -1,3 +1,4 @@
+import 'package:atelyam/app/data/service/business_user_service.dart';
 import 'package:atelyam/app/data/service/product_service.dart';
 import 'package:atelyam/app/modules/settings_view/components/product_card_mine.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
@@ -12,6 +13,18 @@ class AllProductView extends StatefulWidget {
 }
 
 class _AllProductViewState extends State<AllProductView> {
+  Future<void> _navigateToCreateProduct() async {
+    final accounts = await BusinessUserService().getMyStatus();
+    if (accounts == null || accounts.isEmpty) {
+      showSnackBar('error', 'no_business_account'.tr, ColorConstants.redColor);
+      return;
+    }
+    final result = await Get.to(() => CreateProductView());
+    if (result == true) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,12 +80,7 @@ class _AllProductViewState extends State<AllProductView> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AgreeButton(
-                    onTap: () async {
-                      final result = await Get.to(() => CreateProductView());
-                      if (result == true) {
-                        setState(() {});
-                      }
-                    },
+                    onTap: _navigateToCreateProduct,
                     text: 'add_product',
                   ),
                 ),
@@ -106,12 +114,7 @@ class _AllProductViewState extends State<AllProductView> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: AgreeButton(
-                  onTap: () async {
-                    final result = await Get.to(() => CreateProductView());
-                    if (result == true) {
-                      setState(() {});
-                    }
-                  },
+                  onTap: _navigateToCreateProduct,
                   text: 'add_product',
                 ),
               ),

@@ -21,14 +21,38 @@ class LocationPickerPage extends StatefulWidget {
 class _LocationPickerPageState extends State<LocationPickerPage> {
   static const String _osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   static const String _ayterekMap = 'https://map.ayterek.com/tile/{z}/{x}/{y}.png';
+  static const String _tmTileUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
 
   bool _isInTurkmenistan = true;
+  String _resolvedTileUrl = _osmTileUrl;
 
   static bool _checkTurkmenistan(double lat, double lon) {
     return lat >= 35.1 && lat <= 42.8 && lon >= 52.4 && lon <= 66.7;
   }
 
-  String get _tileUrl => _isInTurkmenistan ? _ayterekMap : _osmTileUrl;
+  String get _tileUrl => _resolvedTileUrl;
+
+  Future<void> _probeTileUrl() async {
+    if (!_isInTurkmenistan) {
+      if (mounted) setState(() => _resolvedTileUrl = _osmTileUrl);
+      return;
+    }
+    try {
+      final r = await http.head(Uri.parse('https://map.ayterek.com/tile/8/169/100.png')).timeout(const Duration(seconds: 5));
+      if (r.statusCode == 200) {
+        if (mounted) setState(() => _resolvedTileUrl = _ayterekMap);
+        return;
+      }
+    } catch (_) {}
+    try {
+      final r = await http.head(Uri.parse('https://jaytap.com.tm/styles/test-style/8/169/100.png')).timeout(const Duration(seconds: 5));
+      if (r.statusCode == 200) {
+        if (mounted) setState(() => _resolvedTileUrl = _tmTileUrl);
+        return;
+      }
+    } catch (_) {}
+    if (mounted) setState(() => _resolvedTileUrl = _osmTileUrl);
+  }
 
   // Türkmenistan / Aşgabat merkezi (varsayılan)
   static const LatLng _defaultCenter = LatLng(37.9601, 58.3261);
@@ -49,6 +73,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       _isInTurkmenistan = _checkTurkmenistan(widget.initialLocation!.latitude, widget.initialLocation!.longitude);
       _fetchAddress(widget.initialLocation!);
     }
+    _probeTileUrl();
   }
 
   @override
@@ -113,10 +138,12 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         ),
       );
       final loc = LatLng(position.latitude, position.longitude);
+      final wasInTm = _isInTurkmenistan;
       setState(() {
         _selectedLocation = loc;
         _isInTurkmenistan = _checkTurkmenistan(loc.latitude, loc.longitude);
       });
+      if (wasInTm != _isInTurkmenistan) _probeTileUrl();
       _mapController.move(loc, 15.0);
       await _fetchAddress(loc);
     } catch (_) {
@@ -152,11 +179,13 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               initialCenter: widget.initialLocation ?? _defaultCenter,
               initialZoom: widget.initialLocation != null ? 14.0 : 10.0,
               onTap: (tapPosition, latLng) {
+                final wasInTm = _isInTurkmenistan;
                 setState(() {
                   _selectedLocation = latLng;
                   _addressText = null;
                   _isInTurkmenistan = _checkTurkmenistan(latLng.latitude, latLng.longitude);
                 });
+                if (wasInTm != _isInTurkmenistan) _probeTileUrl();
                 _fetchAddress(latLng);
               },
             ),

@@ -62,24 +62,53 @@ class DashboardFinancials {
 }
 
 class DashboardOrder {
+  final int id;
+  final int client;
   final String clientName;
   final String orderName;
   final String status;
   final double price;
   final double due;
   final String date;
+  final DateTime? deadline;
 
   DashboardOrder({
+    required this.id,
+    required this.client,
     required this.clientName,
     required this.orderName,
     required this.status,
     required this.price,
     required this.due,
     required this.date,
+    this.deadline,
   });
 
+  DashboardOrder copyWith({
+    int? id,
+    int? client,
+    DateTime? deadline,
+  }) =>
+      DashboardOrder(
+        id: id ?? this.id,
+        client: client ?? this.client,
+        clientName: clientName,
+        orderName: orderName,
+        status: status,
+        price: price,
+        due: due,
+        date: date,
+        deadline: deadline ?? this.deadline,
+      );
+
+  DashboardOrder withDeadline(DateTime dl) => copyWith(deadline: dl);
+
   factory DashboardOrder.fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as int? ?? 0;
+    print('📊 DashboardOrder parsed: id=$id, client=${json['client_name']}');
     return DashboardOrder(
+      id: id,
+      client: json['client'] as int? ?? 0,
       clientName: json['client_name'] ?? '',
       orderName: json['order_name'] ?? '',
       status: json['status'] ?? '',

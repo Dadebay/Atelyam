@@ -8,7 +8,7 @@ class AllBusinessUsersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(categoryId);
+    print("mana business category view geldi ----------------------------------------------------");
 
     return Scaffold(
       backgroundColor: ColorConstants.whiteMainColor,

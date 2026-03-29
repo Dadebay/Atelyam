@@ -20,24 +20,36 @@ class BrandsController extends GetxController {
   }) async {
     isLoadingBrandsProfile.value = true;
     try {
-      // Tam profil detayları için getUserById endpointini kullan (instagram, tiktok, website vb.)
-      // Endpoint user ID beklediği için .user kullanılıyor, .id değil
-      // Tam profil verileri için getUserById endpointini kullanıyoruz
-      // .user = User ID, .id = Business Account ID — endpoint User ID bekliyor
-      final fetched = await _businessUserService.fetchBusinessAccountKICI(businessUserModelFromOutside.userID!);
-      // API null döndürürse dışarıdan gelen model ile devam et
-      businessUser.value = fetched ?? businessUserModelFromOutside;
+      // userID 0 veya null gelirse API çağrısı atla, dışarıdan gelen modeli kullan
+      final userId = (businessUserModelFromOutside.userID != null && businessUserModelFromOutside.userID! > 0)
+          ? businessUserModelFromOutside.userID!
+          : (businessUserModelFromOutside.user > 0 ? businessUserModelFromOutside.user : null);
+
+      print('[BrandsController] id=${businessUserModelFromOutside.id} userID=${businessUserModelFromOutside.userID} user=${businessUserModelFromOutside.user} → userId=$userId');
+
+      if (userId != null && userId > 0) {
+        final fetched = await _businessUserService.fetchBusinessAccountKICI(userId);
+        businessUser.value = fetched ?? businessUserModelFromOutside;
+      } else {
+        // cats_id endpoint'i user field'ı döndürmüyor — business ID ile tam modeli al
+        print('[BrandsController] userId null, GetUserId/${businessUserModelFromOutside.id}/ ile tam model alınıyor...');
+        final fetched = await _businessUserService.fetchBusinessAccountByID(businessUserModelFromOutside.id);
+        businessUser.value = fetched ?? businessUserModelFromOutside;
+        print('[BrandsController] GetUserId sonucu: id=${businessUser.value?.id} user=${businessUser.value?.user} userID=${businessUser.value?.userID}');
+      }
+
       print(whichPage);
-      print(businessUser.value?.instagram);
-      print(businessUser.value?.tiktok);
-      print(businessUser.value?.youtube);
-      print(businessUser.value?.address);
-      print(businessUser.value?.businessPhone);
+
       if (whichPage == 'popular' || whichPage == 'map') {
         final uid = (businessUser.value?.userID ?? 0) != 0 ? businessUser.value!.userID! : (businessUser.value?.user ?? 0);
         productsFuture.value = _productService.fetchPopularProductsByUserID(uid);
+        print("Menden hartylary aldy ---------------------- productsFuture.value = _productService.fetchPopularProductsByUserID(uid);");
       } else {
-        productsFuture.value = _productService.fetchProducts(categoryID, businessUser.value?.user ?? 0);
+        final userVal = businessUser.value?.user ?? 0;
+
+        print('[BrandsController] fetchProducts categoryID=$categoryID userId=$userVal');
+        productsFuture.value = _productService.fetchProducts(categoryID, userVal);
+        print("Menden hartylary aldy ---------------------- productsFuture.value = _productService.fetchProducts(uid);");
       }
     } catch (e, stackTrace) {
       print('fetchBusinessUserData ERROR: $e');

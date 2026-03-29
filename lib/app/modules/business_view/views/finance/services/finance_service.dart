@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/expense_model.dart';
 import '../models/finance_data.dart';
+import '../models/outstanding_customer_model.dart';
 
 class FinanceService {
   final AuthController _authController = Get.find<AuthController>();
@@ -28,7 +29,7 @@ class FinanceService {
 
     String url = '$_baseUrl/mobile/get_finance_data/';
     if (period != null && period.isNotEmpty) {
-      url += '?period=$period';
+      url += '?filter=$period';
     }
 
     print('🔷 URL: $url');
@@ -56,10 +57,11 @@ class FinanceService {
     required String title,
     required String category,
     required double amount,
+    required int categoryUserId, // API'nin beklediği alan
   }) async {
     print('🔷 CREATE EXPENSE REQUEST');
     print('🔷 URL: $_baseUrl/mobile/expenses/');
-    print('🔷 Title: $title, Category: $category, Amount: $amount');
+    print('🔷 Title: $title, Category: $category, Amount: $amount, CategoryUser: $categoryUserId');
 
     final headers = await _headers();
     final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/mobile/expenses/'));
@@ -68,6 +70,7 @@ class FinanceService {
     request.fields['title'] = title;
     request.fields['category'] = category;
     request.fields['amount'] = amount.toString();
+    request.fields['categoryuser'] = categoryUserId.toString();
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
@@ -104,5 +107,55 @@ class FinanceService {
     }
 
     print('✅ Expense deleted successfully');
+  }
+
+  /// Fetch outstanding customer list
+  Future<List<OutstandingCustomer>> getOutstandingCustomers() async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/mobile/outstanding/'),
+      headers: await _headers(),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('fetch_outstanding_failed');
+    }
+
+    final body = utf8.decode(response.bodyBytes);
+    final dynamic decoded = json.decode(body);
+    final customers = _extractOutstandingList(decoded).whereType<Map<String, dynamic>>().map(OutstandingCustomer.fromJson).where((c) => c.outstanding > 0).toList();
+
+    print('✅ Outstanding customers fetched: ${customers.length}');
+    return customers;
+  }
+
+  List<dynamic> _extractOutstandingList(dynamic decoded) {
+    if (decoded is List<dynamic>) {
+      return decoded;
+    }
+
+    if (decoded is Map<String, dynamic>) {
+      final candidates = <dynamic>[
+        decoded['results'],
+        decoded['data'],
+        decoded['customers'],
+        decoded['outstanding_customers'],
+        decoded['items'],
+        decoded['outstanding'],
+      ];
+
+      for (final candidate in candidates) {
+        if (candidate is List<dynamic>) {
+          return candidate;
+        }
+        if (candidate is Map<String, dynamic>) {
+          final nested = _extractOutstandingList(candidate);
+          if (nested.isNotEmpty) {
+            return nested;
+          }
+        }
+      }
+    }
+
+    return <dynamic>[];
   }
 }

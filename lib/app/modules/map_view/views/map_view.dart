@@ -54,10 +54,6 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  static const String _tmTileUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
-  static const String _osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-  static const String _ayterekMap = 'https://map.ayterek.com/tile/{z}/{x}/{y}.png';
-
   late final MapViewController _controller;
 
   @override
@@ -97,9 +93,8 @@ class _MapViewState extends State<MapView> {
             children: [
               // Tile katmanı
               Obx(() {
-                final tileUrl = _controller.isInTurkmenistan.value ? _ayterekMap : _osmTileUrl;
                 return TileLayer(
-                  urlTemplate: tileUrl,
+                  urlTemplate: _controller.resolvedTileUrl.value,
                   maxZoom: 19,
                   minZoom: 3,
                   keepBuffer: 8,

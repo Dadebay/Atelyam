@@ -1,4 +1,5 @@
 import 'package:atelyam/app/modules/business_view/views/business_currency_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/orders/services/deadline_storage.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -60,13 +61,6 @@ class StatusCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: (filled ? bgColor : Colors.black).withOpacity(0.12),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
         border: filled ? null : Border.all(color: Colors.grey.shade200),
       ),
       child: Row(
@@ -179,6 +173,7 @@ class FinanceCard extends StatelessWidget {
 }
 
 class DashOrderCard extends StatelessWidget {
+  final int orderId;
   final String customer;
   final String item;
   final String status;
@@ -186,9 +181,12 @@ class DashOrderCard extends StatelessWidget {
   final double due;
   final String date;
   final AppCurrency currency;
+  final VoidCallback? onTap;
+  final DateTime? deadline;
 
   const DashOrderCard({
     super.key,
+    required this.orderId,
     required this.customer,
     required this.item,
     required this.status,
@@ -196,113 +194,188 @@ class DashOrderCard extends StatelessWidget {
     required this.due,
     required this.date,
     required this.currency,
+    this.onTap,
+    this.deadline,
   });
 
   @override
   Widget build(BuildContext context) {
     final statusColor = orderStatusColor(status);
     final statusText = getOrderStatusTranslation(status);
+    // Read deadline from storage directly as fallback (only if we have a valid id)
+    final effectiveDeadline = deadline ?? (orderId > 0 ? DeadlineStorage.read(orderId) : null);
+
+    final now = DateTime.now();
+    final daysLeft = effectiveDeadline != null
+        ? effectiveDeadline.difference(DateTime(now.year, now.month, now.day)).inDays
+        : null;
+    print('📅 DashOrderCard[$orderId] "$item" — passed deadline: $deadline | storage deadline: ${orderId > 0 ? DeadlineStorage.read(orderId) : "skipped(id=0)"} | effectiveDeadline: $effectiveDeadline | daysLeft: $daysLeft');
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    customer,
+                    style: TextStyle(
+                      fontFamily: Fonts.gilroy,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    statusText,
+                    style: TextStyle(
+                      fontFamily: Fonts.gilroy,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 3),
+            Text(
+              item,
+              style: TextStyle(
+                fontFamily: Fonts.gilroy,
+                fontSize: 13,
+                color: Colors.grey.shade500,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 13, color: Colors.black87),
+                    children: [
+                      TextSpan(text: '${'price'.tr}: '),
+                      TextSpan(
+                        text: currency.format(price),
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 14),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 13, color: Colors.black87),
+                    children: [
+                      TextSpan(text: '${'due'.tr}: '),
+                      TextSpan(
+                        text: currency.format(due),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: due > 0 ? ColorConstants.redColor : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                // Icon(Icons.calendar_today_rounded, size: 13, color: Colors.grey.shade400),
+                // const SizedBox(width: 4),
+                // Text(
+                //   formatDate(date),
+                //   style: TextStyle(
+                //     fontFamily: Fonts.gilroy,
+                //     fontSize: 12,
+                //     color: Colors.grey.shade500,
+                //   ),
+                // ),
+                if (effectiveDeadline != null) ...[
+                  const SizedBox(width: 10),
+                  _DashDeadlineBadge(deadline: effectiveDeadline),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashDeadlineBadge extends StatelessWidget {
+  final DateTime deadline;
+  const _DashDeadlineBadge({required this.deadline});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final daysLeft = deadline.difference(DateTime(now.year, now.month, now.day)).inDays;
+
+    Color badgeColor;
+    if (daysLeft < 0) {
+      badgeColor = const Color(0xFFE53935);
+    } else if (daysLeft <= 2) {
+      badgeColor = const Color(0xFFF5A623);
+    } else if (daysLeft <= 5) {
+      badgeColor = const Color(0xFFF5A623).withOpacity(0.7);
+    } else {
+      badgeColor = Colors.grey.shade400;
+    }
+
+    final String label;
+    if (daysLeft < 0) {
+      final overdueDays = -daysLeft;
+      label = '$overdueDays ${'deadline_days_overdue'.tr}';
+    } else if (daysLeft == 0) {
+      label = 'deadline_today'.tr;
+    } else {
+      label = '$daysLeft ${'deadline_days_left'.tr}';
+    }
+
+    print('📅 DeadlineBadge: daysLeft=$daysLeft, label="$label"');
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: badgeColor.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  customer,
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  statusText,
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: statusColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 3),
+          Icon(Icons.flag_rounded, size: 11, color: badgeColor),
+          const SizedBox(width: 3),
           Text(
-            item,
+            label,
             style: TextStyle(
               fontFamily: Fonts.gilroy,
-              fontSize: 13,
-              color: Colors.grey.shade500,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: badgeColor,
             ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 13, color: Colors.black87),
-                  children: [
-                    TextSpan(text: '${'price'.tr}: '),
-                    TextSpan(
-                      text: currency.format(price),
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 14),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 13, color: Colors.black87),
-                  children: [
-                    TextSpan(text: '${'due'.tr}: '),
-                    TextSpan(
-                      text: currency.format(due),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: due > 0 ? ColorConstants.redColor : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Icon(Icons.calendar_today_rounded, size: 13, color: Colors.grey.shade400),
-              const SizedBox(width: 4),
-              Text(
-                formatDate(date),
-                style: TextStyle(
-                  fontFamily: Fonts.gilroy,
-                  fontSize: 12,
-                  color: Colors.grey.shade500,
-                ),
-              ),
-            ],
           ),
         ],
       ),

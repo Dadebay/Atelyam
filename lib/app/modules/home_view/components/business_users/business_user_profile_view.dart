@@ -1,5 +1,6 @@
 import 'package:atelyam/app/modules/home_view/components/business_users/social_media_button.dart';
 import 'package:atelyam/app/modules/home_view/controllers/brands_controller.dart';
+import 'package:atelyam/app/modules/map_view/views/business_location_map_page.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/initialize/firebase_analytics_service.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -20,6 +21,8 @@ class BusinessUserProfileView extends StatefulWidget {
 class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
   final BrandsController _homeController = Get.put<BrandsController>(BrandsController());
   final AuthController authController = Get.find<AuthController>();
+  bool _isDescriptionExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +37,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
       screenName: 'store_profile',
       screenClass: 'BusinessUserProfileView',
     );
+    print("_homeController.fetchBusinessUserData( ${widget.businessUserModelFromOutside} -  ${widget.categoryID}-  ${widget.whichPage}");
     _homeController.fetchBusinessUserData(
       businessUserModelFromOutside: widget.businessUserModelFromOutside,
       categoryID: widget.categoryID,
@@ -52,7 +56,19 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
             onTap: () {
               final String rawPhone = _homeController.businessUser.value?.businessPhone ?? '';
               if (rawPhone.isEmpty) return;
-              final String phoneNumberText = rawPhone.contains('+993') ? rawPhone : '+993$rawPhone';
+              String phoneNumberText = rawPhone.trim();
+              if (!phoneNumberText.startsWith('+')) {
+                final digitsOnly = phoneNumberText.replaceAll(RegExp(r'[^0-9]'), '');
+                if (digitsOnly.length == 8 && digitsOnly.startsWith('6')) {
+                  phoneNumberText = '+993$digitsOnly';
+                } else if (digitsOnly.length == 9 && digitsOnly.startsWith('9')) {
+                  phoneNumberText = '+998$digitsOnly';
+                } else if (digitsOnly.startsWith('998') || digitsOnly.startsWith('993') || digitsOnly.startsWith('90') || digitsOnly.startsWith('994') || digitsOnly.startsWith('7')) {
+                  phoneNumberText = '+$digitsOnly';
+                } else {
+                  phoneNumberText = '+993$digitsOnly';
+                }
+              }
               _homeController.makePhoneCall(phoneNumberText);
             },
             text: 'call'.tr,
@@ -87,8 +103,57 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
         final user = _homeController.businessUser.value;
         if (user == null) return const SizedBox.shrink();
 
-        final rawPhone = user.businessPhone;
-        final phoneNumberText = rawPhone.contains('+993') ? rawPhone : '+993$rawPhone';
+        // Telefon numarası akıllı formatlama
+        String rawPhone = user.businessPhone.trim();
+        String formattedPhone = rawPhone;
+
+        if (rawPhone.isNotEmpty) {
+          // Sadece rakamları al
+          final digitsOnly = rawPhone.replaceAll(RegExp(r'[^0-9]'), '');
+
+          // Eğer zaten + ile başlıyorsa veya ülke kodu (993, 998 vb.) ile girilmişse DOKUNMA
+          if (rawPhone.startsWith('+')) {
+            formattedPhone = rawPhone;
+          }
+          // Eğer numara 6 ile başlıyorsa ve tam 8 haneliyse büyük ihtimalle Türkmenistan içi numaradır (Örn: 61234567)
+          else if (digitsOnly.length == 8 && digitsOnly.startsWith('6')) {
+            formattedPhone = '+993$digitsOnly';
+          }
+          // Özbek numarası: 9 haneli ve 9 ile başlıyor (Örn: 950911802 → +998950911802)
+          else if (digitsOnly.length == 9 && digitsOnly.startsWith('9')) {
+            formattedPhone = '+998$digitsOnly';
+          }
+          // Diğer tüm numaraları olduğu gibi bırak. (Örneğin Özbek numarası: 998901234567)
+          else {
+            // Eğer numara '+' olmadan 998 ile veya 993 ile girilmişse başına '+' koymak istersen:
+            if (digitsOnly.startsWith('998') || digitsOnly.startsWith('993') || digitsOnly.startsWith('90') || digitsOnly.startsWith('994') || digitsOnly.startsWith('7')) {
+              formattedPhone = '+$digitsOnly';
+            } else {
+              formattedPhone = rawPhone;
+            }
+          }
+        }
+
+        // Harita sayfasına git
+        void openMap() {
+          final lat = user.lat;
+          final long = user.long;
+          if (lat != null && lat != 0 && long != null && long != 0) {
+            Get.to(() => BusinessLocationMapPage(business: user));
+          } else {
+            showSnackBar('location'.tr, 'location_not_on_map'.tr, ColorConstants.darkMainColor);
+          }
+        }
+
+        // Telefon araması
+        void callPhone() async {
+          final Uri telUrl = Uri.parse('tel:$formattedPhone');
+          if (await canLaunchUrl(telUrl)) {
+            await launchUrl(telUrl);
+          } else {
+            showSnackBar('url_error'.tr, 'phone_call_error'.tr, ColorConstants.darkMainColor);
+          }
+        }
 
         return Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 25),
@@ -120,13 +185,14 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   index: 5,
                   maxline: 1,
                 ),
-              if (phoneNumberText.isNotEmpty)
+              if (formattedPhone.isNotEmpty)
                 SocialMediaIcon(
                   name: 'phone_number',
-                  userName: phoneNumberText,
+                  userName: formattedPhone,
                   icon: Assets.phone,
                   index: 6,
                   maxline: 1,
+                  onTap: callPhone,
                 ),
               if (user.address?.isNotEmpty == true)
                 SocialMediaIcon(
@@ -135,6 +201,7 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   icon: Assets.address,
                   index: 6,
                   maxline: 4,
+                  onTap: openMap,
                 ),
             ],
           ),
@@ -345,16 +412,40 @@ class _BusinessUserProfileViewState extends State<BusinessUserProfileView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
-                  child: Text(
-                    _homeController.businessUser.value?.description ?? '',
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: ColorConstants.darkMainColor.withOpacity(.6),
-                      fontSize: AppFontSizes.fontSize14,
-                      fontWeight: FontWeight.w400,
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isDescriptionExpanded = !_isDescriptionExpanded;
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          _homeController.businessUser.value?.description ?? '',
+                          maxLines: _isDescriptionExpanded ? null : 3,
+                          overflow: _isDescriptionExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: ColorConstants.darkMainColor.withOpacity(.6),
+                            fontSize: AppFontSizes.fontSize14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        if ((_homeController.businessUser.value?.description ?? '').length > 100)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              _isDescriptionExpanded ? 'show_less'.tr : 'show_more'.tr,
+                              style: TextStyle(
+                                color: ColorConstants.kSecondaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppFontSizes.getFontSize(3.5),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),

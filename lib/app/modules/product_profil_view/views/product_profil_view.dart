@@ -22,6 +22,7 @@ class ProductProfilView extends StatefulWidget {
 class _ProductProfilViewState extends State<ProductProfilView> {
   final ProductProfilController controller = Get.put(ProductProfilController());
   BusinessUserModel? outSideBusinessuserModel;
+  late Future<BusinessUserModel?> _businessUserFuture;
   late PageController _pageController;
 
   @override
@@ -30,6 +31,11 @@ class _ProductProfilViewState extends State<ProductProfilView> {
     controller.fetchImages(widget.productModel.id, widget.productModel.img);
     controller.fetchViewCount(widget.productModel.id);
     _pageController = PageController(initialPage: controller.selectedImageIndex.value);
+
+    _businessUserFuture = BusinessUserService().fetchBusinessAccountKICI(widget.productModel.user.toInt());
+    _businessUserFuture.then((model) {
+      if (mounted) setState(() => outSideBusinessuserModel = model);
+    }).catchError((_) {});
 
     ever(controller.selectedImageIndex, (int index) {
       if (_pageController.hasClients && _pageController.page?.round() != index) {
@@ -58,7 +64,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
         slivers: <Widget>[
           _buildSliverAppBar(),
           FutureBuilder<BusinessUserModel?>(
-            future: BusinessUserService().fetchBusinessAccountKICI(widget.productModel.user.toInt()),
+            future: _businessUserFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SliverToBoxAdapter(child: EmptyStates().loadingData());
@@ -67,7 +73,6 @@ class _ProductProfilViewState extends State<ProductProfilView> {
                   child: EmptyStates().errorData(snapshot.hasError.toString()),
                 );
               } else if (snapshot.hasData) {
-                outSideBusinessuserModel = snapshot.data;
                 return MultiSliver(
                   children: [
                     SliverPadding(

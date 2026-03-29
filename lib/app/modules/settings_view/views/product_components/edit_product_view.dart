@@ -267,7 +267,7 @@ class _UpdateProductViewState extends State<UpdateProductView> {
                     padding: EdgeInsets.only(top: 30, left: 15, right: 15),
                     child: TextField(
                       decoration: _dropdownDecoration('types_of_business'.tr),
-                      controller: TextEditingController(text: controller.selectedCategory.value?.name ?? ''),
+                      controller: TextEditingController(text: controller.selectedCategory.value?.localizedName ?? ''),
                       readOnly: true, // Kullanıcının metni değiştirmesini engeller
                       onTap: () {
                         _showCategoryDialog(context);
@@ -278,7 +278,7 @@ class _UpdateProductViewState extends State<UpdateProductView> {
                     padding: EdgeInsets.only(top: 20, left: 15, right: 15),
                     child: TextField(
                       decoration: _dropdownDecoration('categories'.tr),
-                      controller: TextEditingController(text: controller.selectedHashtag.value?.name ?? ''),
+                      controller: TextEditingController(text: controller.selectedHashtag.value?.localizedName ?? ''),
                       readOnly: true, // Kullanıcının metni değiştirmesini engeller
                       onTap: () {
                         _showHashtagDialog(context);
@@ -459,19 +459,27 @@ class _UpdateProductViewState extends State<UpdateProductView> {
       {'code': 'uz', 'label': '🇺🇿 Uzbek'},
       {'code': 'tr', 'label': '🇹🇷 Türkçe'},
     ];
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        leading: Icon(Icons.translate, color: ColorConstants.kPrimaryColor),
-        title: Text(
-          'other_languages'.tr,
-          style: TextStyle(
-            color: ColorConstants.kPrimaryColor,
-            fontWeight: FontWeight.w600,
-            fontSize: AppFontSizes.getFontSize(4.5),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      decoration: BoxDecoration(
+        // color: ColorConstants.kPrimaryColor.withOpacity(0.1),
+        borderRadius: BorderRadii.borderRadius20,
+        border: Border.all(color: ColorConstants.kPrimaryColor, width: 2),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: Icon(Icons.translate, color: ColorConstants.kPrimaryColor),
+          title: Text(
+            'other_languages'.tr,
+            style: TextStyle(
+              color: ColorConstants.kPrimaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.getFontSize(4.5),
+            ),
           ),
+          children: langs.map((lang) => _buildLangFields(lang['code']!, lang['label']!)).toList(),
         ),
-        children: langs.map((lang) => _buildLangFields(lang['code']!, lang['label']!)).toList(),
       ),
     );
   }

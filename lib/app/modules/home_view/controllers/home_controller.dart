@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:atelyam/app/data/models/banner_model.dart';
 import 'package:atelyam/app/data/models/business_category_model.dart';
 import 'package:atelyam/app/data/models/hashtag_model.dart';
@@ -28,12 +30,17 @@ class HomeController extends GetxController {
   final BusinessCategoryService _categoryService = BusinessCategoryService();
   final HashtagService _hashtagService = HashtagService();
 
+  Future<List<HashtagModel>> _fetchHashtagsShuffled() async {
+    final list = await _hashtagService.fetchHashtags();
+    return list..shuffle(Random());
+  }
+
   @override
   void onInit() {
     super.onInit();
     bannersFuture = _bannerService.fetchBanners().obs;
     categoriesFuture = _categoryService.fetchCategories().obs;
-    hashtagsFuture = _hashtagService.fetchHashtags().obs;
+    hashtagsFuture = _fetchHashtagsShuffled().obs;
   }
 
   void initializeProducts(int hashtagId) {
@@ -88,7 +95,7 @@ class HomeController extends GetxController {
 
     bannersFuture.value = _bannerService.fetchBanners();
     categoriesFuture.value = _categoryService.fetchCategories();
-    hashtagsFuture.value = _hashtagService.fetchHashtags();
+    hashtagsFuture.value = _fetchHashtagsShuffled();
 
     refreshController.refreshCompleted();
   }

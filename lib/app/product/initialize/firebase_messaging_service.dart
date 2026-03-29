@@ -24,10 +24,23 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
-    // Get and print current FCM token for testing
+    // FCM Token (Android & iOS)
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+    print('========== FCM TOKEN ==========');
+    print(fcmToken);
+    print('================================');
+
+    // APNS Token (iOS only)
+    final String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+    print('========== APNS TOKEN ==========');
+    print(apnsToken);
+    print('=================================');
 
     await NotificationService().sendDeviceToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      print('========== FCM TOKEN (refreshed) ==========');
+      print(fcmToken);
+      print('===========================================');
       NotificationService().sendDeviceToken();
     }).onError((error) {});
   }

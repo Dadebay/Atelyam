@@ -1,8 +1,9 @@
 import 'package:atelyam/app/modules/business_view/views/business_currency_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/customers/pages/customer_detail_page.dart';
+import 'package:atelyam/app/modules/business_view/views/customers/services/client_service.dart';
 import 'package:atelyam/app/modules/business_view/views/finance/controllers/finance_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/finance/models/outstanding_customer_model.dart';
 import 'package:atelyam/app/modules/business_view/views/finance/pages/add_expense_page.dart';
-import 'package:atelyam/app/modules/business_view/views/orders/models/order_item.dart';
-import 'package:atelyam/app/modules/business_view/views/orders/services/order_service.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
@@ -11,58 +12,29 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 
-class BusinessFinancePage extends StatefulWidget {
+class BusinessFinancePage extends StatelessWidget {
   const BusinessFinancePage({super.key});
 
   @override
-  State<BusinessFinancePage> createState() => _BusinessFinancePageState();
-}
-
-class _BusinessFinancePageState extends State<BusinessFinancePage> {
-  final FinanceController _controller = Get.put(FinanceController());
-  final BusinessCurrencyController _currencyController = Get.find<BusinessCurrencyController>();
-  final OrderService _orderService = OrderService();
-  List<OrderItem> _outstandingOrders = [];
-  bool _loadingOrders = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadOutstandingOrders();
-  }
-
-  Future<void> _loadOutstandingOrders() async {
-    try {
-      final orders = await _orderService.fetchOrders();
-      setState(() {
-        _outstandingOrders = orders.where((o) => o.due > 0).toList();
-        _loadingOrders = false;
-      });
-    } catch (e) {
-      setState(() => _loadingOrders = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final FinanceController controller = Get.put(FinanceController());
+    final BusinessCurrencyController currencyController = Get.find<BusinessCurrencyController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       body: SafeArea(
         child: Obx(() {
-          if (_controller.isLoading.value && _controller.financeData.value == null) {
+          if (controller.isLoading.value && controller.financeData.value == null) {
             return EmptyStates().loadingData();
           }
 
-          final data = _controller.financeData.value;
+          final data = controller.financeData.value;
           if (data == null) {
-            return Center(child: Text('No data available'));
+            return Center(child: Text('no_data'.tr));
           }
 
           return RefreshIndicator(
-            onRefresh: () async {
-              await _controller.loadFinanceData();
-              await _loadOutstandingOrders();
-            },
+            onRefresh: () => controller.loadFinanceData(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -83,10 +55,10 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
                   ),
 
                   // Period filter
-                  _buildPeriodFilter(),
+                  _buildPeriodFilter(controller),
 
                   // Stats cards
-                  _buildStatsGrid(data),
+                  _buildStatsGrid(data, currencyController),
 
                   const SizedBox(height: 24),
 
@@ -107,7 +79,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
                         onPressed: () async {
                           final result = await Get.to(() => const AddExpensePage());
                           if (result == true) {
-                            await _controller.loadFinanceData();
+                            await controller.loadFinanceData();
                           }
                         },
                         icon: Container(
@@ -125,11 +97,11 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
                   const SizedBox(height: 12),
 
                   // Recent Expenses list
-                  _buildExpensesList(data),
+                  _buildExpensesList(data, controller, currencyController),
 
                   const SizedBox(height: 24),
 
-                  // Outstanding Payments
+                  // Outstanding Payments header
                   Text(
                     'outstanding_payments'.tr,
                     style: TextStyle(
@@ -142,7 +114,13 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
 
                   const SizedBox(height: 12),
 
-                  _buildOutstandingList(),
+                  // Outstanding — per-customer list
+                  Obx(() => _buildOutstandingList(
+                        context,
+                        controller,
+                        controller.outstandingCustomers,
+                        currencyController,
+                      )),
 
                   const SizedBox(height: 20),
                 ],
@@ -154,34 +132,77 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
     );
   }
 
-  Widget _buildPeriodFilter() {
+  Future<void> _openCustomerDetail(
+    BuildContext context,
+    FinanceController controller,
+    OutstandingCustomer customer,
+  ) async {
+    if (customer.id == 0) {
+      Get.snackbar(
+        'error'.tr,
+        'unknownError'.tr,
+        backgroundColor: ColorConstants.redColor,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final clientService = ClientService();
+
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      final client = await clientService.fetchClientById(customer.id);
+      if (Get.isDialogOpen ?? false) Get.back<void>();
+      await Get.to<void>(
+        () => CustomerDetailPage(
+          client: client,
+          service: clientService,
+          onChanged: () async => controller.loadFinanceData(silent: true),
+        ),
+      );
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back<void>();
+      Get.snackbar(
+        'error'.tr,
+        'unknownError'.tr,
+        backgroundColor: ColorConstants.redColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Widget _buildPeriodFilter(FinanceController controller) {
     return Obx(() {
-      final selected = _controller.selectedPeriod.value;
+      final selected = controller.selectedPeriod.value;
 
       return Container(
         height: 42,
-        margin: EdgeInsets.only(top: 10, bottom: 15),
+        margin: const EdgeInsets.only(top: 10, bottom: 15),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            _periodButton('daily', 'daily', selected),
-            _periodButton('weekly', 'weekly', selected),
-            _periodButton('monthly', 'monthly', selected),
+            _periodButton('daily', 'daily', selected, controller),
+            _periodButton('weekly', 'weekly', selected, controller),
+            _periodButton('monthly', 'monthly', selected, controller),
           ],
         ),
       );
     });
   }
 
-  Widget _periodButton(String label, String value, String selected) {
+  Widget _periodButton(String label, String value, String selected, FinanceController controller) {
     final isSelected = selected == value;
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => _controller.changePeriod(value),
+        onTap: () => controller.changePeriod(value),
         child: Container(
           alignment: Alignment.center,
           margin: const EdgeInsets.all(4),
@@ -203,14 +224,14 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
     );
   }
 
-  Widget _buildStatsGrid(data) {
+  Widget _buildStatsGrid(data, BusinessCurrencyController currency) {
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.68,
+      childAspectRatio: 1.55,
       children: [
         _buildStatCard(
           'income',
@@ -218,6 +239,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
           HugeIcons.strokeRoundedArrowUpRight01,
           Colors.green.shade600,
           Colors.green.shade50,
+          currency,
         ),
         _buildStatCard(
           'expenses',
@@ -225,6 +247,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
           HugeIcons.strokeRoundedArrowDownRight01,
           Colors.red.shade600,
           Colors.red.shade50,
+          currency,
         ),
         _buildStatCard(
           'net_profit',
@@ -232,6 +255,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
           HugeIcons.strokeRoundedDollarCircle,
           Colors.blue.shade600,
           Colors.blue.shade50,
+          currency,
         ),
         _buildStatCard(
           'outstanding',
@@ -239,12 +263,20 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
           HugeIcons.strokeRoundedClock01,
           Colors.orange.shade600,
           Colors.orange.shade50,
+          currency,
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, double amount, IconData icon, Color iconColor, Color bgColor) {
+  Widget _buildStatCard(
+    String title,
+    double amount,
+    IconData icon,
+    Color iconColor,
+    Color bgColor,
+    BusinessCurrencyController currency,
+  ) {
     return Container(
       padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 10),
       decoration: BoxDecoration(
@@ -264,7 +296,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
           Row(
             children: [
               Container(
-                margin: EdgeInsets.only(right: 15),
+                margin: const EdgeInsets.only(right: 15),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: bgColor,
@@ -273,15 +305,19 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
                 child: Icon(icon, color: iconColor, size: 20),
               ),
               Expanded(
-                child: Text(
-                  '\$${amount.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: title == 'net_profit' && amount < 0 ? Colors.red : Colors.black,
-                  ),
-                ),
+                child: Obx(() => FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        currency.currency.value.format(amount),
+                        style: TextStyle(
+                          fontFamily: Fonts.gilroy,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: title == 'net_profit' && amount < 0 ? Colors.red : Colors.black,
+                        ),
+                      ),
+                    )),
               ),
             ],
           ),
@@ -302,7 +338,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
     );
   }
 
-  Widget _buildExpensesList(data) {
+  Widget _buildExpensesList(data, FinanceController controller, BusinessCurrencyController currency) {
     if (data.recentExpenses.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(24),
@@ -329,66 +365,155 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
       itemCount: data.recentExpenses.length,
       itemBuilder: (context, index) {
         final expense = data.recentExpenses[index];
-        return Dismissible(
-          key: Key('expense_${expense.id}'),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(16),
+        return Obx(() {
+          final isNew = controller.lastAddedExpenseId.value == expense.id;
+          return Dismissible(
+            key: Key('expense_${expense.id}_$index'),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.centerRight,
+              child: const Icon(HugeIcons.strokeRoundedDelete02, color: Colors.white),
             ),
-            alignment: Alignment.centerRight,
-            child: const Icon(HugeIcons.strokeRoundedDelete02, color: Colors.white),
+            onDismissed: (_) => controller.deleteExpense(expense.id),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isNew ? Colors.green.shade50 : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: isNew ? Border.all(color: Colors.green.shade400, width: 1.5) : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          expense.title,
+                          style: TextStyle(
+                            fontFamily: Fonts.gilroy,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${expense.category} · ${_formatDate(expense.date)}',
+                          style: TextStyle(
+                            fontFamily: Fonts.gilroy,
+                            fontSize: 12,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Obx(() => Text(
+                        '-${currency.currency.value.format(expense.amount)}',
+                        style: TextStyle(
+                          fontFamily: Fonts.gilroy,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.red.shade600,
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Widget _buildOutstandingList(
+    BuildContext context,
+    FinanceController controller,
+    List<OutstandingCustomer> customers,
+    BusinessCurrencyController currency,
+  ) {
+    if (customers.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            'no_outstanding_payments'.tr,
+            style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 14, color: Colors.grey.shade500),
           ),
-          onDismissed: (_) => _controller.deleteExpense(expense.id),
+        ),
+      );
+    }
+
+    return Column(
+      children: customers.map((customer) {
+        return GestureDetector(
+          onTap: () => _openCustomerDetail(context, controller, customer),
           child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
+                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
               ],
             ),
             child: Row(
               children: [
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: const Color(0xFF2B6FDE),
+                  child: Text(
+                    customer.initial,
+                    style: TextStyle(
+                      fontFamily: Fonts.gilroy,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        expense.title,
-                        style: TextStyle(
-                          fontFamily: Fonts.gilroy,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${expense.category} · ${_formatDate(expense.date)}',
-                        style: TextStyle(
-                          fontFamily: Fonts.gilroy,
-                          fontSize: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    customer.name,
+                    style: TextStyle(
+                      fontFamily: Fonts.gilroy,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Obx(() => Text(
-                      '-${_currencyController.currency.value.format(expense.amount)}',
+                      currency.currency.value.format(customer.outstanding),
                       style: TextStyle(
                         fontFamily: Fonts.gilroy,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Colors.red.shade600,
                       ),
@@ -397,95 +522,7 @@ class _BusinessFinancePageState extends State<BusinessFinancePage> {
             ),
           ),
         );
-      },
-    );
-  }
-
-  Widget _buildOutstandingList() {
-    if (_loadingOrders) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_outstandingOrders.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Center(
-          child: Text(
-            'no_outstanding_payments'.tr,
-            style: TextStyle(
-              fontFamily: Fonts.gilroy,
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _outstandingOrders.length,
-      itemBuilder: (context, index) {
-        final order = _outstandingOrders[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: ColorConstants.kSecondaryColor.withOpacity(0.1),
-                child: Text(
-                  order.clientName.isNotEmpty ? order.clientName[0].toUpperCase() : 'C',
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: ColorConstants.kSecondaryColor,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  order.clientName,
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Obx(() => Text(
-                    _currencyController.currency.value.format(order.due),
-                    style: TextStyle(
-                      fontFamily: Fonts.gilroy,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.red.shade600,
-                    ),
-                  )),
-            ],
-          ),
-        );
-      },
+      }).toList(),
     );
   }
 

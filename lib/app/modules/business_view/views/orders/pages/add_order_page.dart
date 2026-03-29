@@ -1,15 +1,20 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../customers/models/client_measurement.dart';
 import '../../customers/models/client_model.dart';
+import '../../customers/models/measurement_type.dart';
 import '../../customers/services/client_service.dart';
 import '../models/order_item.dart';
+import '../services/deadline_storage.dart';
 import '../services/order_service.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/order_card.dart';
@@ -35,12 +40,23 @@ class _AddOrderPageState extends State<AddOrderPage> {
   bool _loadingClients = true;
   bool _saving = false;
   ClientModel? _selectedClient;
-  String _status = 'new';
+  String _status = 'New Orders';
   File? _image;
 
-  static const _statuses = <String>['new', 'in progress', 'ready', 'completed'];
+  // Measurement controllers: keyed by MeasurementType.id (from getvalues)
+  final Map<int, TextEditingController> _measurementCtrls = <int, TextEditingController>{};
+  final Map<int, String> _originalMeasurements = <int, String>{};
+  // Ordered list of types to display (28 standard + synthetic extras)
+  List<MeasurementType> _measurementTypes = <MeasurementType>[];
+  // typeId → MeasurementType for quick lookup
+  Map<int, MeasurementType> _measurementTypeMap = <int, MeasurementType>{};
+
+  // Bu değerler backend'deki status field'larıyla birebir eşleşmeli
+  static const _statuses = <String>['New Orders', 'In Progress', 'Ready', 'Completed'];
 
   bool get _isEditMode => widget.order != null;
+  bool _measurementsExpanded = false;
+  DateTime? _deadline;
 
   @override
   void initState() {
@@ -56,23 +72,184 @@ class _AddOrderPageState extends State<AddOrderPage> {
       _priceCtrl.text = order.price.toString();
       _dueCtrl.text = order.due.toString();
       _status = order.status;
+      // Load deadline from local storage, fall back to value passed via order
+      _deadline = DeadlineStorage.read(order.id) ?? order.deadline;
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Measurement helpers
+  // ---------------------------------------------------------------------------
+
+  static String _normLabel(String s) => s
+      .toLowerCase()
+      .replaceAll(RegExp(r"['\u2018\u2019\u0060]"), '')
+      .replaceAll("ý", "y")
+      .replaceAll("ö", "o")
+      .replaceAll("ä", "a")
+      .replaceAll("ü", "u")
+      .replaceAll("ş", "s")
+      .replaceAll("ç", "c")
+      .replaceAll("ğ", "g")
+      .replaceAll("ň", "n")
+      .replaceAll("ž", "z")
+      .replaceAll('uzunligi', 'uzynlygy')
+      .replaceAll('kokrak', 'dos')
+      .trim();
+
+  int _levenshtein(String a, String b) {
+    if (a == b) return 0;
+    if (a.isEmpty) return b.length;
+    if (b.isEmpty) return a.length;
+    final mx = List.generate(a.length + 1, (i) => List.filled(b.length + 1, 0));
+    for (int i = 0; i <= a.length; i++) mx[i][0] = i;
+    for (int j = 0; j <= b.length; j++) mx[0][j] = j;
+    for (int i = 1; i <= a.length; i++) {
+      for (int j = 1; j <= b.length; j++) {
+        final cost = a[i - 1] == b[j - 1] ? 0 : 1;
+        mx[i][j] = [mx[i - 1][j] + 1, mx[i][j - 1] + 1, mx[i - 1][j - 1] + cost].reduce(math.min);
+      }
+    }
+    return mx[a.length][b.length];
+  }
+
+  /// EditCustomerPage ile aynı matching mantığı:
+  /// Standart type listesini temel alır, client measurements ile eşleştirir.
+  void _initMeasurementCtrls(ClientModel? client, List<MeasurementType> allTypes) {
+    for (final ctrl in _measurementCtrls.values) ctrl.dispose();
+    _measurementCtrls.clear();
+    _originalMeasurements.clear();
+
+    if (client == null) {
+      _measurementTypes = <MeasurementType>[];
+      return;
+    }
+
+    List<MeasurementType> types = List<MeasurementType>.from(allTypes);
+    final Set<int> matchedTypeIds = <int>{};
+    final Set<int> usedMeasurementTypeIds = <int>{};
+
+    for (final type in types) {
+      // 1. typeId ile eşleştir
+      var existing = client.measurements.firstWhereOrNull(
+        (m) => m.typeId != null && m.typeId == type.id,
+      );
+      // 2. Exact label match (tüm dil varyantları)
+      existing ??= client.measurements.firstWhereOrNull((m) {
+        final ml = m.label.toLowerCase().trim();
+        return ml == type.name.toLowerCase().trim() ||
+            (type.nameEn?.toLowerCase().trim() == ml) ||
+            (type.nameRu?.toLowerCase().trim() == ml) ||
+            (type.nameUz?.toLowerCase().trim() == ml) ||
+            (type.nameTr?.toLowerCase().trim() == ml);
+      });
+      // 3. Normalized match (value olanı tercih et)
+      if (existing == null || existing.value.trim().isEmpty) {
+        final normTypeNames = [
+          type.name,
+          type.nameEn ?? '',
+          type.nameRu ?? '',
+          type.nameUz ?? '',
+          type.nameTr ?? '',
+        ].map(_normLabel).toSet();
+        final normalized = client.measurements.firstWhereOrNull((m) {
+          if (m.value.trim().isEmpty) return false;
+          if (m.typeId != null && usedMeasurementTypeIds.contains(m.typeId)) return false;
+          return normTypeNames.contains(_normLabel(m.label));
+        });
+        if (normalized != null) existing = normalized;
+      }
+      // 4. Fuzzy contains
+      existing ??= client.measurements.firstWhereOrNull((m) {
+        final ml = m.label.toLowerCase().trim();
+        if (ml.isEmpty) return false;
+        return [type.name, type.nameEn ?? '', type.nameUz ?? '', type.nameTr ?? ''].map((n) => n.toLowerCase().trim()).where((n) => n.isNotEmpty).any((n) => n.contains(ml) || ml.contains(n));
+      });
+      // 5. Levenshtein >= 65%
+      if (existing == null || existing.value.trim().isEmpty) {
+        final typeNames = [
+          type.name,
+          type.nameEn ?? '',
+          type.nameRu ?? '',
+          type.nameUz ?? '',
+          type.nameTr ?? '',
+        ].map(_normLabel).where((n) => n.isNotEmpty).toList();
+        double bestScore = 0.65;
+        ClientMeasurement? bestMatch;
+        for (final m in client.measurements) {
+          if (m.value.trim().isEmpty) continue;
+          if (m.typeId != null && usedMeasurementTypeIds.contains(m.typeId)) continue;
+          final ml = _normLabel(m.label);
+          if (ml.isEmpty) continue;
+          for (final tn in typeNames) {
+            final maxLen = math.max(ml.length, tn.length);
+            if (maxLen == 0) continue;
+            final score = 1.0 - _levenshtein(ml, tn) / maxLen;
+            if (score > bestScore) {
+              bestScore = score;
+              bestMatch = m;
+            }
+          }
+        }
+        if (bestMatch != null) existing = bestMatch;
+      }
+
+      if (existing?.typeId != null) {
+        matchedTypeIds.add(existing!.typeId!);
+        if (existing.value.trim().isNotEmpty) usedMeasurementTypeIds.add(existing.typeId!);
+      }
+      final prefill = existing?.value ?? '';
+      _measurementCtrls[type.id] = TextEditingController(text: prefill);
+      _originalMeasurements[type.id] = prefill;
+    }
+
+    // Eşleşemeyen ama value olan measurement'ları synthetic olarak ekle
+    for (final m in client.measurements) {
+      if (m.value.trim().isEmpty) continue;
+      if (m.typeId == null) continue;
+      if (matchedTypeIds.contains(m.typeId)) continue;
+      if (types.any((t) => t.id == m.typeId)) continue;
+      final synthetic = MeasurementType(id: m.typeId!, name: m.label);
+      types.add(synthetic);
+      _measurementCtrls[m.typeId!] = TextEditingController(text: m.value);
+      _originalMeasurements[m.typeId!] = m.value;
+    }
+
+    _measurementTypes = types;
+  }
+
+  void _onClientChanged(ClientModel? client) {
+    _initMeasurementCtrls(client, _measurementTypeMap.values.toList());
+    setState(() => _selectedClient = client);
+  }
+
+  // ---------------------------------------------------------------------------
+
   Future<void> _loadClients() async {
     try {
-      final clients = await _clientService.fetchClients();
+      final results = await Future.wait(<Future<dynamic>>[
+        _clientService.fetchClients(),
+        _clientService.fetchMeasurementTypes(),
+      ]);
       if (!mounted) return;
+      final clients = results[0] as List<ClientModel>;
+      final types = results[1] as List<MeasurementType>;
+      final typeMap = <int, MeasurementType>{
+        for (final t in types) t.id: t,
+      };
+      ClientModel? editClient;
+      if (_isEditMode) {
+        editClient = clients.firstWhere(
+          (c) => c.id == widget.order!.client,
+          orElse: () => clients.first,
+        );
+        _initMeasurementCtrls(editClient, types);
+      }
       setState(() {
         _clients = clients;
         _loadingClients = false;
-        // If in edit mode, select the client
-        if (_isEditMode) {
-          _selectedClient = clients.firstWhere(
-            (c) => c.id == widget.order!.client,
-            orElse: () => clients.first,
-          );
-        }
+        _measurementTypeMap = typeMap;
+        if (_isEditMode) _selectedClient = editClient;
       });
       print('📋 Loaded ${clients.length} clients for order');
     } catch (e) {
@@ -83,6 +260,144 @@ class _AddOrderPageState extends State<AddOrderPage> {
         _loadingClients = false;
       });
     }
+  }
+
+  Widget _buildMeasurementsSection() {
+    if (_measurementTypes.isEmpty) return const SizedBox.shrink();
+
+    final filledTypes = _measurementTypes.where((t) {
+      final ctrl = _measurementCtrls[t.id];
+      return ctrl != null && ctrl.text.trim().isNotEmpty;
+    }).toList();
+
+    return OFormCard(
+      children: <Widget>[
+        // Collapsible header
+        GestureDetector(
+          onTap: () => setState(() => _measurementsExpanded = !_measurementsExpanded),
+          behavior: HitTestBehavior.opaque,
+          child: Row(
+            children: <Widget>[
+              const Icon(Icons.straighten_rounded, size: 16, color: Color(0xFF3B79F6)),
+              const SizedBox(width: 6),
+              Expanded(child: OFormLabel('measurements'.tr)),
+              if (filledTypes.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3B79F6).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${filledTypes.length}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF3B79F6),
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 6),
+              AnimatedRotation(
+                duration: const Duration(milliseconds: 200),
+                turns: _measurementsExpanded ? 0.5 : 0,
+                child: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Colors.grey.shade400,
+                  size: 22,
+                ),
+              ),
+            ],
+          ),
+        ),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 250),
+          crossFadeState: _measurementsExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+          firstChild: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                'client_measurements_hint'.tr,
+                style: TextStyle(
+                  fontFamily: Fonts.gilroy,
+                  fontSize: 11,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ..._measurementTypes.map((type) {
+                final ctrl = _measurementCtrls[type.id];
+                if (ctrl == null) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          type.localizedName,
+                          style: TextStyle(
+                            fontFamily: Fonts.gilroy,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: ctrl,
+                          style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 14),
+                          decoration: oInputDeco('0').copyWith(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+          secondChild: const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickDeadline() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _deadline ?? now.add(const Duration(days: 7)),
+      firstDate: now,
+      lastDate: DateTime(now.year + 5),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorConstants.kPrimaryColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black87,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _deadline = picked);
+    }
+  }
+
+  String _formatDeadline(DateTime date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   Future<void> _pickImage() async {
@@ -112,6 +427,30 @@ class _AddOrderPageState extends State<AddOrderPage> {
     });
 
     try {
+      // Update measurements that have changed
+      final changedMeasurements = <Map<String, dynamic>>[];
+      for (final type in _measurementTypes) {
+        final ctrl = _measurementCtrls[type.id];
+        if (ctrl == null) continue;
+        final current = ctrl.text.trim();
+        if (current != (_originalMeasurements[type.id] ?? '')) {
+          changedMeasurements.add(<String, dynamic>{
+            'name': type.localizedName,
+            'value': current,
+          });
+        }
+      }
+      if (changedMeasurements.isNotEmpty) {
+        print('📏 Updating ${changedMeasurements.length} measurements for client ${_selectedClient!.id}');
+        await _clientService.updateClient(
+          id: _selectedClient!.id,
+          name: _selectedClient!.name,
+          phone: _selectedClient!.phone,
+          newMeasurements: changedMeasurements,
+        );
+        print('✅ Measurements updated');
+      }
+
       if (_isEditMode) {
         print('💾 Updating order...');
         await widget.service.updateOrder(
@@ -123,6 +462,22 @@ class _AddOrderPageState extends State<AddOrderPage> {
           status: _status,
           image: _image,
         );
+        // Save deadline locally on device
+        DeadlineStorage.save(widget.order!.id, _deadline);
+        try {
+          if (_deadline != null) {
+            await LocalNotificationsService.instance().scheduleDeadlineNotifications(
+              orderId: widget.order!.id,
+              orderName: _orderNameCtrl.text.trim(),
+              clientName: _selectedClient!.name,
+              deadline: _deadline!,
+            );
+          } else {
+            await LocalNotificationsService.instance().cancelDeadlineNotifications(widget.order!.id);
+          }
+        } catch (notifErr) {
+          print('⚠️ Notification scheduling failed (order still saved): $notifErr');
+        }
         print('✅ Order updated successfully!');
       } else {
         print('💾 Creating order...');
@@ -132,7 +487,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
         print('💾 Due: ${_dueCtrl.text.trim()}');
         print('💾 Status: $_status');
 
-        await widget.service.createOrder(
+        final newOrder = await widget.service.createOrder(
           clientId: _selectedClient!.id,
           orderName: _orderNameCtrl.text.trim(),
           price: _priceCtrl.text.trim(),
@@ -140,6 +495,20 @@ class _AddOrderPageState extends State<AddOrderPage> {
           status: _status,
           image: _image,
         );
+        // Save deadline locally on device
+        DeadlineStorage.save(newOrder.id, _deadline);
+        try {
+          if (_deadline != null) {
+            await LocalNotificationsService.instance().scheduleDeadlineNotifications(
+              orderId: newOrder.id,
+              orderName: _orderNameCtrl.text.trim(),
+              clientName: _selectedClient!.name,
+              deadline: _deadline!,
+            );
+          }
+        } catch (notifErr) {
+          print('⚠️ Notification scheduling failed (order still saved): $notifErr');
+        }
         print('✅ Order created successfully!');
       }
 
@@ -175,6 +544,9 @@ class _AddOrderPageState extends State<AddOrderPage> {
     _orderNameCtrl.dispose();
     _priceCtrl.dispose();
     _dueCtrl.dispose();
+    for (final ctrl in _measurementCtrls.values) {
+      ctrl.dispose();
+    }
     super.dispose();
   }
 
@@ -231,15 +603,16 @@ class _AddOrderPageState extends State<AddOrderPage> {
                         ),
                       );
                     }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedClient = value;
-                      });
-                    },
+                    onChanged: _onClientChanged,
                     validator: (value) => value == null ? 'please_select_customer'.tr : null,
                   ),
               ],
             ),
+            // Measurements (shown when a client is selected and types are loaded)
+            if (_selectedClient != null && _measurementTypes.isNotEmpty) ...<Widget>[
+              const SizedBox(height: 14),
+              _buildMeasurementsSection(),
+            ],
             const SizedBox(height: 14),
             // Order Name
             OFormCard(
@@ -268,13 +641,13 @@ class _AddOrderPageState extends State<AddOrderPage> {
                     final color = orderStatusColor(s);
                     final selected = s == _status;
                     String labelKey;
-                    if (s == 'new') {
+                    if (s == 'New Orders') {
                       labelKey = 'status_new';
-                    } else if (s == 'in progress') {
+                    } else if (s == 'In Progress') {
                       labelKey = 'status_in_progress';
-                    } else if (s == 'ready') {
+                    } else if (s == 'Ready') {
                       labelKey = 'status_ready';
-                    } else if (s == 'completed') {
+                    } else if (s == 'Completed') {
                       labelKey = 'status_completed';
                     } else {
                       labelKey = s;
@@ -343,6 +716,46 @@ class _AddOrderPageState extends State<AddOrderPage> {
                       ),
                     ),
                   ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            // Deadline
+            OFormCard(
+              children: <Widget>[
+                OFormLabel('deadline'.tr + ' (${'optional'.tr})'),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: _pickDeadline,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_month_rounded, size: 18, color: _deadline != null ? ColorConstants.kPrimaryColor : Colors.grey.shade400),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _deadline != null ? _formatDeadline(_deadline!) : 'select_deadline'.tr,
+                            style: TextStyle(
+                              fontFamily: Fonts.gilroy,
+                              fontSize: 14,
+                              color: _deadline != null ? Colors.black87 : Colors.grey.shade500,
+                            ),
+                          ),
+                        ),
+                        if (_deadline != null)
+                          GestureDetector(
+                            onTap: () => setState(() => _deadline = null),
+                            child: Icon(Icons.close_rounded, size: 18, color: Colors.grey.shade400),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

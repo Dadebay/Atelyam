@@ -1,5 +1,11 @@
+import 'package:atelyam/app/modules/business_view/views/analytics/controllers/analytics_controller.dart';
 import 'package:atelyam/app/modules/business_view/views/business_currency_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/customers/controllers/customer_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/dashboard/controllers/dashboard_controller.dart';
+import 'package:atelyam/app/modules/business_view/views/finance/controllers/finance_controller.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
+import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
+import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +13,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 import 'models/order_item.dart';
 import 'pages/add_order_page.dart';
+import 'services/deadline_storage.dart';
 import 'services/order_service.dart';
 import 'widgets/order_card.dart';
 
@@ -27,8 +34,10 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
   bool _isRefreshing = false;
   String? _error;
   String _activeFilter = 'All';
+  int? _deletingOrderId;
 
-  static const _filters = <String>['All', 'new', 'in progress', 'ready', 'completed'];
+  // Backend'in status field'larıyla birebir eşleşen değerler
+  static const _filters = <String>['All', 'New Orders', 'In Progress', 'Ready', 'Completed'];
 
   @override
   void initState() {
@@ -41,6 +50,22 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  /// Sipariş değişince ilgili tüm controller'ları yenile
+  void _refreshAllControllers() {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().refresh();
+    }
+    if (Get.isRegistered<FinanceController>()) {
+      Get.find<FinanceController>().loadFinanceData(silent: true);
+    }
+    if (Get.isRegistered<AnalyticsController>()) {
+      Get.find<AnalyticsController>().refresh();
+    }
+    if (Get.isRegistered<CustomerController>()) {
+      Get.find<CustomerController>().refresh();
+    }
   }
 
   Future<void> _loadOrders({bool silent = false}) async {
@@ -59,9 +84,15 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
     try {
       final orders = await _orderService.fetchOrders();
       print('📋 Loaded ${orders.length} orders');
+      // Merge locally stored deadlines into the order objects
+      final deadlines = DeadlineStorage.readAll(orders.map((o) => o.id).toList());
+      final ordersWithDeadlines = orders.map((o) {
+        final dl = deadlines[o.id];
+        return dl != null ? o.withDeadline(dl) : o;
+      }).toList();
       if (!mounted) return;
       setState(() {
-        _allOrders = orders;
+        _allOrders = ordersWithDeadlines;
         _applyFilter();
         _isLoading = false;
         _isRefreshing = false;
@@ -78,11 +109,13 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
     }
   }
 
-  void _applyFilter() {
-    final q = _searchCtrl.text.toLowerCase();
+  void _applyFilter({String? filter}) {
+    final q = _searchCtrl.text.toLowerCase().trim();
+    final active = filter ?? _activeFilter;
     setState(() {
+      if (filter != null) _activeFilter = filter;
       _filteredOrders = _allOrders.where((o) {
-        final matchFilter = _activeFilter == 'All' || o.status.toLowerCase() == _activeFilter.toLowerCase();
+        final matchFilter = active == 'All' || o.status.trim() == active.trim();
         final matchSearch = q.isEmpty || o.clientName.toLowerCase().contains(q) || o.orderName.toLowerCase().contains(q);
         return matchFilter && matchSearch;
       }).toList();
@@ -103,6 +136,7 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
             print('🔄 Refreshing order list...');
             await _loadOrders(silent: true);
             print('🔄 Order list refreshed');
+            _refreshAllControllers();
           }
         },
         backgroundColor: const Color(0xFF3B79F6),
@@ -164,22 +198,19 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
                   String labelKey;
                   if (f == 'All') {
                     labelKey = 'filter_all';
-                  } else if (f == 'new') {
-                    labelKey = 'filter_new';
-                  } else if (f == 'in progress') {
+                  } else if (f == 'New Orders') {
+                    labelKey = 'new_orders';
+                  } else if (f == 'In Progress') {
                     labelKey = 'filter_in_progress';
-                  } else if (f == 'ready') {
+                  } else if (f == 'Ready') {
                     labelKey = 'filter_ready';
-                  } else if (f == 'completed') {
+                  } else if (f == 'Completed') {
                     labelKey = 'filter_completed';
                   } else {
                     labelKey = f;
                   }
                   return GestureDetector(
-                    onTap: () {
-                      setState(() => _activeFilter = f);
-                      _applyFilter();
-                    },
+                    onTap: () => _applyFilter(filter: f),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6).copyWith(top: selected ? 10 : 8),
@@ -261,23 +292,29 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _filteredOrders.length,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (_, i) => OrderCard(
-                order: _filteredOrders[i],
-                currency: currency,
-                onTap: () async {
-                  print('🎯 Opening order ${_filteredOrders[i].id} for edit...');
-                  final updated = await Get.to<bool>(() => AddOrderPage(
-                        service: _orderService,
-                        order: _filteredOrders[i],
-                      ));
-                  print('🎯 Edit page closed, result: $updated');
-                  if (updated == true) {
-                    print('🔄 Refreshing order list after edit...');
-                    await _loadOrders(silent: true);
-                    print('🔄 Order list refreshed');
-                  }
-                },
-              ),
+              itemBuilder: (_, i) {
+                final order = _filteredOrders[i];
+                return OrderCard(
+                  order: order,
+                  currency: currency,
+                  isDeleting: _deletingOrderId == order.id,
+                  onDelete: () => _confirmDelete(order),
+                  onTap: () async {
+                    print('🎯 Opening order ${order.id} for edit...');
+                    final updated = await Get.to<bool>(() => AddOrderPage(
+                          service: _orderService,
+                          order: order,
+                        ));
+                    print('🎯 Edit page closed, result: $updated');
+                    if (updated == true) {
+                      print('🔄 Refreshing order list after edit...');
+                      await _loadOrders(silent: true);
+                      print('🔄 Order list refreshed');
+                      _refreshAllControllers();
+                    }
+                  },
+                );
+              },
             );
           }),
         ),
@@ -294,5 +331,66 @@ class _BusinessOrdersPageState extends State<BusinessOrdersPage> {
           ),
       ],
     );
+  }
+
+  Future<void> _confirmDelete(OrderItem order) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'delete_order'.tr,
+          style: TextStyle(fontFamily: Fonts.gilroy, fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'confirm_delete_order'.tr,
+          style: TextStyle(fontFamily: Fonts.gilroy, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('cancel'.tr),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: ColorConstants.redColor),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('delete_order'.tr),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      await _deleteOrder(order);
+    }
+  }
+
+  Future<void> _deleteOrder(OrderItem order) async {
+    setState(() => _deletingOrderId = order.id);
+    try {
+      await _orderService.deleteOrder(order.id);
+      // Remove locally stored deadline and cancel notifications
+      DeadlineStorage.delete(order.id);
+      LocalNotificationsService.instance().cancelDeadlineNotifications(order.id);
+      await _loadOrders(silent: true);
+      _refreshAllControllers();
+      Get.snackbar(
+        'success'.tr,
+        'order_deleted'.tr,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      print('❌ Failed to delete order: $e');
+      Get.snackbar(
+        'error'.tr,
+        'order_error'.tr,
+        backgroundColor: ColorConstants.redColor,
+        colorText: Colors.white,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _deletingOrderId = null);
+      }
+    }
   }
 }

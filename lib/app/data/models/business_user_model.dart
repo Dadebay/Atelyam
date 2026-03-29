@@ -67,7 +67,7 @@ class BusinessUserModel {
       created: json['created'].toString(),
       popular: json['popular'].toString(),
       status: json['status'].toString(),
-      user: json['user'] ?? 0,
+      user: (json['user'] ?? json['user_id'] ?? json['userId'] ?? 0) as int,
       productCount: json['productCount'] ?? 0,
       title: json['title'] ?? json['title_id'] ?? 0,
       images: (json['images'] as List<dynamic>?)?.map((image) => image['image'] as String).toList() ?? [],
@@ -92,6 +92,7 @@ class GetMyStatusModel {
   bool? popular;
   String? status;
   int? user;
+  int? categoryUser; // Gider (expense) vb. eklerken gereken ID
   double? lat;
   double? long;
 
@@ -110,6 +111,7 @@ class GetMyStatusModel {
     this.popular,
     this.status,
     this.user,
+    this.categoryUser,
     this.lat,
     this.long,
   });
@@ -130,6 +132,7 @@ class GetMyStatusModel {
       popular: json['popular'],
       status: json['status'],
       user: json['user'],
+      categoryUser: json['categoryuser'] ?? json['id'], // Eğer gelmezse id'yi fallback al
       lat: _parseDouble(json['lat']),
       long: _parseDouble(json['long']),
     );

@@ -42,6 +42,13 @@ class ClientService {
     if (decoded is Map<String, dynamic>) {
       final List<dynamic> results = decoded['results'] as List<dynamic>? ?? <dynamic>[];
       print('✅ Fetched ${results.length} clients');
+      if (results.isNotEmpty) {
+        final first = results.first as Map<String, dynamic>;
+        final measurements = first['measurements'] as List<dynamic>? ?? [];
+        if (measurements.isNotEmpty) {
+          print('🔍 MEASUREMENT SAMPLE JSON: ${measurements.first}');
+        }
+      }
       return results.whereType<Map<String, dynamic>>().map(ClientModel.fromJson).toList();
     }
 
@@ -49,9 +56,28 @@ class ClientService {
       print('✅ Fetched ${decoded.length} clients');
       return decoded.whereType<Map<String, dynamic>>().map(ClientModel.fromJson).toList();
     }
-
     print('✅ Fetched 0 clients (empty response)');
     return <ClientModel>[];
+  }
+
+  Future<ClientModel> fetchClientById(int id) async {
+    print('🔷 FETCH CLIENT DETAIL REQUEST - ID: $id');
+    print('🔷 URL: $_baseUrl/mobile/clients/$id/');
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl/mobile/clients/$id/'),
+      headers: await _headers(),
+    );
+
+    print('🔷 Response Status: ${response.statusCode}');
+
+    if (response.statusCode != 200) {
+      print('❌ FETCH DETAIL FAILED: Status ${response.statusCode}');
+      throw Exception('fetch_client_failed');
+    }
+
+    final Map<String, dynamic> decoded = json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+    return ClientModel.fromJson(decoded);
   }
 
   Future<List<MeasurementType>> fetchMeasurementTypes() async {
@@ -75,10 +101,10 @@ class ClientService {
     required String phone,
     required List<Map<String, dynamic>> measurements,
   }) async {
+    // Step 1: Create client (without measurements — backend ignores new_measurements on POST)
     final Map<String, dynamic> requestBody = <String, dynamic>{
       'name': name,
       'phone': phone,
-      'new_measurements': measurements,
     };
 
     print('🔷 CREATE CLIENT REQUEST');
@@ -100,9 +126,22 @@ class ClientService {
     }
 
     print('✅ Client created successfully');
-    return ClientModel.fromJson(
+    final created = ClientModel.fromJson(
       json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
     );
+
+    // Step 2: Save measurements via update (PUT supports new_measurements)
+    if (measurements.isNotEmpty) {
+      print('🔷 Saving ${measurements.length} measurements via update...');
+      return await updateClient(
+        id: created.id,
+        name: name,
+        phone: phone,
+        newMeasurements: measurements,
+      );
+    }
+
+    return created;
   }
 
   Future<ClientModel> updateClient({

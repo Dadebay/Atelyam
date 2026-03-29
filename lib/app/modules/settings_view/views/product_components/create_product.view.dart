@@ -178,7 +178,7 @@ class CreateProductView extends StatelessWidget {
                 child: AbsorbPointer(
                   child: TextFormField(
                     controller: TextEditingController(
-                      text: controller.selectedHashtag.value?.name ?? '',
+                      text: controller.selectedHashtag.value?.localizedName ?? '',
                     ),
                     decoration: InputDecoration(
                       labelText: 'select_categories'.tr,
@@ -489,19 +489,26 @@ class CreateProductView extends StatelessWidget {
       {'code': 'uz', 'label': '🇺🇿 Uzbek'},
       {'code': 'tr', 'label': '🇹🇷 Türkçe'},
     ];
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        leading: Icon(Icons.translate, color: ColorConstants.kPrimaryColor),
-        title: Text(
-          'other_languages'.tr,
-          style: TextStyle(
-            color: ColorConstants.kPrimaryColor,
-            fontWeight: FontWeight.w600,
-            fontSize: AppFontSizes.getFontSize(4.5),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadii.borderRadius20,
+        border: Border.all(color: ColorConstants.kPrimaryColor, width: 2),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: Icon(Icons.translate, color: ColorConstants.kPrimaryColor),
+          title: Text(
+            'other_languages'.tr,
+            style: TextStyle(
+              color: ColorConstants.kPrimaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.getFontSize(4.5),
+            ),
           ),
+          children: langs.map((lang) => _buildLangFields(lang['code']!, lang['label']!)).toList(),
         ),
-        children: langs.map((lang) => _buildLangFields(lang['code']!, lang['label']!)).toList(),
       ),
     );
   }

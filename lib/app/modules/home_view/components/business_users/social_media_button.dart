@@ -12,6 +12,7 @@ class SocialMediaIcon extends StatelessWidget {
   final String name;
   final String userName;
   final int maxline;
+  final VoidCallback? onTap; // Dışarıdan özel tap override edilebilir
 
   const SocialMediaIcon({
     required this.icon,
@@ -19,6 +20,7 @@ class SocialMediaIcon extends StatelessWidget {
     required this.name,
     required this.userName,
     required this.maxline,
+    this.onTap,
     super.key,
   });
 
@@ -88,7 +90,7 @@ class SocialMediaIcon extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () async {
+      onTap: onTap ?? () async {
         print('🔵 Launching: $urlToLaunch');
         final Uri url = Uri.parse(urlToLaunch);
         if (await canLaunchUrl(url)) {

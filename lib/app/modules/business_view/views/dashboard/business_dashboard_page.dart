@@ -7,6 +7,13 @@ import 'package:hugeicons/hugeicons.dart';
 
 import 'controllers/dashboard_controller.dart';
 import 'widgets/dashboard_widgets.dart';
+import '../orders/models/order_item.dart';
+import '../orders/pages/add_order_page.dart';
+import '../orders/services/order_service.dart';
+import '../analytics/controllers/analytics_controller.dart';
+import '../customers/controllers/customer_controller.dart';
+import '../finance/controllers/finance_controller.dart';
+import '../notifications/deadline_notifications_page.dart';
 
 class BusinessDashboardPage extends StatefulWidget {
   const BusinessDashboardPage({super.key});
@@ -18,6 +25,7 @@ class BusinessDashboardPage extends StatefulWidget {
 class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
   late final BusinessCurrencyController _ctrl;
   late final DashboardController _dashboardCtrl;
+  final OrderService _orderService = OrderService();
 
   @override
   void initState() {
@@ -99,6 +107,58 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
                               ),
                             );
                           }).toList(),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Notification bell
+                      GestureDetector(
+                        onTap: () => Get.to(() => const DeadlineNotificationsPage()),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(9),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8),
+                                ],
+                              ),
+                              child: Icon(
+                                HugeIcons.strokeRoundedNotification01,
+                                size: 20,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            // Badge: count of orders with deadlines
+                            Builder(builder: (_) {
+                              final orders = data?.recentOrders ?? [];
+                              final withDl = orders.where((o) => o.deadline != null).length;
+                              if (withDl == 0) return const SizedBox.shrink();
+                              return Positioned(
+                                top: -4,
+                                right: -4,
+                                child: Container(
+                                  width: 18,
+                                  height: 18,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFE53935),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '$withDl',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
                         ),
                       ),
                     ],
@@ -235,6 +295,7 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
                       ...data.recentOrders.map((order) => Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: DashOrderCard(
+                              orderId: order.id,
                               customer: order.clientName,
                               item: order.orderName,
                               status: order.status,
@@ -242,6 +303,35 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
                               due: order.due,
                               date: order.date,
                               currency: currency,
+                              deadline: order.deadline,
+                              onTap: () async {
+                                // DashboardOrder verisini OrderItem'a dönüştürüyoruz
+                                final orderItem = OrderItem(
+                                  id: order.id,
+                                  client: order.client,
+                                  clientName: order.clientName,
+                                  orderName: order.orderName,
+                                  status: order.status,
+                                  price: order.price,
+                                  due: order.due,
+                                  created: order.date,
+                                  deadline: order.deadline,
+                                );
+                                final updated = await Get.to<bool>(
+                                  () => AddOrderPage(
+                                    service: _orderService,
+                                    order: orderItem,
+                                  ),
+                                );
+                                if (updated == true) {
+                                  // Refresh dashboard
+                                  await _dashboardCtrl.refresh();
+                                  // Also refresh other pages (same as BusinessOrdersPage._refreshAllControllers)
+                                  try { Get.find<FinanceController>().loadFinanceData(silent: true); } catch (_) {}
+                                  try { Get.find<AnalyticsController>().refresh(); } catch (_) {}
+                                  try { Get.find<CustomerController>().refresh(); } catch (_) {}
+                                }
+                              },
                             ),
                           )),
                   ],

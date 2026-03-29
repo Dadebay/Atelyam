@@ -22,6 +22,11 @@ class BusinessUserService {
         final responseBody = utf8.decode(response.bodyBytes);
 
         final List<dynamic> decodedJson = jsonDecode(responseBody);
+        // DEBUG: hangi field'lar geliyor?
+        if (decodedJson.isNotEmpty) {
+          print('[cats_id] İlk öğe keys: ${(decodedJson[0] as Map).keys.toList()}');
+          print('[cats_id] İlk öğe: ${decodedJson[0]}');
+        }
         final List<BusinessUserModel> responseData = decodedJson.map((json) => BusinessUserModel.fromJson(json as Map<String, dynamic>)).toList();
         return responseData;
       } else {
@@ -62,7 +67,12 @@ class BusinessUserService {
         print(response.statusCode);
         print(json.decode(response.body));
 
-        return BusinessUserModel.fromJson(json.decode(response.body)[0]);
+        final List<dynamic> list = json.decode(utf8.decode(response.bodyBytes));
+        if (list.isEmpty) {
+          print('[fetchBusinessAccountKICI] ID=$id için boş dizi döndü');
+          return null;
+        }
+        return BusinessUserModel.fromJson(list[0] as Map<String, dynamic>);
       } else {
         _handleApiError(response.statusCode);
         return null;
@@ -118,9 +128,12 @@ class BusinessUserService {
       );
 
       if (response.statusCode == 200) {
-        print(response.statusCode);
-        print(response.body);
-        final List<dynamic> jsonList = json.decode(response.body);
+        final List<dynamic> jsonList = json.decode(utf8.decode(response.bodyBytes));
+        print('🟡 getMyStatus JSON: $jsonList');
+        if (jsonList.isNotEmpty) {
+          final first = jsonList.first as Map<String, dynamic>;
+          print('🟡 USER ID: ${first['id']} | CATEGORY USER ID: ${first['categoryuser'] ?? first['id']}');
+        }
         return jsonList.map((json) => GetMyStatusModel.fromJson(json)).toList();
       } else {
         return null;

@@ -7,7 +7,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 import '../models/client_model.dart';
 import '../services/client_service.dart';
-import 'customer_detail_sheet.dart';
+import '../pages/customer_detail_page.dart';
 
 class CustomerTile extends StatelessWidget {
   final ClientModel client;
@@ -28,14 +28,8 @@ class CustomerTile extends StatelessWidget {
       totalSpent: client.totalSpend ?? 0,
     );
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (_) => CustomerDetailSheet(
+    Get.to<void>(
+      () => CustomerDetailPage(
         client: client,
         service: service,
         onChanged: onChanged,

@@ -8,9 +8,26 @@ class AppBarActionsWidget extends StatelessWidget {
   final ProductModel productModel;
   final String phoneNumber;
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final String phoneNumberText = phoneNumber.contains('+993') ? phoneNumber : '+993${phoneNumber}';
+    String raw = phoneNumber.trim();
+    print('📞********************************************************************************** Ham numara (gelen): $raw');
+    // Eğer zaten + ile başlıyorsa dokunma
+    if (!raw.startsWith('+')) {
+      final digitsOnly = raw.replaceAll(RegExp(r'[^0-9]'), '');
+      if (digitsOnly.length == 9 && digitsOnly.startsWith('9')) {
+        // Özbek numarası (ör: 950911802 → +998950911802)
+        raw = '+998$digitsOnly';
+      } else if (digitsOnly.length == 8 && digitsOnly.startsWith('6')) {
+        // Türkmenistan numarası (ör: 61234567 → +99361234567)
+        raw = '+993$digitsOnly';
+      } else if (digitsOnly.startsWith('998') || digitsOnly.startsWith('993') || digitsOnly.startsWith('90') || digitsOnly.startsWith('994') || digitsOnly.startsWith('7')) {
+        raw = '+$digitsOnly';
+      } else {
+        raw = '+993$digitsOnly';
+      }
+    }
+    print('📞 Formatlanan numara (aranacak): $raw');
 
-    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumberText);
+    final Uri launchUri = Uri(scheme: 'tel', path: raw);
 
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
@@ -86,7 +103,7 @@ class AppBarActionsWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             icon: Icon(IconlyLight.call, color: ColorConstants.kPrimaryColor, size: AppFontSizes.fontSize24),
             onPressed: () {
-              _makePhoneCall('+${phoneNumber}');
+              _makePhoneCall(phoneNumber);
             },
           ),
         ),

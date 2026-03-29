@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 
 class AuthController extends GetxController {
   final RxString ipAddress = 'http://216.250.11.255:7000'.obs;
+  final RxBool justLoggedIn = false.obs;
 
   // Country code selection: TM = +993 (8 digits), UZ = +998 (9 digits)
   final RxString selectedCountryCode = '+993'.obs;
@@ -82,7 +83,6 @@ class AuthController extends GetxController {
         final homeController = Get.find<HomeController>();
         final settingsController = Get.find<NewSettingsPageController>();
         homeController.selectedIndex.value = 0;
-        settingsController.isLoginView.value = true;
         await settingsController.saveUserData(username, phoneNumber);
         showSnackBar('success', 'successOTP', ColorConstants.kSecondaryColor);
         await NotificationService().sendDeviceToken();
@@ -91,6 +91,10 @@ class AuthController extends GetxController {
         await FirebaseAnalyticsService.instance().setUserId(phoneNumber);
 
         await Get.offAll(() => BottomNavBar());
+        // Trigger settings refresh AFTER the new BottomNavBar's widgets are built
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          justLoggedIn.value = true;
+        });
       } else {
         showSnackBar('error', 'errorOTP', Colors.red);
       }

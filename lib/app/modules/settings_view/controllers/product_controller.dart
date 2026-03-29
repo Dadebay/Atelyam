@@ -301,10 +301,12 @@ class ProductController extends GetxController {
     homeController.agreeButton.toggle();
     final token = await Auth().getToken();
     try {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse('${authController.ipAddress.value}/mobile/productUpdate/$productId/'),
-      );
+      final url = '${authController.ipAddress.value}/mobile/productUpdate/$productId/';
+      print('🟡 ===== UPDATE PRODUCT START =====');
+      print('🟡 URL: $url');
+      print('🟡 ProductId: $productId');
+
+      final request = http.MultipartRequest('POST', Uri.parse(url));
       request.headers.addAll({
         'Authorization': 'Bearer $token',
         'Content-Type': 'multipart/form-data',
@@ -326,23 +328,33 @@ class ProductController extends GetxController {
         if (priceUz.isNotEmpty) 'price_uz': priceUz,
         if (priceTr.isNotEmpty) 'price_tr': priceTr,
       });
-      print('🔵 [updateProduct] URL: ${authController.ipAddress.value}/mobile/productUpdate/$productId/');
-      print('🔵 [updateProduct] Fields: ${request.fields}');
-      print('🔵 [updateProduct] Has image: ${selectedImage.value != null}');
+
+      print('🟡 --- request.fields (TÜMÜ) ---');
+      request.fields.forEach((key, value) {
+        print('  [$key] = "$value"');
+      });
+      print('🟡 Toplam field sayısı: ${request.fields.length}');
 
       if (selectedImage.value != null) {
+        print('🟡 Resim ekleniyor: ${selectedImage.value!.path}');
         request.files.add(
           await http.MultipartFile.fromPath(
             'img',
             selectedImage.value!.path,
           ),
         );
+      } else {
+        print('🟡 Resim seçilmedi, img alanı gönderilmiyor.');
       }
+
+      print('🟡 İstek gönderiliyor...');
       final response = await request.send();
-      print('Response Status Code: ${response.statusCode}');
-      final responseBytes = await response.stream.toBytes(); // Byte olarak oku
-      final responseBody = utf8.decode(responseBytes); // UTF-8 formatına çevir
-      print('Response Body: $responseBody');
+      final responseBytes = await response.stream.toBytes();
+      final responseBody = utf8.decode(responseBytes);
+
+      print('🟡 Response statusCode: ${response.statusCode}');
+      print('🟡 Response body: $responseBody');
+      print('🟡 ===== UPDATE PRODUCT END =====');
 
       if (response.statusCode == 200) {
         Get.back(result: true);
@@ -350,7 +362,9 @@ class ProductController extends GetxController {
       } else {
         showSnackBar('error', 'update_failed'.tr, ColorConstants.redColor);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ updateProduct hata: $e');
+      print('❌ StackTrace: $stackTrace');
       showSnackBar('error', 'error_occurred'.tr, ColorConstants.redColor);
     } finally {
       homeController.agreeButton.toggle();

@@ -2,16 +2,20 @@ import 'package:atelyam/app/product/custom_widgets/widgets.dart';
 import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:get/get.dart';
 
+import 'package:atelyam/app/data/service/business_user_service.dart';
 import '../models/finance_data.dart';
+import '../models/outstanding_customer_model.dart';
 import '../services/finance_service.dart';
 
 class FinanceController extends GetxController {
   final FinanceService _financeService = FinanceService();
 
   final Rx<FinanceData?> financeData = Rx<FinanceData?>(null);
+  final RxList<OutstandingCustomer> outstandingCustomers = <OutstandingCustomer>[].obs;
   final RxBool isLoading = false.obs;
-  final RxString selectedPeriod = 'monthly'.obs; // 'daily', 'weekly', 'monthly'
+  final RxString selectedPeriod = 'monthly'.obs;
   final RxString error = ''.obs;
+  final RxInt lastAddedExpenseId = (-1).obs; // Yeni eklenen giderin ID'si
 
   @override
   void onInit() {
@@ -24,14 +28,22 @@ class FinanceController extends GetxController {
     error.value = '';
 
     try {
-      final data = await _financeService.getFinanceData(period: selectedPeriod.value);
-      financeData.value = data;
+      financeData.value = await _financeService.getFinanceData(period: selectedPeriod.value);
     } catch (e) {
       print('❌ Error loading finance data: $e');
       error.value = e.toString();
       showSnackBar('error'.tr, 'Failed to load finance data', ColorConstants.redColor);
     } finally {
       if (!silent) isLoading.value = false;
+    }
+
+    // Load outstanding separately so a failure here doesn't block finance data
+    try {
+      final outstanding = await _financeService.getOutstandingCustomers();
+      outstandingCustomers.assignAll(outstanding);
+    } catch (e) {
+      print('❌ Error loading outstanding: $e');
+      outstandingCustomers.clear();
     }
   }
 
@@ -46,17 +58,45 @@ class FinanceController extends GetxController {
     required double amount,
   }) async {
     try {
-      await _financeService.createExpense(
+      // 1. getMyStatus ile categoryUser ID'yi al
+      final businessUserService = BusinessUserService();
+      final statusList = await businessUserService.getMyStatus();
+
+      print('🟠 addExpense: statusList = $statusList');
+
+      if (statusList == null || statusList.isEmpty) {
+        throw Exception('getMyStatus boş döndü — oturum açık mı?');
+      }
+
+      final me = statusList.first;
+      print('🟠 me.id=${me.id}  me.user=${me.user}  me.categoryUser=${me.categoryUser}');
+
+      // Backend'in istediği categoryuser ID: önce categoryUser, sonra id
+      final categoryUserId = me.categoryUser ?? me.id;
+      if (categoryUserId == null) {
+        throw Exception('categoryUser ID alınamadı');
+      }
+
+      print('🟠 categoryUserId olarak kullanılacak: $categoryUserId');
+
+      // 2. Gideri kaydet
+      final created = await _financeService.createExpense(
         title: title,
         category: category,
         amount: amount,
+        categoryUserId: categoryUserId,
       );
-      showSnackBar('success'.tr, 'Expense added successfully', ColorConstants.kPrimaryColor);
+
+      lastAddedExpenseId.value = created.id;
       await loadFinanceData(silent: true);
+
+      // Highlight'ı 3 saniye sonra kaldır
+      Future.delayed(const Duration(seconds: 3), () {
+        lastAddedExpenseId.value = -1;
+      });
     } catch (e) {
       print('❌ Error adding expense: $e');
-      showSnackBar('error'.tr, 'Failed to add expense', ColorConstants.redColor);
-      rethrow;
+      rethrow; // Hatayı page'e ilet, orada snackbar gösterilecek
     }
   }
 

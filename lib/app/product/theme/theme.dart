@@ -53,7 +53,7 @@ final List<Map<String, dynamic>> settingsViews = [
     'page': () => AboutUsView(),
   },
   {
-    'name': 'login',
+    'name': 'loginAsTailor',
     'icon': IconlyLight.login,
     'page': () => AuthView(),
   },
@@ -85,9 +85,9 @@ final List<Map<String, dynamic>> loggedInSettingsViews = [
     'page': () => AboutUsView(),
   },
   {
-    'name': 'login',
-    'icon': IconlyLight.login,
-    'page': () => AuthView(),
+    'name': 'logout',
+    'icon': IconlyLight.logout,
+    'page': '',
   },
 ];
 final List<Map<String, dynamic>> loggedInSettingsViewsBusinessaccountHave = [
@@ -117,9 +117,9 @@ final List<Map<String, dynamic>> loggedInSettingsViewsBusinessaccountHave = [
     'page': () => AboutUsView(),
   },
   {
-    'name': 'login',
-    'icon': IconlyLight.login,
-    'page': () => AuthView(),
+    'name': 'logout',
+    'icon': IconlyLight.logout,
+    'page': '',
   },
 ];
 

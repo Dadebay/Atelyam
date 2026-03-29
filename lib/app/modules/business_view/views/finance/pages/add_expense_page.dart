@@ -57,9 +57,11 @@ class _AddExpensePageState extends State<AddExpensePage> {
         category: _selectedCategory!,
         amount: double.parse(_amountController.text.trim()),
       );
+      // Önce sayfadan çık, sonra snackbar göster (finance sayfasında görünür)
       Get.back(result: true);
+      showSnackBar('success'.tr, 'expense_added_success'.tr, ColorConstants.kPrimaryColor);
     } catch (e) {
-      // Error handled in controller
+      showSnackBar('error'.tr, 'Failed to add expense', ColorConstants.redColor);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

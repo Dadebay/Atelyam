@@ -9,7 +9,7 @@ import '../pages/edit_customer_page.dart';
 import '../services/client_service.dart';
 import 'form_widgets.dart';
 
-class CustomerDetailSheet extends StatelessWidget {
+class CustomerDetailSheet extends StatefulWidget {
   final ClientModel client;
   final ClientService service;
   final VoidCallback onChanged;
@@ -20,6 +20,17 @@ class CustomerDetailSheet extends StatelessWidget {
     required this.service,
     required this.onChanged,
   });
+
+  @override
+  State<CustomerDetailSheet> createState() => _CustomerDetailSheetState();
+}
+
+class _CustomerDetailSheetState extends State<CustomerDetailSheet> {
+  bool _measurementsExpanded = false;
+
+  ClientModel get client => widget.client;
+  ClientService get service => widget.service;
+  VoidCallback get onChanged => widget.onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -166,71 +177,128 @@ class CustomerDetailSheet extends StatelessWidget {
               // Measurements
               if (client.measurements.isNotEmpty) ...<Widget>[
                 const SizedBox(height: 20),
-                Text(
-                  'saved_measurements'.tr,
-                  style: TextStyle(
-                    fontFamily: Fonts.gilroy,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                // Tappable header with count + chevron
+                GestureDetector(
+                  onTap: () => setState(() => _measurementsExpanded = !_measurementsExpanded),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedRuler,
+                          color: const Color(0xFF3B79F6),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'saved_measurements'.tr,
+                            style: TextStyle(
+                              fontFamily: Fonts.gilroy,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF3B79F6).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${client.measurements.length}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF3B79F6),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        AnimatedRotation(
+                          duration: const Duration(milliseconds: 200),
+                          turns: _measurementsExpanded ? 0.5 : 0,
+                          child: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: Colors.grey.shade400,
+                            size: 22,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: Column(
-                    children: client.measurements.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final measurement = entry.value;
-                      final isLast = index == client.measurements.length - 1;
+                // Expandable list
+                AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 250),
+                  crossFadeState: _measurementsExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                  firstChild: Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: Column(
+                        children: client.measurements.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final measurement = entry.value;
+                          final isLast = index == client.measurements.length - 1;
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        decoration: BoxDecoration(
-                          border: isLast
-                              ? null
-                              : Border(
-                                  bottom: BorderSide(color: Colors.grey.shade100, width: 1),
-                                ),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                measurement.label,
-                                style: TextStyle(
-                                  fontFamily: Fonts.gilroy,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              border: isLast
+                                  ? null
+                                  : Border(
+                                      bottom: BorderSide(color: Colors.grey.shade100, width: 1),
+                                    ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF3B79F6).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                measurement.value,
-                                style: TextStyle(
-                                  fontFamily: Fonts.gilroy,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF3B79F6),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    measurement.label,
+                                    style: TextStyle(
+                                      fontFamily: Fonts.gilroy,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF3B79F6).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    measurement.value,
+                                    style: TextStyle(
+                                      fontFamily: Fonts.gilroy,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF3B79F6),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
+                  secondChild: const SizedBox.shrink(),
                 ),
               ],
             ],

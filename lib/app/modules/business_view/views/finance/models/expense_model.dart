@@ -14,8 +14,10 @@ class ExpenseModel {
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
+    print('🔍 ExpenseModel.fromJson keys: ${json.keys.toList()}');
+    print('🔍 ExpenseModel.fromJson id field: ${json['id']} (type: ${json['id'].runtimeType})');
     return ExpenseModel(
-      id: json['id'] as int? ?? 0,
+      id: (json['id'] as num?)?.toInt() ?? 0,
       title: json['title'] as String? ?? '',
       category: json['category'] as String? ?? '',
       amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,

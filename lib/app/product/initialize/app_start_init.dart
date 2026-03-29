@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../modules/business_view/views/orders/services/deadline_storage.dart';
 import '../custom_widgets/index.dart';
 import 'firebase_analytics_service.dart';
 
@@ -15,6 +16,7 @@ class AppStartInit {
     WidgetsFlutterBinding.ensureInitialized();
     HttpOverrides.global = MyHttpOverrides();
     await GetStorage.init();
+    await DeadlineStorage.init();
     Get.put(AuthController());
 
     // Initialize Firebase only if not already initialized
