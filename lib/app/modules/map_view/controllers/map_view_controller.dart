@@ -12,22 +12,15 @@ import 'package:iconly/iconly.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapViewController extends GetxController {
-  static const String ayterekTileUrl = 'https://map.ayterek.com/tile/{z}/{x}/{y}.png';
   static const String tmTileUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
   static const String osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-  // Test tile for Ashgabat area at zoom 8
-  static const String _ayterekTestTile = 'https://map.ayterek.com/tile/8/169/100.png';
   static const String _tmTestTile = 'https://jaytap.com.tm/styles/test-style/8/169/100.png';
 
-  /// Probes ayterek → jaytap.com.tm → OSM and returns the first working URL.
+  /// Probes jaytap.com.tm → OSM and returns the first working URL.
   /// If [isInTurkmenistan] is false, returns OSM directly.
   static Future<String> resolveTileUrl({required bool isInTurkmenistan}) async {
     if (!isInTurkmenistan) return osmTileUrl;
-    try {
-      final r = await http.head(Uri.parse(_ayterekTestTile)).timeout(const Duration(seconds: 5));
-      if (r.statusCode == 200) return ayterekTileUrl;
-    } catch (_) {}
     try {
       final r = await http.head(Uri.parse(_tmTestTile)).timeout(const Duration(seconds: 5));
       if (r.statusCode == 200) return tmTileUrl;

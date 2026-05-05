@@ -20,7 +20,6 @@ class LocationPickerPage extends StatefulWidget {
 
 class _LocationPickerPageState extends State<LocationPickerPage> {
   static const String _osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-  static const String _ayterekMap = 'https://map.ayterek.com/tile/{z}/{x}/{y}.png';
   static const String _tmTileUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
 
   bool _isInTurkmenistan = true;
@@ -37,13 +36,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       if (mounted) setState(() => _resolvedTileUrl = _osmTileUrl);
       return;
     }
-    try {
-      final r = await http.head(Uri.parse('https://map.ayterek.com/tile/8/169/100.png')).timeout(const Duration(seconds: 5));
-      if (r.statusCode == 200) {
-        if (mounted) setState(() => _resolvedTileUrl = _ayterekMap);
-        return;
-      }
-    } catch (_) {}
     try {
       final r = await http.head(Uri.parse('https://jaytap.com.tm/styles/test-style/8/169/100.png')).timeout(const Duration(seconds: 5));
       if (r.statusCode == 200) {

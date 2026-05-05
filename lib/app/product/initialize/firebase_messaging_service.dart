@@ -36,12 +36,12 @@ class FirebaseMessagingService {
     print(apnsToken);
     print('=================================');
 
-    await NotificationService().sendDeviceToken();
+    // await NotificationService().sendDeviceToken();
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       print('========== FCM TOKEN (refreshed) ==========');
       print(fcmToken);
       print('===========================================');
-      NotificationService().sendDeviceToken();
+      // NotificationService().sendDeviceToken();
     }).onError((error) {});
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:atelyam/app/data/service/auth_service.dart';
 import 'package:atelyam/app/modules/auth_view/controllers/auth_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
@@ -13,28 +14,32 @@ class NotificationService {
 
   static const String deviceIdEndpoint = '/notifications/deviceid/';
 
-  Future<void> sendDeviceToken() async {
+  Future<void> sendDeviceToken({bool force = false}) async {
+    final Auth _auth = Auth();
+
     try {
       final String? token = await FirebaseMessaging.instance.getToken();
+      final String? bearerToken = await _auth.getToken();
+
       if (token != null) {
-        final String? storedToken = _storage.read('fcm_token');
-        if (storedToken != token) {
-          try {
-            final response = await http.post(
-              Uri.parse('${authController.ipAddress.value}${deviceIdEndpoint}'),
-              headers: {
-                HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(<String, String>{'device_id': token}),
-            );
-            if (response.statusCode == 201 || response.statusCode == 200) {
-              await _storage.write('fcm_token', token);
-            } else {}
-          } catch (e) {}
+        try {
+          final response = await http.post(
+            Uri.parse('${authController.ipAddress.value}${deviceIdEndpoint}'),
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+              HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
+            },
+            body: jsonEncode(<String, String>{'device_id': token}),
+          );
+          if (response.statusCode == 201 || response.statusCode == 200) {
+            await _storage.write('fcm_token', token);
+          }
+        } catch (e) {
+          print('❌ POST hatası: $e');
         }
       }
     } catch (e) {
-      // Release modda emulator baglanyşygy ýok bolsa, app crash etmez
+      print('❌ sendDeviceToken hatası: $e');
     }
   }
 }

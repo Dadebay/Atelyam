@@ -31,7 +31,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  final HomeController homeController = Get.put<HomeController>(HomeController());
+  final HomeController homeController = Get.put<HomeController>(HomeController(), permanent: true);
   List phoneNumbers = [];
   dynamic getPhoneNumber() async {
     phoneNumbers = await BannerService().fetchPhoneNumbers();
