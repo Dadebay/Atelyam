@@ -286,6 +286,7 @@ class _NavItem {
     required this.icon,
     required this.activeIcon,
     required this.label,
+    // ignore: unused_element_parameter
     this.isCenterItem = false,
   });
 }

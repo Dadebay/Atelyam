@@ -1,0 +1,5 @@
+# Copy to android/key.properties and use your own Android release keystore.
+storeFile=/absolute/path/to/upload-keystore.jks
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+keyPassword=YOUR_KEY_PASSWORD

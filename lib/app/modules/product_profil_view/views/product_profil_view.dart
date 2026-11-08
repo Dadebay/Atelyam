@@ -141,6 +141,7 @@ class _ProductProfilViewState extends State<ProductProfilView> {
   }
 
   /// Virtual Try-On Butonu
+  // ignore: unused_element
   Widget _buildTryOnButton() {
     final authController = Get.find<AuthController>();
     final garmentImageUrl = authController.ipAddress.value + widget.productModel.img;

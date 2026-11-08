@@ -1,4 +1,3 @@
-import 'package:atelyam/app/data/service/notification_service.dart';
 import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 

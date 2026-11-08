@@ -32,6 +32,7 @@ class DiscoveryCard extends StatelessWidget {
 
   // Static decorations to avoid recreating on every build
 
+  // ignore: unused_field
   static final _standardCardShadow = [
     BoxShadow(
       color: ColorConstants.darkMainColor.withOpacity(0.1),
@@ -267,6 +268,7 @@ class DiscoveryCard extends StatelessWidget {
   }
 
   /// Alt bilgi paneli (standart kart için - ana sayfa)
+  // ignore: unused_element
   Widget _buildBottomInfoPanel() {
     return Positioned(
       bottom: 0,

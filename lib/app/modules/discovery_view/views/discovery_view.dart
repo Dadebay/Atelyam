@@ -1,4 +1,3 @@
-import 'package:lottie/lottie.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:atelyam/app/modules/discovery_view/controllers/discovery_controller.dart';

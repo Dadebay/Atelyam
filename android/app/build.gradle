@@ -38,6 +38,30 @@ if (flutterTargetSdkVersion == null) {
     flutterTargetSdkVersion = '36'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { stream ->
+        keystoreProperties.load(stream)
+    }
+}
+def releaseTaskRequested = gradle.startParameter.taskNames.any {
+    it.toLowerCase().contains('release')
+}
+if (releaseTaskRequested) {
+    if (!keystorePropertiesFile.exists()) {
+        throw new GradleException('Android release signing requires android/key.properties. See android/key.properties.example.')
+    }
+    def requiredKeys = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']
+    def missingKeys = requiredKeys.findAll { !keystoreProperties.getProperty(it) }
+    if (!missingKeys.isEmpty()) {
+        throw new GradleException("Missing Android release signing values: ${missingKeys.join(', ')}")
+    }
+    if (!rootProject.file(keystoreProperties.getProperty('storeFile')).exists()) {
+        throw new GradleException('Android release keystore file does not exist.')
+    }
+}
+
 android {
     namespace = "com.gurbanov.atelyam"
     compileSdkVersion 36
@@ -71,9 +95,21 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            release {
+                storeFile rootProject.file(keystoreProperties.getProperty('storeFile'))
+                storePassword keystoreProperties.getProperty('storePassword')
+                keyAlias keystoreProperties.getProperty('keyAlias')
+                keyPassword keystoreProperties.getProperty('keyPassword')
+            }
+        }
+    }
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:atelyam/app/modules/virtual_tryon/controllers/virtual_tryon_controller.dart';
-import 'package:atelyam/app/data/service/virtual_tryon_service.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
