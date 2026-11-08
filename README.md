@@ -1,36 +1,50 @@
-# Atelýam: Make Your Mark in the Fashion World! 🧵✨
+# Atelýam
 
-Atelýam is a platform where you can share your custom-designed clothes, handicrafts, and unique designs. 👗🎨 This application, developed especially for fashion enthusiasts, young girls, home dressmakers, and fashion design houses, offers a great opportunity to showcase your creativity and inspire others. 🌟👩‍🎨
+Atelýam is a Flutter community for sharing original clothing and handmade designs. People can show their work, explore designs from others, and connect with fashion makers.
 
-## Key Features:
+[Get Atelýam on Google Play](https://play.google.com/store/apps/details?id=com.gurbanov.atelyam)
 
-- **Create and Share Your Account:** Easily share your custom-designed clothes and products. 📸📤
-- **Get Inspired:** Discover unique designs shared by other users. 💡🔍
-- **Top Favorites:** See the most liked clothes of all time and follow the trends. 🔥🏆
-- **Fashion Community:** Interact with fashion enthusiasts, leave comments, and share your likes. 💬🤝
+## Features
 
-## Why Atelýam? 🤔
+- Create a profile and share clothing, craft, or fashion designs.
+- Browse community posts, save favorites, and interact through likes and comments.
+- Discover makers and their products.
+- Manage a business profile and products from the app.
 
-- A unique platform where you can showcase your designs in Turkmenistan. 🇹🇲
-- Specially designed for home dressmakers, young girls, and fashion designers. 👩‍👧‍👦
-- The perfect place to step into the fashion world and show your style to the world. 🌍💖
+## Development
 
-Showcase your style, get inspired, and inspire others with Atelýam! ✨🎉
+Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) and the toolchain for your target platform. Android builds use JDK 17 with this project's Gradle version. Then run:
 
+```sh
+flutter pub get
+flutter run
+```
 
-## Download the App
+Firebase is used for messaging and analytics. Android uses `android/app/google-services.json`; iOS uses its own Firebase configuration. The mobile app also depends on its backend services for account and product data.
 
-### Google Play Store
-[Download the app from the Google Play Store](https://play.google.com/store/apps/details?id=com.gurbanov.atelyam)
+The included `third_party/iconly` copy retains the original icon font and glyphs while making the icon definitions compatible with current Flutter versions.
 
-### App store
-[Download the app from the App Store](https://apps.apple.com/tm/app/atel%C3%BDam/id6741672466)
+## Checks
 
+```sh
+flutter analyze --no-fatal-infos
+flutter build apk --debug
+```
+
+The analyzer currently reports legacy style notices. The check above still fails on warnings and errors. GitHub Actions runs the same checks on pull requests and `main`.
+
+## Android release signing
+
+The Android app ID is `com.gurbanov.atelyam`. Android currently declares version `9.0.6 (18)` in `android/app/build.gradle`; `pubspec.yaml` has a different version for Flutter and iOS. Reconcile these versions before publishing a new store update.
+
+An Android release requires an upload keystore and a local `android/key.properties` file. Copy [`android/key.properties.example`](android/key.properties.example) and fill it with your own paths and credentials. The properties file and keystore are ignored by Git. A release build intentionally fails when signing information is missing.
+
+```sh
+flutter build apk --release
+```
+
+Verify the resulting APK's package, version, and signing certificate before distributing it. A source-only GitHub Release does not contain an installable APK.
 
 ## Screenshots
-![ScreenShot 1](https://play-lh.googleusercontent.com/iVcy-lGmKrYFUA0aqKhpBhc5CXPjHopqgwdp3HN75U8HX1XS7we6lArvb5N2_DzLJA=w1052-h592-rw)
-![ScreenShot 2](https://play-lh.googleusercontent.com/T0mBnIF6dZNnyEtxK34Wb8NOJNMHue7QdDUPR5a5nEABGBrDVvPcLSum2cdkA5BAC4Y3=w1052-h592-rw)
-![ScreenShot 3](https://play-lh.googleusercontent.com/vFfoOpOeJ4NMlcquRB8KRyEXd35und3AWXFDsOF74GyGEkke0QCvFVVRwTra5uFVoRx8=w1052-h592-rw)
-![ScreenShot 4](https://play-lh.googleusercontent.com/KH3akicH-2Jub359ApYoXxoCJNd4anIbdFLPHoMBj1yIJIzuu7cumWQPp6hB_LP0hf_T=w1052-h592-rw)
-![ScreenShot 5](https://play-lh.googleusercontent.com/MMJew1yKMgQ2gxJ3F6V7LKkRDu3kQPGGslidv2bjLuK7QVbFXoyaD7kovo6ZE69Es8Yn=w1052-h592-rw)
 
+![Atelýam community feed](https://play-lh.googleusercontent.com/iVcy-lGmKrYFUA0aqKhpBhc5CXPjHopqgwdp3HN75U8HX1XS7we6lArvb5N2_DzLJA=w1052-h592-rw)

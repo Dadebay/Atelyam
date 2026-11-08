@@ -9,7 +9,6 @@ import 'package:atelyam/app/product/theme/color_constants.dart';
 import 'package:atelyam/app/product/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 import 'models/order_item.dart';
 import 'pages/add_order_page.dart';

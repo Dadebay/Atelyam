@@ -3,11 +3,8 @@ import 'package:atelyam/app/modules/home_view/views/bottom_nav_bar_view.dart';
 import 'package:atelyam/app/modules/settings_view/components/settings_button.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_added_products_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/all_business_accounts_view.dart';
-import 'package:atelyam/app/modules/settings_view/views/business_acc_components_view/edit_business_account_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/business_profile_settings_view.dart';
-import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
-import 'package:atelyam/app/product/initialize/local_notifications_service.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../controllers/settings_controller.dart';
 

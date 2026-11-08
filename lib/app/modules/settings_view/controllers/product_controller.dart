@@ -63,7 +63,6 @@ class ProductController extends GetxController {
   Future<XFile?> compressImage(File file) async {
     final int fileSizeInBytes = await file.length();
     final double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-    final double fileSizeInKB = fileSizeInBytes / 1024;
 
     int quality = 60;
 

@@ -4,7 +4,6 @@ import 'package:atelyam/app/data/service/product_service.dart';
 import 'package:atelyam/app/modules/business_view/views/business_splash_view.dart';
 import 'package:atelyam/app/modules/discovery_view/components/discovery_card.dart';
 import 'package:atelyam/app/modules/settings_view/controllers/settings_controller.dart';
-import 'package:atelyam/app/modules/settings_view/views/business_acc_components_view/edit_business_account_view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/create_product.view.dart';
 import 'package:atelyam/app/modules/settings_view/views/product_components/edit_product_view.dart';
 import 'package:atelyam/app/product/custom_widgets/index.dart';
